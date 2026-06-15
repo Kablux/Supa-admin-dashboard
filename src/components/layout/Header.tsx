@@ -22,13 +22,30 @@ import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { useThemeMode } from "../../theme/ThemeContext";
 import { ROUTE_LABELS } from "../../data/mockData";
+import { logoutAdmin } from "../../api/xhrHelper";
+import { useAppDispatch } from "../../redux/hooks";
 
 export default function Header() {
   const location = useLocation();
+  const dispatch = useAppDispatch();
   const { mode, toggleMode } = useThemeMode();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const pageLabel = ROUTE_LABELS[location.pathname] || "Dashboard";
   const isDark = mode === "dark";
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleActionClick = async (action: string) => {
+    handleMenuClose();
+
+    if (action === "Sign out") {
+      await dispatch(logoutAdmin());
+      // Your ProtectedRoute / App routing architecture will automatically
+      // catch the unauthenticated state change and drop them back to /login
+    }
+  };
 
   return (
     <Box
@@ -215,7 +232,7 @@ export default function Header() {
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={() => setAnchorEl(null)}
+        onClose={handleMenuClose}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         slotProps={{
@@ -226,6 +243,7 @@ export default function Header() {
               borderRadius: "12px",
               bgcolor: "var(--bg-card)",
               border: "1px solid var(--border)",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
             },
           },
         }}
@@ -233,11 +251,18 @@ export default function Header() {
         {["Profile", "Account Settings", "Sign out"].map((item) => (
           <MenuItem
             key={item}
-            onClick={() => setAnchorEl(null)}
+            onClick={() => handleActionClick(item)}
             sx={{
               fontSize: 13,
               py: 1,
               color: item === "Sign out" ? "error.main" : "text.secondary",
+              fontWeight: item === "Sign out" ? 600 : 400,
+              "&:hover": {
+                backgroundColor:
+                  item === "Sign out"
+                    ? "rgba(211, 47, 47, 0.04)"
+                    : "rgba(0,0,0,0.02)",
+              },
             }}
           >
             {item}

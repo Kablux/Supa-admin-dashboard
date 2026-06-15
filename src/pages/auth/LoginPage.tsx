@@ -49,9 +49,9 @@ export default function LoginPage(): React.ReactElement {
     (location.state as { from?: { pathname: string } } | null)?.from
       ?.pathname ?? "/";
 
-  if (isAuthenticated) {
-    return <Navigate to={from} replace />;
-  }
+  // if (isAuthenticated) {
+  //   return <Navigate to={from} replace />;
+  // }
 
   useEffect(() => {
     return () => {
@@ -97,8 +97,7 @@ export default function LoginPage(): React.ReactElement {
 
     if (loginAdmin.fulfilled.match(result)) {
       toast.success("Welcome, Administrator");
-
-      navigate(from, {
+      navigate("/", {
         replace: true,
       });
     }

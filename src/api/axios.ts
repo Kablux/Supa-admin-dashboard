@@ -1,5 +1,4 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
-
 const API_BASE_URL: string =
   import.meta.env.VITE_API_BASE_URL || "https://api.kabluxe.com/api/v1";
 
@@ -14,7 +13,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const token = getStoredAccessToken();
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -23,36 +22,23 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
 export default api;
 
-export function setStoredTokens(
-  access: string,
-  refresh?: string
-): void {
-  sessionStorage.setItem(
-    ACCESS_TOKEN_KEY,
-    access
-  );
+export function setStoredTokens(access: string, refresh?: string): void {
+  sessionStorage.setItem(ACCESS_TOKEN_KEY, access);
 
   if (refresh) {
-    localStorage.setItem(
-      REFRESH_TOKEN_KEY,
-      refresh
-    );
+    localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
   }
 }
 
 export function getStoredAccessToken() {
-  return sessionStorage.getItem(
-    ACCESS_TOKEN_KEY
-  );
+  return sessionStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
 export function getStoredRefreshToken() {
-  return localStorage.getItem(
-    REFRESH_TOKEN_KEY
-  );
+  return localStorage.getItem(REFRESH_TOKEN_KEY);
 }
 
 export function clearStoredTokens(): void {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  sessionStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
