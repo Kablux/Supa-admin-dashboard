@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -21,6 +20,9 @@ import SettingsPage from "./pages/SettingsPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import DisputePage from "./pages/DisputePage";
 import HelpPage from "./pages/HelpPage";
+import LoginPage from "./pages/auth/LoginPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
 
 function ThemedApp() {
   const { mode } = useThemeMode();
@@ -30,27 +32,35 @@ function ThemedApp() {
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       <BrowserRouter>
-        <DashboardLayout>
-          <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/riders" element={<RidersPage />} />
-            <Route path="/drivers" element={<DriversPage />} />
-            <Route path="/trips" element={<TripsPage />} />
-            <Route path="/cooperate" element={<CooperatePage />} />
-            <Route path="/fleet" element={<FleetPage />} />
-            <Route path="/premium" element={<PremiumPage />} />
-            <Route path="/inspection" element={<InspectionPage />} />
-            <Route path="/transactions" element={<TransactionsPage />} />
-            <Route path="/admin-roles" element={<AdminRolesPage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/sos" element={<SOSPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/feedback" element={<FeedbackPage />} />
-            <Route path="/dispute" element={<DisputePage />} />
-            <Route path="/help" element={<HelpPage />} />
-          </Routes>
-        </DashboardLayout>
-      </BrowserRouter>
+  <Routes>
+    <Route path="/login" element={<LoginPage />} />
+
+    <Route
+      element={
+        <ProtectedRoute>
+          <DashboardLayout />
+        </ProtectedRoute>
+      }
+    >
+      <Route index element={<DashboardPage />} />
+      <Route path="riders" element={<RidersPage />} />
+      <Route path="drivers" element={<DriversPage />} />
+      <Route path="trips" element={<TripsPage />} />
+      <Route path="cooperate" element={<CooperatePage />} />
+      <Route path="fleet" element={<FleetPage />} />
+      <Route path="premium" element={<PremiumPage />} />
+      <Route path="inspection" element={<InspectionPage />} />
+      <Route path="transactions" element={<TransactionsPage />} />
+      <Route path="admin-roles" element={<AdminRolesPage />} />
+      <Route path="notifications" element={<NotificationsPage />} />
+      <Route path="sos" element={<SOSPage />} />
+      <Route path="settings" element={<SettingsPage />} />
+      <Route path="feedback" element={<FeedbackPage />} />
+      <Route path="dispute" element={<DisputePage />} />
+      <Route path="help" element={<HelpPage />} />
+    </Route>
+  </Routes>
+</BrowserRouter>
     </ThemeProvider>
   );
 }
@@ -58,6 +68,16 @@ function ThemedApp() {
 export default function App() {
   return (
     <ThemeModeProvider>
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        // theme="dark"
+      />
+
       <ThemedApp />
     </ThemeModeProvider>
   );

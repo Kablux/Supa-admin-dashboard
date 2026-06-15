@@ -1,8 +1,9 @@
-import React, { useState, ReactNode, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import Sidebar, { SIDEBAR_WIDTH } from "./Sidebar.js";
-import Header from "./Header.js";
+import Sidebar, { SIDEBAR_WIDTH } from "./Sidebar";
+import Header from "./Header";
 
 const PATH_TO_ID: Record<string, string> = {
   "/": "dashboard",
@@ -23,10 +24,7 @@ const PATH_TO_ID: Record<string, string> = {
   "/help": "help",
 };
 
-interface DashboardLayoutProps {
-  children: ReactNode;
-}
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout() {
   const location = useLocation();
   const [activeNav, setActiveNav] = useState(
     PATH_TO_ID[location.pathname] || "dashboard",
@@ -62,8 +60,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         }}
       >
         <Header />
-        <Box sx={{ flex: 1, p: { xs: 2, md: 3 }, overflow: "auto" }}>
-          {children}
+        <Box
+          sx={{ flex: 1, p: { xs: 2, md: 3 }, overflow: "auto" }}
+          component="main"
+        >
+          <Outlet />
         </Box>
       </Box>
     </Box>
