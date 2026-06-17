@@ -1,5 +1,11 @@
 import api from "./axios";
-import { LoginCredentials, LoginResponse, AdminUser } from "../types/auth";
+import {
+  LoginCredentials,
+  LoginResponse,
+  AdminUser,
+  PaginatedUsers,
+  PaginatedDrivers,
+} from "../types/auth";
 
 export async function loginRequest(
   credentials: LoginCredentials,
@@ -13,6 +19,20 @@ export async function loginRequest(
 
 export async function logoutRequest(refresh: string): Promise<void> {
   await api.post("/auth/logout/", { refresh });
+}
+
+export async function getUserList(): Promise<PaginatedUsers> {
+  const { data } = await api.get<PaginatedUsers>(
+    "/business-admin/users/?page=1",
+  );
+  return data;
+}
+
+export async function getDriverList(): Promise<PaginatedDrivers> {
+  const { data } = await api.get<PaginatedDrivers>(
+    "/business-admin/drivers/?page=1",
+  );
+  return data;
 }
 
 export async function fetchAdminProfile(

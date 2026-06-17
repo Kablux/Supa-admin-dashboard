@@ -1,13 +1,69 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import FilterBar from "../components/dashboard/FilterBar.js";
 import StatCard from "../components/dashboard/StatCard.js";
 import QuickActions from "../components/dashboard/QuickActions.js";
 import FinanceAnalytics from "../components/dashboard/FinanceAnalytics.js";
 import MessagesPanel from "../components/dashboard/MessagesPanel.js";
-import { statsData } from "../data/mockData";
+import { getDashboardStats } from "../api/xhrHelper.js";
+import { useAppDispatch, useAppSelector } from "../redux/hooks.js";
+import { Stat } from "../types/common.types";
 
 export default function DashboardPage() {
+  const dispatch = useAppDispatch();
+
+const { totalUsers, totalDrivers } =
+  useAppSelector(
+    (state) => state.dashboard
+  );
+
+useEffect(() => {
+  dispatch(getDashboardStats());
+}, [dispatch]);
+
+const statsData: Stat[] = [
+  {
+    id: "live_trips",
+    label: "Live Trips",
+    value: "45",
+    icon: "DirectionsCar",
+    color: "#FEB40E",
+    bg: "#2a2000",
+    trend: "+12%",
+    trendUp: true,
+  },
+  {
+    id: "total_users",
+    label: "Total Users",
+    value: totalUsers.toLocaleString(),
+    icon: "PeopleAlt",
+    color: "#1565C0",
+    bg: "#2A409F",
+    trend: "+8%",
+    trendUp: true,
+  },
+  {
+    id: "total_partners",
+    label: "Total Drivers",
+    value: totalDrivers.toLocaleString(),
+    icon: "Handshake",
+    color: "#D21248",
+    bg: "#2a0020",
+    trend: "+5%",
+    trendUp: true,
+  },
+  {
+    id: "revenue",
+    label: "Revenue",
+    value: "₦0",
+    icon: "AccountBalanceWallet",
+    color: "#4B6D4D",
+    bg: "#002000",
+    trend: "+0%",
+    trendUp: true,
+  },
+];
+
   return (
     <Box
       className="fade-in"

@@ -6,7 +6,7 @@ import {
   clearStoredTokens,
   getStoredRefreshToken,
 } from "./axios";
-import { loginRequest, logoutRequest } from "./xhr";
+import { getDriverList, getUserList, loginRequest, logoutRequest } from "./xhr";
 
 export const loginAdmin = createAsyncThunk<
   LoginResponse,
@@ -14,14 +14,19 @@ export const loginAdmin = createAsyncThunk<
   { rejectValue: string }
 >("auth/loginAdmin", async (credentials, { rejectWithValue }) => {
   try {
-    const data = await loginRequest(credentials);
-    setStoredTokens(data.access, data.refresh);
-    return data;
+    const responsePayload = await loginRequest(credentials);
+
+    const accessToken = responsePayload.data.access;
+    const refreshToken = responsePayload.data.refresh;
+
+    // save them to storage
+    setStoredTokens(accessToken, refreshToken);
+
+    //Return the full payload to authSlice
+    return responsePayload;
   } catch (error: any) {
     const message = error.response?.data?.message || "Login failed";
-
     toast.error(message);
-
     return rejectWithValue(message);
   }
 });
@@ -48,3 +53,24 @@ export const logoutAdmin = createAsyncThunk<
     clearStoredTokens();
   }
 });
+
+export const getDashboardStats = createAsyncThunk(
+  "dashboard/getStats",
+  async (_, { rejectWithValue }) => {
+    try {
+      const [users, drivers] = await Promise.all([
+        getUserList(),
+        getDriverList(),
+      ]);
+
+      return {
+        totalUsers: users.count,
+        totalDrivers: drivers.count,
+      };
+    } catch (error: any) {
+      const message =
+        error.response?.data?.message || "Failed to load dashboard stats";
+      return rejectWithValue(message);
+    }
+  },
+);

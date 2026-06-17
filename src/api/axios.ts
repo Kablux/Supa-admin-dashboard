@@ -22,8 +22,13 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
 export default api;
 
-export function setStoredTokens(access: string, refresh?: string): void {
-  sessionStorage.setItem(ACCESS_TOKEN_KEY, access);
+export function setStoredTokens(access?: string, refresh?: string): void {
+  // Prevent saving if token is undefined
+  if (access) {
+    sessionStorage.setItem(ACCESS_TOKEN_KEY, access);
+  } else {
+    console.error("Critical: Tried to save an undefined access token!");
+  }
 
   if (refresh) {
     localStorage.setItem(REFRESH_TOKEN_KEY, refresh);

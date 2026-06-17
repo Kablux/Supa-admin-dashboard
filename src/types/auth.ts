@@ -16,6 +16,12 @@ export interface LoginFormErrors {
 
 export type AuthStatus = "idle" | "submitting" | "error" | "success";
 
+export interface DashboardState {
+  totalDrivers: number;
+  totalUsers: number;
+  isLoading: boolean;
+  error: string | null;
+}
 // ─────────────────────────────────────────────
 // API payloads — shaped exactly to the API docs
 // ─────────────────────────────────────────────
@@ -44,6 +50,29 @@ export interface AdminUser {
   rating: string;
   role: UserRole;
 }
+export interface Driver {
+  id: string;
+  email: string;
+  status: string;
+  phone_number: string;
+  address: string;
+  rating: string;
+  role: string;
+  full_name: string;
+  profile_picture: string;
+  profile_picture_url: string;
+  loyalty_points: string;
+  mileage_points: string;
+  mileage_point: string;
+  total_rides: string;
+  total_ride: string;
+  completed_rides: string;
+  cancelled_rides: string;
+  vehicle_information: string;
+  vehicle: string;
+  transfer_recipient: string;
+  total_amount: string;
+}
 
 // Matches GET /api/v1/business-admin/users/ paginated response
 export interface PaginatedUsers {
@@ -52,13 +81,22 @@ export interface PaginatedUsers {
   previous: string | null; // URL string or null when on first page
   results: AdminUser[];
 }
+export interface PaginatedDrivers {
+  count: number;
+  next: string | null; // URL string or null when on last page
+  previous: string | null; // URL string or null when on first page
+  results: Driver[];
+}
 
 // Shape of the login API response — access + refresh tokens,
 // plus optionally the logged-in user's own record
 export interface LoginResponse {
-  access: string;
-  refresh?: string;
-  user?: AdminUser;
+  message: string;
+  data: {
+    user: AdminUser;
+    access: string;
+    refresh: string;
+  };
 }
 
 // ─────────────────────────────────────────────
