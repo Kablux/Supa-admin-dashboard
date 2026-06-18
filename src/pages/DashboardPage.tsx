@@ -8,6 +8,7 @@ import MessagesPanel from "../components/dashboard/MessagesPanel";
 import { getDashboardStats } from "../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { Stat } from "../types/common.types";
+import MapWidget from "../components/dashboard/MapWidget";
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
@@ -160,7 +161,7 @@ export default function DashboardPage() {
       </Box>
 
       {/* Row 2 — Live map */}
-      {/* <MapWidget /> */}
+      <MapWidget />
 
       {/* Row 3 — Finance analytics + Messages panel */}
       <Box
