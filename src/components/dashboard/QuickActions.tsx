@@ -10,9 +10,11 @@ import {
 } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import { quickActions } from "../../data/mockData.js";
+import { quickActions } from "../../data/mockData";
+import { useNavigate } from "react-router-dom";
 
 export default function QuickActions() {
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -62,6 +64,7 @@ export default function QuickActions() {
           <ListItem
             key={i}
             disablePadding
+            onClick={() => navigate(action.path)}
             sx={{
               py: 0.55,
               px: 0.5,

@@ -1,13 +1,133 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@mui/material";
-import FilterBar from "../components/dashboard/FilterBar.js";
-import StatCard from "../components/dashboard/StatCard.js";
-import QuickActions from "../components/dashboard/QuickActions.js";
-import FinanceAnalytics from "../components/dashboard/FinanceAnalytics.js";
-import MessagesPanel from "../components/dashboard/MessagesPanel.js";
-import { statsData } from "../data/mockData";
+import FilterBar from "../components/dashboard/FilterBar";
+import StatCard from "../components/dashboard/StatCard";
+import QuickActions from "../components/dashboard/QuickActions";
+import FinanceAnalytics from "../components/dashboard/FinanceAnalytics";
+import MessagesPanel from "../components/dashboard/MessagesPanel";
+import { getDashboardStats } from "../api/xhrHelper";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { Stat } from "../types/common.types";
+import MapWidget from "../components/dashboard/MapWidget";
 
 export default function DashboardPage() {
+  const dispatch = useAppDispatch();
+
+  const {
+    totalUsers,
+    totalDrivers,
+    liveTrips,
+    usersummary,
+    ridersummary,
+    driversummary,
+  } = useAppSelector((state) => state.dashboard);
+
+  useEffect(() => {
+    dispatch(getDashboardStats());
+  }, [dispatch]);
+
+  const statsData: Stat[] = [
+    {
+      id: "live_trips",
+      label: "Live Trips",
+      value: liveTrips.toLocaleString(),
+      icon: "DirectionsCar",
+      color: "#FEB40E",
+      bg: "#2a2000",
+      trendUp: true,
+      description: "Registered drivers currently onboarded on Kablux.",
+
+      details: [
+        {
+          label: "dummy",
+          value: 0,
+        },
+        {
+          label: "dummy",
+          value: 0,
+        },
+        {
+          label: "dummy",
+          value: 0,
+        },
+      ],
+    },
+    {
+      id: "total_users",
+      label: "Total Users",
+      value: totalUsers.toLocaleString(),
+      icon: "PeopleAlt",
+      color: "#1565C0",
+      bg: "#2A409F",
+      trendUp: true,
+      description: "",
+      details: [
+        {
+          label: "Active",
+          value: usersummary.active,
+        },
+        {
+          label: "Suspended",
+          value: usersummary.suspended,
+        },
+        {
+          label: "Total",
+          value: usersummary.total,
+        },
+      ],
+    },
+    {
+      id: "total_drivers",
+      label: "Total Drivers",
+      value: totalDrivers.toLocaleString(),
+      icon: "Handshake",
+      color: "#D21248",
+      bg: "#2a0020",
+      trendUp: true,
+      description: "Registered drivers currently onboarded on Kablux.",
+
+      details: [
+        {
+          label: "Active",
+          value: driversummary.active,
+        },
+        {
+          label: "Suspended",
+          value: driversummary.suspended,
+        },
+        {
+          label: "Total",
+          value: driversummary.total,
+        },
+      ],
+    },
+    {
+      id: "revenue",
+      label: "Revenue",
+      value: "₦0",
+      icon: "AccountBalanceWallet",
+      color: "#4B6D4D",
+      bg: "#063006",
+      trendUp: true,
+      description: "Registered drivers currently onboarded on Kablux.",
+
+      details: [
+        {
+          label: "Not available",
+          value: 0,
+        },
+        {
+          label: "Not available",
+          value: 0,
+        },
+        {
+          label: "Not available",
+          value: 0,
+        },
+      ],
+    },
+  ];
+
   return (
     <Box
       className="fade-in"
@@ -41,7 +161,7 @@ export default function DashboardPage() {
       </Box>
 
       {/* Row 2 — Live map */}
-      {/* <MapWidget /> */}
+      <MapWidget />
 
       {/* Row 3 — Finance analytics + Messages panel */}
       <Box

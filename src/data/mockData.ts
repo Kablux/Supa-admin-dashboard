@@ -14,7 +14,7 @@ import { MdOutlineSettings } from "react-icons/md";
 import { MdOutlineFeedback } from "react-icons/md";
 import { HiUsers } from "react-icons/hi";
 import { MdOutlineHelpOutline } from "react-icons/md";
-import type { MessagesData, NavSection, Stat } from "../types/common.types.ts";
+import type { MessagesData, NavSection } from "../types/common.types.ts";
 
 export const navSections: NavSection[] = [
   {
@@ -169,58 +169,33 @@ export const ROUTE_LABELS: Record<string, string> = {
   "/help": "Help",
 };
 
-export const statsData: Stat[] = [
-  {
-    id: "live_trips",
-    label: "Live Trips",
-    value: "45",
-    icon: "DirectionsCar",
-    color: "#FEB40E",
-    bg: "#2a2000",
-    trend: "+12%",
-    trendUp: true,
-  },
-  {
-    id: "total_users",
-    label: "Total Users",
-    value: "450",
-    icon: "PeopleAlt",
-    color: "#1565C0",
-    bg: "#2A409F",
-    trend: "+8%",
-    trendUp: true,
-  },
-  {
-    id: "total_partners",
-    label: "Total Partners",
-    value: "20",
-    icon: "Handshake",
-    color: "#D21248",
-    bg: "#2a0020",
-    trend: "+5%",
-    trendUp: true,
-  },
-  {
-    id: "revenue",
-    label: "Revenue",
-    value: "₦4,000,000",
-    icon: "AccountBalanceWallet",
-    color: "#4B6D4D",
-    bg: "#002000",
-    trend: "+23%",
-    trendUp: true,
-  },
-];
 
 export const quickActions = [
   {
     label: "Credit/debit a premium rider's wallet",
     icon: "AccountBalanceWallet",
+    path: "/transactions",
   },
-  { label: "Suspend/activate a driver", icon: "PersonOff" },
-  { label: "Create promo code", icon: "LocalOffer" },
-  { label: "Send broadcast message", icon: "Campaign" },
-  { label: "Assign driver to fleet owner", icon: "AssignmentInd" },
+  { 
+    label: "Suspend/activate a driver", 
+    icon: "PersonOff", 
+    path: "/drivers",
+  },
+  { 
+    label: "Create promo code", 
+    icon: "LocalOffer", 
+    path: "/cooperate",
+  },
+  { 
+    label: "Send broadcast message", 
+    icon: "Campaign", 
+    path: "/notifications",
+  },
+  { 
+    label: "Assign driver to fleet owner", 
+    icon: "AssignmentInd", 
+    path: "/fleet",
+  },
 ];
 
 export const financeData = [

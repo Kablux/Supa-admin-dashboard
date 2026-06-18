@@ -20,8 +20,12 @@ export interface Stat {
   icon: keyof typeof Icons;
   color: string;
   bg: string;
-  trend: string;
-  trendUp: boolean;
+  description?: string;
+  trendUp?: boolean;
+  details?: {
+    label: string;
+    value: string | number;
+  }[];
 }
 
 export interface Message {
@@ -38,7 +42,9 @@ export interface MessagesData {
   drivers: Message[];
   riders: Message[];
 }
-// export interface QuickAction {
-//   label: string;
-//   path: string;
-// }
+
+export interface RideSummaryData {
+  total: number;
+  active: number;
+  suspended: number;
+}

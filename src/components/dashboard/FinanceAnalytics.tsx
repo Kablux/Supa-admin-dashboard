@@ -12,8 +12,8 @@ import type { TooltipProps } from "recharts";
 //   NameType,
 // } from "recharts";
 
-import { financeData } from '../../data/mockData.js';
-import { useThemeMode } from '../../theme/ThemeContext.js';
+import { financeData } from '../../data/mockData';
+import { useThemeMode } from '../../theme/ThemeContext';
 
 interface CustomTooltipProps {
   active?: boolean;
