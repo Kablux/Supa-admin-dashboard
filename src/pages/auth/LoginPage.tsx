@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -13,17 +13,16 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import MailOutlineIcon from "@mui/icons-material/MailOutlineOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import SecurityIcon from "@mui/icons-material/Security";
 import { loginAdmin } from "../../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { clearAuthError } from "../../redux/slices/Auth";
-import { useThemeMode } from "../../theme/ThemeContext";
-import { LoginFormValues, LoginFormErrors } from "../../types/auth";
+// import { useThemeMode } from "../../theme/ThemeContext";
+import { LoginCredentials, LoginFormErrors } from "../../types/auth";
 import { validateLoginForm } from "../../utils/hook";
 import AdminTextField from "../../components/common/TextInput";
 import { toast } from "react-toastify";
 
-const initialValues: LoginFormValues = {
+const initialValues: LoginCredentials = {
   email: "",
   password: "",
   role: "business_admin",
@@ -31,23 +30,21 @@ const initialValues: LoginFormValues = {
 
 export default function LoginPage(): React.ReactElement {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const dispatch = useAppDispatch();
-  const { mode } = useThemeMode();
+  // const { mode } = useThemeMode();
 
-  const { status, error, isAuthenticated } = useAppSelector(
-    (state) => state.auth,
-  );
+  const { status, error } = useAppSelector((state) => state.auth);
 
-  const [values, setValues] = useState<LoginFormValues>(initialValues);
+  const [values, setValues] = useState<LoginCredentials>(initialValues);
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const isSubmitting = status === "loading";
 
-  const from =
-    (location.state as { from?: { pathname: string } } | null)?.from
-      ?.pathname ?? "/";
+  // const from =
+  //   (location.state as { from?: { pathname: string } } | null)?.from
+  //     ?.pathname ?? "/";
 
   // if (isAuthenticated) {
   //   return <Navigate to={from} replace />;
@@ -60,7 +57,7 @@ export default function LoginPage(): React.ReactElement {
   }, [dispatch]);
 
   const handleChange =
-    (field: keyof LoginFormValues) =>
+    (field: keyof LoginCredentials) =>
     (e: React.ChangeEvent<HTMLInputElement>): void => {
       const value = e.target.value;
       setValues((prev) => ({ ...prev, [field]: value }));

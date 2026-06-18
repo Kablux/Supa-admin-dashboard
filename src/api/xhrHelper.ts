@@ -6,7 +6,16 @@ import {
   clearStoredTokens,
   getStoredRefreshToken,
 } from "./axios";
-import { getDriverList, getUserList, loginRequest, logoutRequest } from "./xhr";
+import {
+  getDriverList,
+  getDriverSummary,
+  getRiderSummary,
+  getRides,
+  getUserList,
+  getUserSummary,
+  loginRequest,
+  logoutRequest,
+} from "./xhr";
 
 export const loginAdmin = createAsyncThunk<
   LoginResponse,
@@ -19,10 +28,7 @@ export const loginAdmin = createAsyncThunk<
     const accessToken = responsePayload.data.access;
     const refreshToken = responsePayload.data.refresh;
 
-    // save them to storage
     setStoredTokens(accessToken, refreshToken);
-
-    //Return the full payload to authSlice
     return responsePayload;
   } catch (error: any) {
     const message = error.response?.data?.message || "Login failed";
@@ -58,14 +64,25 @@ export const getDashboardStats = createAsyncThunk(
   "dashboard/getStats",
   async (_, { rejectWithValue }) => {
     try {
-      const [users, drivers] = await Promise.all([
+      const [users, drivers, rides, userSummary, driverSummary,riderSummary] = await Promise.all([
         getUserList(),
         getDriverList(),
+        getRides(),
+        getUserSummary(),
+        getDriverSummary(),
+        getRiderSummary(),
       ]);
 
+      const liveTrips = rides.results.filter(
+        (ride: any) => ride.status === "driver_on_way",
+      ).length;
       return {
         totalUsers: users.count,
         totalDrivers: drivers.count,
+        userSummary,
+        driverSummary,
+        riderSummary,
+        liveTrips,
       };
     } catch (error: any) {
       const message =

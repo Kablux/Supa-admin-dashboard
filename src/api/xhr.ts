@@ -5,7 +5,17 @@ import {
   AdminUser,
   PaginatedUsers,
   PaginatedDrivers,
+  PaginatedRides,
 } from "../types/auth";
+import { RideSummaryData } from "../types/common.types";
+
+export interface SummaryResponse {
+  data: {
+    total: number;
+    active: number;
+    suspended: number;
+  };
+}
 
 export async function loginRequest(
   credentials: LoginCredentials,
@@ -34,7 +44,34 @@ export async function getDriverList(): Promise<PaginatedDrivers> {
   );
   return data;
 }
+export async function getRides(page = 1): Promise<PaginatedRides> {
+  const { data } = await api.get<PaginatedRides>(
+    `/business-admin/rides/?page=${page}`,
+  );
 
+  return data;
+}
+
+export async function getUserSummary() {
+  const { data } = await api.get<SummaryResponse>(
+    "/business-admin/users/summary/",
+  );
+  return data.data;
+}
+
+export async function getDriverSummary() {
+  const { data } = await api.get<SummaryResponse>(
+    "/business-admin/drivers/summary/",
+  );
+  return data.data;
+}
+
+export async function getRiderSummary() {
+  const { data } = await api.get<SummaryResponse>(
+    "/business-admin/riders/summary/",
+  );
+  return data.data;
+}
 export async function fetchAdminProfile(
   id: string | number,
 ): Promise<AdminUser> {

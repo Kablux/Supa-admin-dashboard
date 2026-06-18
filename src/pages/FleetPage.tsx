@@ -1,5 +1,5 @@
 import React from "react";
-import StubPage from "./StubPage.js";
+import StubPage from "./StubPage";
 export default function FleetPage() {
   return (
     <StubPage

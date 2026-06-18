@@ -4,8 +4,8 @@ import {
 } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import MoreVertIcon        from '@mui/icons-material/MoreVert';
-import { messagesData } from '../../data/mockData.js';
-import { Message } from '../../types/common.types.js';
+import { messagesData } from '../../data/mockData';
+import { Message } from '../../types/common.types';
 
 interface MessageRowProps {
   msg: Message;
