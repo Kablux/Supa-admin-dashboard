@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { fetchRiders } from "../api/xhrHelper";
+import { fetchRiders, getDashboardStats } from "../api/xhrHelper";
 import AppButton from "../components/common/AppButton";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setCurrentPage } from "../redux/slices/Riders";
@@ -15,7 +12,6 @@ import BlockIcon from "@mui/icons-material/Block";
 import SearchFilterRow from "../components/rider/SearchFilterRow";
 import RidersTable from "../components/rider/RidersTable";
 import { TAB_MAPPING } from "../types/common.types";
-
 
 type UITabType = keyof typeof TAB_MAPPING;
 
@@ -34,6 +30,10 @@ export default function RidersPage() {
     currentPage,
     isLoading,
   } = useAppSelector((state) => state.riders);
+
+  useEffect(() => {
+    dispatch(getDashboardStats());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(
@@ -64,7 +64,7 @@ export default function RidersPage() {
 
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
-    dispatch(setCurrentPage(1)); 
+    dispatch(setCurrentPage(1));
   };
 
   const handleFilterToggle = () => {
@@ -103,7 +103,7 @@ export default function RidersPage() {
       />
 
       {/* Overview Cards Block */}
-      <OverviewCards items={riderStats} maxWidth={768} />
+      <OverviewCards items={riderStats} maxWidth={768} loading={isLoading} />
 
       {/* Tabs and Add New Button */}
       <Box

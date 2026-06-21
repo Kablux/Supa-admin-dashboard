@@ -1,6 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import { LoginResponse, LoginCredentials, AuthState, RiderQueryParams } from "../types/auth";
+import {
+  LoginResponse,
+  LoginCredentials,
+  AuthState,
+  RiderQueryParams,
+} from "../types/auth";
 import {
   setStoredTokens,
   clearStoredTokens,
@@ -65,14 +70,15 @@ export const getDashboardStats = createAsyncThunk(
   "dashboard/getStats",
   async (_, { rejectWithValue }) => {
     try {
-      const [users, drivers, rides, userSummary, driverSummary,riderSummary] = await Promise.all([
-        getUserList(),
-        getDriverList(),
-        getRides(),
-        getUserSummary(),
-        getDriverSummary(),
-        getRiderSummary(),
-      ]);
+      const [users, drivers, rides, userSummary, driverSummary, riderSummary] =
+        await Promise.all([
+          getUserList(),
+          getDriverList(),
+          getRides(),
+          getUserSummary(),
+          getDriverSummary(),
+          getRiderSummary(),
+        ]);
 
       const liveTrips = rides.results.filter(
         (ride: any) => ride.status === "driver_on_way",
@@ -99,7 +105,9 @@ export const fetchRiders = createAsyncThunk(
     try {
       return await getRiders(params);
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to load riders list");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to load riders list",
+      );
     }
-  }
+  },
 );
