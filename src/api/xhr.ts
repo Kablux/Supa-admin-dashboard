@@ -6,8 +6,12 @@ import {
   PaginatedUsers,
   PaginatedDrivers,
   PaginatedRides,
+  RiderQueryParams,
+  PaginatedResponse,
+  Rider,
 } from "../types/auth";
 import { RideSummaryData } from "../types/common.types";
+import { cleanQueryParams } from "../utils/hook";
 
 export interface SummaryResponse {
   data: {
@@ -66,12 +70,33 @@ export async function getDriverSummary() {
   return data.data;
 }
 
+// export async function getRiders(page = 1) {
+//   const { data } = await api.get(
+//     `/business-admin/riders/?page=${page}`
+//   );
+
+//   return data;
+// }
+
 export async function getRiderSummary() {
   const { data } = await api.get<SummaryResponse>(
     "/business-admin/riders/summary/",
   );
   return data.data;
 }
+
+export async function getRiders(
+  params: RiderQueryParams,
+): Promise<PaginatedResponse<Rider>> {
+  const { data } = await api.get<PaginatedResponse<Rider>>(
+    "/business-admin/riders/",
+    {
+      params: cleanQueryParams(params),
+    },
+  );
+  return data;
+}
+
 export async function fetchAdminProfile(
   id: string | number,
 ): Promise<AdminUser> {

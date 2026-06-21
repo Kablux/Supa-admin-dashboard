@@ -169,31 +169,30 @@ export const ROUTE_LABELS: Record<string, string> = {
   "/help": "Help",
 };
 
-
 export const quickActions = [
   {
     label: "Credit/debit a premium rider's wallet",
     icon: "AccountBalanceWallet",
     path: "/transactions",
   },
-  { 
-    label: "Suspend/activate a driver", 
-    icon: "PersonOff", 
+  {
+    label: "Suspend/activate a driver",
+    icon: "PersonOff",
     path: "/drivers",
   },
-  { 
-    label: "Create promo code", 
-    icon: "LocalOffer", 
+  {
+    label: "Create promo code",
+    icon: "LocalOffer",
     path: "/cooperate",
   },
-  { 
-    label: "Send broadcast message", 
-    icon: "Campaign", 
+  {
+    label: "Send broadcast message",
+    icon: "Campaign",
     path: "/notifications",
   },
-  { 
-    label: "Assign driver to fleet owner", 
-    icon: "AssignmentInd", 
+  {
+    label: "Assign driver to fleet owner",
+    icon: "AssignmentInd",
     path: "/fleet",
   },
 ];
@@ -282,3 +281,10 @@ export const messagesData: MessagesData = {
     },
   ],
 };
+
+export const RIDER_STATUS_TABS = [
+  { key: "all", label: "All" },
+  { key: "active", label: "Approved" },
+  { key: "pending_verification", label: "Pending" },
+  { key: "suspended", label: "Cancelled" },
+];

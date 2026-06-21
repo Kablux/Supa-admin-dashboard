@@ -1,8 +1,8 @@
-import { LoginFormValues, LoginFormErrors } from "../types/auth";
+import { LoginCredentials, LoginFormErrors } from "../types/auth";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export function validateLoginForm(values: LoginFormValues): LoginFormErrors {
+export function validateLoginForm(values: LoginCredentials): LoginFormErrors {
   const errors: LoginFormErrors = {};
 
   if (!values.email.trim()) {
@@ -18,4 +18,14 @@ export function validateLoginForm(values: LoginFormValues): LoginFormErrors {
   }
 
   return errors;
+}
+
+export function cleanQueryParams<T extends Record<string, any>>(
+  params: T,
+): Record<string, any> {
+  return Object.fromEntries(
+    Object.entries(params).filter(
+      ([_, value]) => value !== undefined && value !== null && value !== "",
+    ),
+  );
 }

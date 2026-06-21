@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import { LoginResponse, LoginCredentials, AuthState } from "../types/auth";
+import { LoginResponse, LoginCredentials, AuthState, RiderQueryParams } from "../types/auth";
 import {
   setStoredTokens,
   clearStoredTokens,
@@ -9,6 +9,7 @@ import {
 import {
   getDriverList,
   getDriverSummary,
+  getRiders,
   getRiderSummary,
   getRides,
   getUserList,
@@ -90,4 +91,15 @@ export const getDashboardStats = createAsyncThunk(
       return rejectWithValue(message);
     }
   },
+);
+
+export const fetchRiders = createAsyncThunk(
+  "riders/fetchRiders",
+  async (params: RiderQueryParams, { rejectWithValue }) => {
+    try {
+      return await getRiders(params);
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to load riders list");
+    }
+  }
 );

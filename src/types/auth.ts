@@ -124,8 +124,37 @@ export interface PaginatedRides {
   results: Ride[];
 }
 
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
 
+export interface Rider {
+id: string;
+  email: string;
+  full_name: string;
+  phone_number: string;
+  address: string;
+  rating: string; 
+  profile_image: string;
+  profile_image_url: string;
+  loyalty_points: string;
+  total_rides: string;
+  total_of_rides: string;
+  completed_rides: string;
+  number_of_completed_rides: string;
+  cancelled_rides: string;
+  number_of_cancelled_rides: string;
+}
 
+export interface RiderQueryParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  status?: "active" | "pending_verification" | "suspended" | "deleted" | "";
+}
 // ─────────────────────────────────────────────
 // Redux slice state
 // ─────────────────────────────────────────────
