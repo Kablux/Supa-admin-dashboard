@@ -48,3 +48,10 @@ export interface RideSummaryData {
   active: number;
   suspended: number;
 }
+
+export const TAB_MAPPING = {
+  all: "",
+  approved: "active",
+  pending: "pending_verification",
+  cancelled: "deleted",
+} as const;

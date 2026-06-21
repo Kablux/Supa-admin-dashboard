@@ -21,6 +21,7 @@ import { LoginCredentials, LoginFormErrors } from "../../types/auth";
 import { validateLoginForm } from "../../utils/hook";
 import AdminTextField from "../../components/common/TextInput";
 import { toast } from "react-toastify";
+import AppButton from "../../components/common/AppButton";
 
 const initialValues: LoginCredentials = {
   email: "",
@@ -41,14 +42,6 @@ export default function LoginPage(): React.ReactElement {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const isSubmitting = status === "loading";
-
-  // const from =
-  //   (location.state as { from?: { pathname: string } } | null)?.from
-  //     ?.pathname ?? "/";
-
-  // if (isAuthenticated) {
-  //   return <Navigate to={from} replace />;
-  // }
 
   useEffect(() => {
     return () => {
@@ -259,7 +252,7 @@ export default function LoginPage(): React.ReactElement {
               }}
             />
 
-            <Button
+            {/* <Button
               fullWidth
               type="submit"
               disabled={isSubmitting}
@@ -285,7 +278,15 @@ export default function LoginPage(): React.ReactElement {
               ) : (
                 "Sign In"
               )}
-            </Button>
+            </Button> */}
+            <AppButton
+              fullWidth
+              type="submit"
+              loading={isSubmitting}
+              sx={{ mt: 1 }}
+            >
+              Sign In
+            </AppButton>
           </Box>
         </Box>
       </Box>
