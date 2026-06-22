@@ -49,6 +49,13 @@ export interface RideSummaryData {
   suspended: number;
 }
 
+export interface LiveTripsSummary {
+  total: number;
+  driver_on_way: number;
+  arrived: number;
+  started: number;
+}
+
 export const TAB_MAPPING = {
   all: "",
   approved: "active",

@@ -14,6 +14,7 @@ import {
 import {
   getDriverList,
   getDriverSummary,
+  getLiveTripsSummary,
   getRiders,
   getRiderSummary,
   getRides,
@@ -70,26 +71,30 @@ export const getDashboardStats = createAsyncThunk(
   "dashboard/getStats",
   async (_, { rejectWithValue }) => {
     try {
-      const [users, drivers, rides, userSummary, driverSummary, riderSummary] =
-        await Promise.all([
-          getUserList(),
-          getDriverList(),
-          getRides(),
-          getUserSummary(),
-          getDriverSummary(),
-          getRiderSummary(),
-        ]);
+      const [
+        users,
+        drivers,
+        liveTripsSummary,
+        userSummary,
+        driverSummary,
+        riderSummary,
+      ] = await Promise.all([
+        getUserList(),
+        getDriverList(),
+        getLiveTripsSummary(),
+        getUserSummary(),
+        getDriverSummary(),
+        getRiderSummary(),
+      ]);
 
-      const liveTrips = rides.results.filter(
-        (ride: any) => ride.status === "driver_on_way",
-      ).length;
       return {
         totalUsers: users.count,
         totalDrivers: drivers.count,
         userSummary,
         driverSummary,
         riderSummary,
-        liveTrips,
+        liveTrips: liveTripsSummary.total,
+        liveTripsSummary,
       };
     } catch (error: any) {
       const message =

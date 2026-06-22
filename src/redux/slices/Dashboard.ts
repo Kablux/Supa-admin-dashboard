@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getDashboardStats } from "../../api/xhrHelper";
 import { DashboardState } from "../../types/auth";
-import { RideSummaryData } from "../../types/common.types";
+import { LiveTripsSummary, RideSummaryData } from "../../types/common.types";
 
 const emptySummary: RideSummaryData = {
   total: 0,
@@ -9,10 +9,18 @@ const emptySummary: RideSummaryData = {
   suspended: 0,
 };
 
+const emptyLiveTripsSummary: LiveTripsSummary = {
+  total: 0,
+  driver_on_way: 0,
+  arrived: 0,
+  started: 0,
+};
+
 const initialState: DashboardState = {
   totalDrivers: 0,
   totalUsers: 0,
   liveTrips: 0,
+  liveTripsSummary: emptyLiveTripsSummary,
   isLoading: false,
   error: null,
   usersummary: emptySummary,
@@ -35,6 +43,7 @@ const dashboardSlice = createSlice({
         state.totalDrivers = action.payload.totalDrivers;
         state.totalUsers = action.payload.totalUsers;
         state.liveTrips = action.payload.liveTrips;
+        state.liveTripsSummary = action.payload.liveTripsSummary;
         state.usersummary = action.payload.userSummary;
         state.driversummary = action.payload.driverSummary;
         state.ridersummary = action.payload.riderSummary;

@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Skeleton, Typography } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import * as Icons from "@mui/icons-material";
 import { Stat } from "../../types/common.types";
 import StatsModal from "./StatsModal";
@@ -14,6 +12,7 @@ interface DynamicIconProps {
 interface StatCardProps {
   stat: Stat;
   delay?: number;
+  loading?: boolean;
 }
 
 const DynamicIcon = ({ name }: DynamicIconProps) => {
@@ -22,7 +21,11 @@ const DynamicIcon = ({ name }: DynamicIconProps) => {
   return IconComponent ? <IconComponent sx={{ fontSize: 16 }} /> : null;
 };
 
-export default function StatCard({ stat, delay = 0 }: StatCardProps) {
+export default function StatCard({
+  stat,
+  delay = 0,
+  loading = false,
+}: StatCardProps) {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -78,43 +81,22 @@ export default function StatCard({ stat, delay = 0 }: StatCardProps) {
           >
             <DynamicIcon name={stat.icon} />
           </Box>
-
-          {/* <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 0.25,
-            px: 0.75,
-            py: 0.2,
-            borderRadius: "6px",
-            backgroundColor: stat.trendUp
-              ? "rgba(76,175,80,0.13)"
-              : "rgba(239,83,80,0.13)",
-          }}
-        >
-          {stat.trendUp ? (
-            <TrendingUpIcon sx={{ fontSize: 11, color: "#4CAF50" }} />
-          ) : (
-            <TrendingDownIcon sx={{ fontSize: 11, color: "#EF5350" }} />
-          )}
-          <Typography
-            sx={{
-              fontSize: 10,
-              fontWeight: 700,
-              color: stat.trendUp ? "#4CAF50" : "#EF5350",
-            }}
-          >
-            {stat.trend}
-          </Typography>
-        </Box> */}
         </Box>
 
         {/* Bottom row */}
-        <Box>
+        <Box className="py-4">
           <Typography
             sx={{ fontSize: 11, color: "rgba(255,255,255,0.48)", mb: 0.25 }}
           >
-            {stat.label}
+            {loading ? (
+              <Skeleton
+                variant="text"
+                width={80}
+                sx={{ bgcolor: "rgba(255,255,255,0.1)" }}
+              />
+            ) : (
+              stat.label
+            )}
           </Typography>
           <Box
             sx={{
@@ -131,26 +113,44 @@ export default function StatCard({ stat, delay = 0 }: StatCardProps) {
                 letterSpacing: "-0.5px",
               }}
             >
-              {stat.value}
+              {loading ? (
+                <Skeleton
+                  variant="text"
+                  width={100}
+                  height={36}
+                  sx={{ bgcolor: "rgba(255,255,255,0.1)" }}
+                />
+              ) : (
+                stat.value
+              )}
             </Typography>
-            <Box
-              sx={{
-                width: 24,
-                height: 24,
-                borderRadius: "50%",
-                backgroundColor: `${stat.color}28`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: stat.color,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpen(true);
-              }}
-            >
-              <ArrowForwardIcon sx={{ fontSize: 12 }} />
-            </Box>
+            {loading ? (
+              <Skeleton
+                variant="circular"
+                width={24}
+                height={24}
+                sx={{ bgcolor: "rgba(255,255,255,0.1)" }}
+              />
+            ) : (
+              <Box
+                sx={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  backgroundColor: `${stat.color}28`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: stat.color,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen(true);
+                }}
+              >
+                <ArrowForwardIcon sx={{ fontSize: 12 }} />
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>

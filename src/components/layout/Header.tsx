@@ -42,7 +42,6 @@ export default function Header() {
 
     if (action === "Sign out") {
       await dispatch(logoutAdmin());
-    
     }
   };
 
@@ -51,7 +50,7 @@ export default function Header() {
       component="header"
       sx={{
         height: 60,
-        backgroundColor: "var(var(--bg-primary))",
+        backgroundColor: "var(--bg-primary)",
         borderBottom: "1px solid var(--border)",
         display: "flex",
         alignItems: "center",

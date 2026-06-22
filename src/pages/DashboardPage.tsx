@@ -17,10 +17,12 @@ export default function DashboardPage() {
     totalUsers,
     totalDrivers,
     liveTrips,
+    liveTripsSummary,
     usersummary,
-    ridersummary,
     driversummary,
+    isLoading,
   } = useAppSelector((state) => state.dashboard);
+  // const { isLoading } = useAppSelector((state) => state.dashboard);
 
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -29,26 +31,26 @@ export default function DashboardPage() {
   const statsData: Stat[] = [
     {
       id: "live_trips",
-      label: "Live Trips",
+      label: "Total Live Trips",
       value: liveTrips.toLocaleString(),
       icon: "DirectionsCar",
       color: "#FEB40E",
       bg: "#2a2000",
       trendUp: true,
-      description: "Registered drivers currently onboarded on Kablux.",
+      description: "",
 
       details: [
         {
-          label: "dummy",
-          value: 0,
+          label: "Driver On Way",
+          value: liveTripsSummary.driver_on_way,
         },
         {
-          label: "dummy",
-          value: 0,
+          label: "Arrived",
+          value: liveTripsSummary.arrived,
         },
         {
-          label: "dummy",
-          value: 0,
+          label: "Total",
+          value: liveTripsSummary.total,
         },
       ],
     },
@@ -149,7 +151,12 @@ export default function DashboardPage() {
         }}
       >
         {statsData.map((stat, i) => (
-          <StatCard key={stat.id} stat={stat} delay={i * 70} />
+          <StatCard
+            key={stat.id}
+            stat={stat}
+            delay={i * 70}
+            loading={isLoading}
+          />
         ))}
         <Box sx={{ display: { xs: "none", xl: "block" } }}>
           <QuickActions />

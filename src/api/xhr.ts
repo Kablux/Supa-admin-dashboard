@@ -70,18 +70,19 @@ export async function getDriverSummary() {
   return data.data;
 }
 
-// export async function getRiders(page = 1) {
-//   const { data } = await api.get(
-//     `/business-admin/riders/?page=${page}`
-//   );
-
-//   return data;
-// }
 
 export async function getRiderSummary() {
   const { data } = await api.get<SummaryResponse>(
     "/business-admin/riders/summary/",
   );
+  return data.data;
+}
+
+export async function getLiveTripsSummary() {
+  const { data } = await api.get(
+    "/business-admin/rides/live/",
+  );
+
   return data.data;
 }
 
