@@ -1,5 +1,3 @@
-// components/RidersTable.tsx
-import React from "react";
 import {
   Box,
   Typography,
@@ -20,6 +18,7 @@ interface RidersTableProps {
   pageSize: number;
   onPageChange: (event: unknown, newPage: number) => void;
   onPageSizeChange: (newPageSize: number) => void;
+  onViewRider: (riderId: string) => void;
 }
 
 export default function RidersTable({
@@ -30,6 +29,7 @@ export default function RidersTable({
   pageSize,
   onPageChange,
   onPageSizeChange,
+  onViewRider,
 }: RidersTableProps) {
   const gridTemplate = "1.2fr 1fr 1.5fr 1fr 0.8fr 40px";
 
@@ -160,7 +160,11 @@ export default function RidersTable({
             />
 
             {/* Options Action Menu Pop trigger */}
-            <IconButton size="small" sx={{ color: "rgba(255,255,255,0.4)" }}>
+            <IconButton
+              size="small"
+              sx={{ color: "rgba(255,255,255,0.4)" }}
+              onClick={() => onViewRider(rider.id)}
+            >
               <MoreVertIcon sx={{ fontSize: 16 }} />
             </IconButton>
           </Box>
