@@ -42,8 +42,7 @@ export default function Header() {
 
     if (action === "Sign out") {
       await dispatch(logoutAdmin());
-      // Your ProtectedRoute / App routing architecture will automatically
-      // catch the unauthenticated state change and drop them back to /login
+    
     }
   };
 

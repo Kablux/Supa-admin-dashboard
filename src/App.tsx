@@ -23,6 +23,7 @@ import HelpPage from "./pages/HelpPage";
 import LoginPage from "./pages/auth/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
+import AddNewRider from "./pages/AddNewRider";
 
 function ThemedApp() {
   const { mode } = useThemeMode();
@@ -44,6 +45,7 @@ function ThemedApp() {
     >
       <Route index element={<DashboardPage />} />
       <Route path="riders" element={<RidersPage />} />
+      <Route path="/riders/new" element={<AddNewRider />} />
       <Route path="drivers" element={<DriversPage />} />
       <Route path="trips" element={<TripsPage />} />
       <Route path="cooperate" element={<CooperatePage />} />

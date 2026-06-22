@@ -12,6 +12,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import SearchFilterRow from "../components/rider/SearchFilterRow";
 import RidersTable from "../components/rider/RidersTable";
 import { TAB_MAPPING } from "../types/common.types";
+import { useNavigate } from "react-router-dom";
 
 type UITabType = keyof typeof TAB_MAPPING;
 
@@ -21,7 +22,6 @@ export default function RidersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [pageSize, setPageSize] = useState(10);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { ridersummary } = useAppSelector((state) => state.dashboard);
   const {
@@ -30,6 +30,8 @@ export default function RidersPage() {
     currentPage,
     isLoading,
   } = useAppSelector((state) => state.riders);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -120,8 +122,8 @@ export default function RidersPage() {
               key={tab}
               onClick={() => handleTabChange(tab)}
               sx={{
-                fontSize: 12.5,
-                fontWeight: 600,
+                fontSize: 14,
+                fontWeight: 500,
                 cursor: "pointer",
                 textTransform: "capitalize",
                 color:
@@ -151,9 +153,9 @@ export default function RidersPage() {
         </Box>
 
         <AppButton
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => navigate("/riders/new")}
           startIcon={<AddIcon sx={{ fontSize: 14 }} />}
-          sx={{ height: 36, borderRadius: "8px", px: 2, fontSize: 12.5 }}
+          sx={{ borderRadius: "6px", px: 2, fontSize: 14 }}
         >
           Add New
         </AppButton>

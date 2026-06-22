@@ -16,7 +16,8 @@ export default function AppButton({
       disabled={disabled}
       sx={[
         {
-          height: 52,
+          py: 1.2,
+          px: 4,
           borderRadius: "14px",
           backgroundColor: "var(--accent-gold)",
           color: "#000",
@@ -25,9 +26,8 @@ export default function AppButton({
           textTransform: "none",
           transition: "all .2s ease",
           "&:hover": {
-            backgroundColor: "#f5c518",
             transform: "translateY(-1px)",
-            boxShadow: "0 10px 25px rgba(245,197,24,.25)",
+            boxShadow: "0 10px 25px rgba(245, 197, 24, 0.114)",
           },
 
           "&.Mui-disabled": {

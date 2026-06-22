@@ -12,7 +12,6 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Rider } from "../../types/auth";
 
-
 interface RidersTableProps {
   isLoading: boolean;
   ridersList: Rider[];
@@ -32,7 +31,6 @@ export default function RidersTable({
   onPageChange,
   onPageSizeChange,
 }: RidersTableProps) {
-  // Reusable column layout for both header and rows
   const gridTemplate = "1.2fr 1fr 1.5fr 1fr 0.8fr 40px";
 
   return (
@@ -47,20 +45,25 @@ export default function RidersTable({
           borderBottom: "1px solid var(--border)",
         }}
       >
-        {["Name", "Phone number", "Address", "Completed Rides", "Ratings", ""].map(
-          (header, idx) => (
-            <Typography
-              key={idx}
-              sx={{
-                fontSize: 11,
-                fontWeight: 500,
-                color: "rgba(255,255,255,0.35)",
-              }}
-            >
-              {header}
-            </Typography>
-          )
-        )}
+        {[
+          "Name",
+          "Phone number",
+          "Address",
+          "Completed Rides",
+          "Ratings",
+          "",
+        ].map((header, idx) => (
+          <Typography
+            key={idx}
+            sx={{
+              fontSize: 12,
+              fontWeight: 500,
+              color: "rgba(255,255,255,0.35)",
+            }}
+          >
+            {header}
+          </Typography>
+        ))}
       </Box>
 
       {/* List Content States */}
