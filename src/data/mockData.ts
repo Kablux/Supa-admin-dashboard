@@ -153,6 +153,7 @@ export const navSections: NavSection[] = [
 export const ROUTE_LABELS: Record<string, string> = {
   "/": "Dashboard",
   "/riders": "Riders",
+  "/riders/new": "Riders",
   "/drivers": "Drivers",
   "/trips": "Trips",
   "/cooperate": "Cooperate",

@@ -61,7 +61,7 @@ export default function DashboardLayout() {
       >
         <Header />
         <Box
-          sx={{ flex: 1, p: { xs: 2, md: 3 }, overflow: "auto" }}
+          sx={{ flex: 1, p: { xs: 2, md: 5 }, overflow: "auto" }}
           component="main"
         >
           <Outlet />

@@ -4,7 +4,7 @@
   //   password: string;
   //   role: string;
 
-import { RideSummaryData } from "./common.types";
+import { LiveTripsSummary, RideSummaryData } from "./common.types";
 
   
   // }
@@ -26,6 +26,7 @@ export interface DashboardState {
   totalDrivers: number;
   totalUsers: number;
   liveTrips: number;
+  liveTripsSummary: LiveTripsSummary;
   usersummary: RideSummaryData;
   driversummary: RideSummaryData;
   ridersummary: RideSummaryData;

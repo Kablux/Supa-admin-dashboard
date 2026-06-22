@@ -12,17 +12,19 @@ import BlockIcon from "@mui/icons-material/Block";
 import SearchFilterRow from "../components/rider/SearchFilterRow";
 import RidersTable from "../components/rider/RidersTable";
 import { TAB_MAPPING } from "../types/common.types";
+import { useNavigate } from "react-router-dom";
+import RiderDetailsModal from "../components/rider/RideDetailsModal";
 
 type UITabType = keyof typeof TAB_MAPPING;
 
 export default function RidersPage() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [pageSize, setPageSize] = useState(10);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [selectedRiderId, setSelectedRiderId] = useState<string | null>(null);
   const { ridersummary } = useAppSelector((state) => state.dashboard);
   const {
     items: ridersList,
@@ -46,7 +48,6 @@ export default function RidersPage() {
     );
   }, [dispatch, currentPage, pageSize, activeTab, searchQuery]);
 
-  // Handle Input Changes & reset back to page 1 to protect search query structures
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     dispatch(setCurrentPage(1));
@@ -58,7 +59,6 @@ export default function RidersPage() {
   };
 
   const handleChangePage = (_: any, newPage: number) => {
-    // MUI pagination index starts at 0, our backend starts page counters at 1
     dispatch(setCurrentPage(newPage + 1));
   };
 
@@ -120,8 +120,8 @@ export default function RidersPage() {
               key={tab}
               onClick={() => handleTabChange(tab)}
               sx={{
-                fontSize: 12.5,
-                fontWeight: 600,
+                fontSize: 14,
+                fontWeight: 500,
                 cursor: "pointer",
                 textTransform: "capitalize",
                 color:
@@ -151,9 +151,9 @@ export default function RidersPage() {
         </Box>
 
         <AppButton
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => navigate("/riders/new")}
           startIcon={<AddIcon sx={{ fontSize: 14 }} />}
-          sx={{ height: 36, borderRadius: "8px", px: 2, fontSize: 12.5 }}
+          sx={{ borderRadius: "6px", px: 2, fontSize: 14 }}
         >
           Add New
         </AppButton>
@@ -168,9 +168,15 @@ export default function RidersPage() {
         pageSize={pageSize}
         onPageChange={handleChangePage}
         onPageSizeChange={handlePageSizeChange}
+        onViewRider={(id) => setSelectedRiderId(id)}
       />
 
-      {/* <AddRiderModal open={isModalOpen} onClose={() => setIsModalOpen(false)} /> */}
+      {/*Render the details modal here */}
+      <RiderDetailsModal
+        riderId={selectedRiderId}
+        isOpen={!!selectedRiderId}
+        onClose={() => setSelectedRiderId(null)}
+      />
     </Box>
   );
 }

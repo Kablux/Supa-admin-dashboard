@@ -1,4 +1,3 @@
-// store/ridersSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Rider } from "../../types/auth";
 import { fetchRiders } from "../../api/xhrHelper";

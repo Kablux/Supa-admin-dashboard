@@ -1,4 +1,3 @@
-// components/OverviewCards.tsx
 import React from "react";
 import { Box, Skeleton, Typography } from "@mui/material";
 
@@ -75,12 +74,12 @@ export default function OverviewCards({
             )}
 
             <Typography
-              sx={{ fontSize: 11, color: "rgba(255,255,255,0.45)", mb: 0.5 }}
+              sx={{ fontSize: 12, color: "secondary.main", mb: 0.5 }}
             >
               {item.title}
             </Typography>
 
-            <Typography sx={{ fontSize: 26, fontWeight: 700, color: "#fff" }}>
+            <Typography sx={{ fontSize: 24, fontWeight: 700, color: "primary" }}>
               {loading ? (
                 <Skeleton
                   variant="text"

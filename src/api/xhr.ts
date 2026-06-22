@@ -10,7 +10,6 @@ import {
   PaginatedResponse,
   Rider,
 } from "../types/auth";
-import { RideSummaryData } from "../types/common.types";
 import { cleanQueryParams } from "../utils/hook";
 
 export interface SummaryResponse {
@@ -70,20 +69,23 @@ export async function getDriverSummary() {
   return data.data;
 }
 
-// export async function getRiders(page = 1) {
-//   const { data } = await api.get(
-//     `/business-admin/riders/?page=${page}`
-//   );
-
-//   return data;
-// }
-
 export async function getRiderSummary() {
   const { data } = await api.get<SummaryResponse>(
     "/business-admin/riders/summary/",
   );
   return data.data;
 }
+
+export async function getLiveTripsSummary() {
+  const { data } = await api.get("/business-admin/rides/live/");
+
+  return data.data;
+}
+
+export const fetchRiderDetails = async (id: string): Promise<Rider> => {
+  const { data } = await api.get<Rider>(`/business-admin/riders/${id}/`);
+  return data;
+};
 
 export async function getRiders(
   params: RiderQueryParams,

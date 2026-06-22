@@ -1,5 +1,3 @@
-// components/RidersTable.tsx
-import React from "react";
 import {
   Box,
   Typography,
@@ -12,7 +10,6 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Rider } from "../../types/auth";
 
-
 interface RidersTableProps {
   isLoading: boolean;
   ridersList: Rider[];
@@ -21,6 +18,7 @@ interface RidersTableProps {
   pageSize: number;
   onPageChange: (event: unknown, newPage: number) => void;
   onPageSizeChange: (newPageSize: number) => void;
+  onViewRider: (riderId: string) => void;
 }
 
 export default function RidersTable({
@@ -31,8 +29,8 @@ export default function RidersTable({
   pageSize,
   onPageChange,
   onPageSizeChange,
+  onViewRider,
 }: RidersTableProps) {
-  // Reusable column layout for both header and rows
   const gridTemplate = "1.2fr 1fr 1.5fr 1fr 0.8fr 40px";
 
   return (
@@ -47,20 +45,25 @@ export default function RidersTable({
           borderBottom: "1px solid var(--border)",
         }}
       >
-        {["Name", "Phone number", "Address", "Completed Rides", "Ratings", ""].map(
-          (header, idx) => (
-            <Typography
-              key={idx}
-              sx={{
-                fontSize: 11,
-                fontWeight: 500,
-                color: "rgba(255,255,255,0.35)",
-              }}
-            >
-              {header}
-            </Typography>
-          )
-        )}
+        {[
+          "Name",
+          "Phone number",
+          "Address",
+          "Completed Rides",
+          "Ratings",
+          "",
+        ].map((header, idx) => (
+          <Typography
+            key={idx}
+            sx={{
+              fontSize: 12,
+              fontWeight: 500,
+              color: "rgba(255,255,255,0.35)",
+            }}
+          >
+            {header}
+          </Typography>
+        ))}
       </Box>
 
       {/* List Content States */}
@@ -157,7 +160,11 @@ export default function RidersTable({
             />
 
             {/* Options Action Menu Pop trigger */}
-            <IconButton size="small" sx={{ color: "rgba(255,255,255,0.4)" }}>
+            <IconButton
+              size="small"
+              sx={{ color: "rgba(255,255,255,0.4)" }}
+              onClick={() => onViewRider(rider.id)}
+            >
               <MoreVertIcon sx={{ fontSize: 16 }} />
             </IconButton>
           </Box>

@@ -38,7 +38,6 @@ export default function MapWidget() {
           <Typography
             sx={{
               fontSize: 14,
-              fontFamily: "Syne",
               fontWeight: 600,
               color: "#f0f0f0",
             }}
