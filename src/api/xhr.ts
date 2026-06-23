@@ -11,6 +11,7 @@ import {
   Rider,
 } from "../types/auth";
 import { cleanQueryParams } from "../utils/hook";
+import { TransactionAnalytics } from "../types/common.types";
 
 export interface SummaryResponse {
   data: {
@@ -32,6 +33,18 @@ export async function loginRequest(
 
 export async function logoutRequest(refresh: string): Promise<void> {
   await api.post("/auth/logout/", { refresh });
+}
+export async function getTransactionAnalytics(
+  range: "week" | "month" | "year" = "month",
+): Promise<TransactionAnalytics> {
+  const { data } = await api.get(
+    "/business-admin/transactions/analytics/",
+    {
+      params: { range },
+    },
+  );
+
+  return data;
 }
 
 export async function getUserList(): Promise<PaginatedUsers> {

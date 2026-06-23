@@ -1,19 +1,17 @@
-
 // export interface LoginFormValues {
-  //   email: string;
-  //   password: string;
-  //   role: string;
+//   email: string;
+//   password: string;
+//   role: string;
 
-import { LiveTripsSummary, RideSummaryData } from "./common.types";
+import { LiveTripsSummary, RideSummaryData, TransactionAnalytics } from "./common.types";
 
-  
-  // }
-  
-  export interface LoginCredentials {
-    email: string;
-    password: string;
-    role: string;
-  }
+// }
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+  role: string;
+}
 export interface LoginFormErrors {
   email?: string;
   password?: string;
@@ -32,9 +30,9 @@ export interface DashboardState {
   ridersummary: RideSummaryData;
   isLoading: boolean;
   error: string | null;
+  analytics: TransactionAnalytics | null;
+  analyticsLoading: boolean;
 }
-
-
 
 export type UserStatus =
   | "pending_verification"
@@ -42,9 +40,7 @@ export type UserStatus =
   | "suspended"
   | "deactivated";
 
-
 export type UserRole = "business_admin" | "driver" | "rider";
-
 
 export interface AdminUser {
   id: string;
@@ -92,13 +88,13 @@ export interface Driver {
 export interface PaginatedUsers {
   count: number;
   next: string | null;
-  previous: string | null; 
+  previous: string | null;
   results: AdminUser[];
 }
 export interface PaginatedDrivers {
   count: number;
-  next: string | null; 
-  previous: string | null; 
+  next: string | null;
+  previous: string | null;
   results: Driver[];
 }
 
@@ -110,7 +106,7 @@ export interface Ride {
   pickup_address: string;
   agreed_fare: string;
   fare: string;
-  status: string; 
+  status: string;
   start_time: string;
   end_time: string;
   arrived_at: string;
@@ -133,12 +129,12 @@ export interface PaginatedResponse<T> {
 }
 
 export interface Rider {
-id: string;
+  id: string;
   email: string;
   full_name: string;
   phone_number: string;
   address: string;
-  rating: string; 
+  rating: string;
   profile_image: string;
   profile_image_url: string;
   loyalty_points: string;
@@ -169,5 +165,3 @@ export interface AuthState {
   error: string | null;
   isAuthenticated: boolean;
 }
-
-

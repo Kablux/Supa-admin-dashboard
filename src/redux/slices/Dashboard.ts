@@ -1,5 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDashboardStats } from "../../api/xhrHelper";
+import {
+  fetchTransactionAnalytics,
+  getDashboardStats,
+} from "../../api/xhrHelper";
 import { DashboardState } from "../../types/auth";
 import { LiveTripsSummary, RideSummaryData } from "../../types/common.types";
 
@@ -26,6 +29,8 @@ const initialState: DashboardState = {
   usersummary: emptySummary,
   driversummary: emptySummary,
   ridersummary: emptySummary,
+  analytics: null,
+  analyticsLoading: false,
 };
 
 const dashboardSlice = createSlice({
@@ -55,6 +60,18 @@ const dashboardSlice = createSlice({
             ? action.payload
             : (action.payload as any)?.message ||
               "An unexpected error occurred.";
+      })
+      .addCase(fetchTransactionAnalytics.pending, (state) => {
+        state.analyticsLoading = true;
+      })
+
+      .addCase(fetchTransactionAnalytics.fulfilled, (state, action) => {
+        state.analyticsLoading = false;
+        state.analytics = action.payload;
+      })
+
+      .addCase(fetchTransactionAnalytics.rejected, (state) => {
+        state.analyticsLoading = false;
       });
   },
 });
