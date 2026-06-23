@@ -62,3 +62,25 @@ export const TAB_MAPPING = {
   pending: "pending_verification",
   cancelled: "deleted",
 } as const;
+
+
+export interface AnalyticsPoint {
+  x: string;
+  y: number;
+}
+
+export interface AnalyticsMetric {
+  name: string;
+  label: string;
+  data: AnalyticsPoint[];
+}
+
+export interface TransactionAnalytics {
+  range: string;
+  currency: string;
+  metrics: AnalyticsMetric[];
+  summary: {
+    total_income: number;
+    total_expense: number;
+  };
+}

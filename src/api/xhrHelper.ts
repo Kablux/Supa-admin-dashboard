@@ -18,6 +18,7 @@ import {
   getRiders,
   getRiderSummary,
   getRides,
+  getTransactionAnalytics,
   getUserList,
   getUserSummary,
   loginRequest,
@@ -112,6 +113,23 @@ export const fetchRiders = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to load riders list",
+      );
+    }
+  },
+);
+
+export const fetchTransactionAnalytics = createAsyncThunk(
+  "dashboard/fetchTransactionAnalytics",
+  async (
+    range: "week" | "month" | "year" = "month",
+    { rejectWithValue },
+  ) => {
+    try {
+      return await getTransactionAnalytics(range);
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to load analytics",
       );
     }
   },
