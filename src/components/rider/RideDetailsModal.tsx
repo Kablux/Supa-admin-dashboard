@@ -20,7 +20,7 @@ const infoBoxStyle = {
   alignItems: "center",
   gap: 1.5,
   p: 1.5,
-  border: "1px solid rgba(255, 255, 255, 0.15)",
+  border: "1px solid var(--border)",
   borderRadius: "8px",
 };
 
@@ -58,13 +58,13 @@ export default function RiderDetailsModal({
       onClose={onClose}
       sx={{
         "& .MuiDialog-paper": {
-          background: "#1E1E20",
-          color: "#fff",
+          background: "var(--bg-card)",
+          color: "primary",
           borderRadius: "18px",
           maxWidth: 425,
           width: "100%",
           p: 4,
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid var(--border)",
           boxShadow:
             "0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)",
         },
@@ -91,7 +91,7 @@ export default function RiderDetailsModal({
               />
               <Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                  <StarIcon sx={{ color: "#ffb400", fontSize: 20 }} />
+                  <StarIcon sx={{ color: "#ffb400", fontSize: 18 }} />
                   <Typography sx={{ fontSize: 18, fontWeight: 700, mr: 0.5 }}>
                     {parseFloat(riderData.rating || "0")}
                   </Typography>
@@ -99,9 +99,7 @@ export default function RiderDetailsModal({
                     {riderData.full_name}
                   </Typography>
                 </Box>
-                <Typography
-                  sx={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}
-                >
+                <Typography sx={{ fontSize: 14, color: "secondary.main" }}>
                   {riderData.email}
                 </Typography>
               </Box>
@@ -113,23 +111,19 @@ export default function RiderDetailsModal({
 
           {/* Customer Info Section */}
           <Box>
-            <Typography
-              sx={{ fontSize: 14, mb: 1.5, color: "rgba(255,255,255,0.85)" }}
-            >
+            <Typography sx={{ fontSize: 14, mb: 1.5, color: "secondary.main" }}>
               Customer Info
             </Typography>
             <Box className="gap-5 flex flex-col">
               <Box sx={infoBoxStyle}>
-                <PhoneIcon
-                  sx={{ fontSize: 18, color: "rgba(255,255,255,0.6)" }}
-                />
+                <PhoneIcon sx={{ fontSize: 18, color: "secondary.main" }} />
                 <Typography sx={{ fontSize: 14 }}>
                   {riderData.phone_number || "N/A"}
                 </Typography>
               </Box>
               <Box sx={infoBoxStyle}>
                 <LocationOnIcon
-                  sx={{ fontSize: 18, color: "rgba(255,255,255,0.6)" }}
+                  sx={{ fontSize: 18, color: "secondary.main" }}
                 />
                 <Typography sx={{ fontSize: 14 }}>
                   {riderData.address || "No address provided"}
@@ -140,9 +134,7 @@ export default function RiderDetailsModal({
 
           {/* Points Section */}
           <Box>
-            <Typography
-              sx={{ fontSize: 14, mb: 1.5, color: "rgba(255,255,255,0.85)" }}
-            >
+            <Typography sx={{ fontSize: 14, mb: 1.5, color: "secondary.main" }}>
               Points
             </Typography>
             <Box sx={{ display: "flex", gap: 2 }}>
@@ -151,16 +143,14 @@ export default function RiderDetailsModal({
                 label="Bonus"
                 labelColor="#7a92f0"
               />
+              {/* Not available yet */}
               <MetricBox value="0" label="Millage" labelColor="#50c878" />{" "}
-              {/* Assuming placeholder for Millage if not in API */}
             </Box>
           </Box>
 
           {/* Ride Overview Section */}
           <Box>
-            <Typography
-              sx={{ fontSize: 14, mb: 1.5, color: "rgba(255,255,255,0.85)" }}
-            >
+            <Typography sx={{ fontSize: 14, mb: 1.5, color: "secondary.main" }}>
               Ride overview
             </Typography>
             <Box sx={{ display: "flex", gap: 2 }}>
