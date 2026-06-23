@@ -17,7 +17,7 @@ export const MetricBox = ({
       alignItems: "center",
       justifyContent: "center",
       py: 1.5,
-      border: "1px solid rgba(255, 255, 255, 0.15)",
+      border: "1px solid var(--border)",
       borderRadius: "8px",
     }}
   >

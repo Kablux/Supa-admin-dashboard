@@ -125,9 +125,7 @@ export default function RidersPage() {
                 cursor: "pointer",
                 textTransform: "capitalize",
                 color:
-                  activeTab === tab
-                    ? "var(--accent-gold)"
-                    : "rgba(255,255,255,0.45)",
+                  activeTab === tab ? "var(--accent-gold)" : "secondary.main",
                 position: "relative",
                 pb: 0.5,
                 transition: "color 0.2s",

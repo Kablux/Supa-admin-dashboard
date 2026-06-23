@@ -56,9 +56,9 @@ export default function RidersTable({
           <Typography
             key={idx}
             sx={{
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: 500,
-              color: "rgba(255,255,255,0.35)",
+              color: "secondary.main",
             }}
           >
             {header}
@@ -83,7 +83,7 @@ export default function RidersTable({
           sx={{
             textAlign: "center",
             py: 6,
-            fontSize: 13,
+            fontSize: 14,
             color: "var(--text-muted)",
           }}
         >
@@ -110,7 +110,7 @@ export default function RidersTable({
                 sx={{
                   width: 28,
                   height: 28,
-                  fontSize: 11,
+                  fontSize: 12,
                   bgcolor: "var(--border)",
                 }}
               >
@@ -118,13 +118,13 @@ export default function RidersTable({
               </Avatar>
               <Box sx={{ minWidth: 0 }}>
                 <Typography
-                  sx={{ fontSize: 12, fontWeight: 600, color: "#fff" }}
+                  sx={{ fontSize: 12, fontWeight: 600, color: "primary" }}
                   noWrap
                 >
                   {rider.full_name}
                 </Typography>
                 <Typography
-                  sx={{ fontSize: 10, color: "var(--text-muted)" }}
+                  sx={{ fontSize: 10, color: "secondary.main" }}
                   noWrap
                 >
                   {rider.email}
@@ -133,20 +133,20 @@ export default function RidersTable({
             </Box>
 
             {/* Contacts */}
-            <Typography sx={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>
+            <Typography sx={{ fontSize: 12, color: "secondary.main" }}>
               {rider.phone_number || "—"}
             </Typography>
 
             {/* Address */}
             <Typography
-              sx={{ fontSize: 12, color: "rgba(255,255,255,0.7)", pr: 2 }}
+              sx={{ fontSize: 12, color: "secondary.main", pr: 2 }}
               noWrap
             >
               {rider.address || "No Address Added"}
             </Typography>
 
             {/* Ride Metrics */}
-            <Typography sx={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>
+            <Typography sx={{ fontSize: 12, color: "secondary.main" }}>
               {rider.completed_rides || "0"} rides
             </Typography>
 
@@ -159,10 +159,9 @@ export default function RidersTable({
               sx={{ color: "var(--accent-gold)", fontSize: 12 }}
             />
 
-            {/* Options Action Menu Pop trigger */}
             <IconButton
               size="small"
-              sx={{ color: "rgba(255,255,255,0.4)" }}
+              sx={{ color: "secondary.main" }}
               onClick={() => onViewRider(rider.id)}
             >
               <MoreVertIcon sx={{ fontSize: 16 }} />
