@@ -36,7 +36,7 @@ export default function SearchFilterRow({
         sx={{
           backgroundColor: "var(--bg-card, #181818)",
           border: "1px solid var(--border, #222)",
-          color: "var(--text-primary, #fff)",
+          color: "var(--text-primary,)",
           borderRadius: "10px",
           textTransform: "none",
           height: 44,
@@ -59,9 +59,7 @@ export default function SearchFilterRow({
           input: {
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon
-                  sx={{ color: "rgba(255,255,255,0.3)", fontSize: 18 }}
-                />
+                <SearchIcon sx={{ color: "secondary.main", fontSize: 16 }} />
               </InputAdornment>
             ),
           },
@@ -72,8 +70,9 @@ export default function SearchFilterRow({
           // Safely overriding AdminTextField structural sizes for a search context
           "& .MuiOutlinedInput-root": {
             height: 44,
+            fontSize: 14,
             borderRadius: "10px",
-            color: "#fff",
+            color: "primary",
           },
         }}
       />

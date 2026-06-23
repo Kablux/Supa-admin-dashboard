@@ -143,8 +143,8 @@ export default function RiderDetailsModal({
                 label="Bonus"
                 labelColor="#7a92f0"
               />
+              {/* Not available yet */}
               <MetricBox value="0" label="Millage" labelColor="#50c878" />{" "}
-              {/* Assuming placeholder for Millage if not in API */}
             </Box>
           </Box>
 
