@@ -11,9 +11,9 @@ import StarIcon from "@mui/icons-material/Star";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { Rider } from "../../types/auth";
-import { fetchRiderDetails } from "../../api/xhr";
 import { MetricBox } from "../ModalMetricsBox";
+import { fetchDriverDetails } from "../../api/xhr";
+import { Driver } from "../../types/auth";
 
 const infoBoxStyle = {
   display: "flex",
@@ -24,32 +24,32 @@ const infoBoxStyle = {
   borderRadius: "8px",
 };
 
-interface RiderDetailsModalProps {
-  riderId: string | null;
+interface DriverDetailsModalProps {
+  driverId: string | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function RiderDetailsModal({
-  riderId,
+export default function DriverDetailsModal({
+  driverId,
   isOpen,
   onClose,
-}: RiderDetailsModalProps) {
+}: DriverDetailsModalProps) {
   const [loading, setLoading] = useState(false);
-  const [riderData, setRiderData] = useState<Rider | null>(null);
+  const [driverData, setDriverData] = useState<Driver | null>(null);
   useEffect(() => {
-    if (isOpen && riderId) {
+    if (isOpen && driverId) {
       setLoading(true);
-      fetchRiderDetails(riderId)
-        .then((data) => setRiderData(data))
-        .catch((err) => console.error("Failed to fetch rider details", err))
+      fetchDriverDetails(driverId)
+        .then((data) => setDriverData(data))
+        .catch((err) => console.error("Failed to fetch driver details", err))
         .finally(() => setLoading(false));
     } else {
-      setRiderData(null);
+      setDriverData(null);
     }
-  }, [isOpen, riderId]);
+  }, [isOpen, driverId]);
   const handleCopyEmail = () => {
-    if (riderData?.email) navigator.clipboard.writeText(riderData.email);
+    if (driverData?.email) navigator.clipboard.writeText(driverData.email);
   };
 
   return (
@@ -70,7 +70,7 @@ export default function RiderDetailsModal({
         },
       }}
     >
-      {loading || !riderData ? (
+      {loading || !driverData ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
           <CircularProgress sx={{ color: "var(--accent-gold)" }} />
         </Box>
@@ -86,21 +86,21 @@ export default function RiderDetailsModal({
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Avatar
-                src={riderData.profile_image_url}
+                src={driverData.profile_picture_url}
                 sx={{ width: 64, height: 64 }}
               />
               <Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <StarIcon sx={{ color: "#ffb400", fontSize: 18 }} />
                   <Typography sx={{ fontSize: 18, fontWeight: 700, mr: 0.5 }}>
-                    {parseFloat(riderData.rating || "0")}
+                    {parseFloat(driverData.rating || "0")}
                   </Typography>
                   <Typography sx={{ fontSize: 18, fontWeight: 600 }}>
-                    {riderData.full_name}
+                    {driverData.full_name}
                   </Typography>
                 </Box>
                 <Typography sx={{ fontSize: 14, color: "secondary.main" }}>
-                  {riderData.email}
+                  {driverData.email}
                 </Typography>
               </Box>
             </Box>
@@ -118,7 +118,7 @@ export default function RiderDetailsModal({
               <Box sx={infoBoxStyle}>
                 <PhoneIcon sx={{ fontSize: 18, color: "secondary.main" }} />
                 <Typography sx={{ fontSize: 14 }}>
-                  {riderData.phone_number || "N/A"}
+                  {driverData.phone_number || "N/A"}
                 </Typography>
               </Box>
               <Box sx={infoBoxStyle}>
@@ -126,7 +126,7 @@ export default function RiderDetailsModal({
                   sx={{ fontSize: 18, color: "secondary.main" }}
                 />
                 <Typography sx={{ fontSize: 14 }}>
-                  {riderData.address || "No address provided"}
+                  {driverData.address || "No address provided"}
                 </Typography>
               </Box>
             </Box>
@@ -139,12 +139,15 @@ export default function RiderDetailsModal({
             </Typography>
             <Box sx={{ display: "flex", gap: 2 }}>
               <MetricBox
-                value={riderData.loyalty_points || "0"}
+                value={driverData.loyalty_points || "0"}
                 label="Bonus"
                 labelColor="#7a92f0"
               />
-              {/* Not available yet */}
-              <MetricBox value="0" label="Millage" labelColor="#50c878" />{" "}
+              <MetricBox
+                value={driverData.mileage_points || "0"}
+                label="Millage"
+                labelColor="#50c878"
+              />{" "}
             </Box>
           </Box>
 
@@ -155,17 +158,17 @@ export default function RiderDetailsModal({
             </Typography>
             <Box sx={{ display: "flex", gap: 2 }}>
               <MetricBox
-                value={riderData.total_rides || "0"}
+                value={driverData.total_rides || "0"}
                 label="Total Ride"
                 labelColor="#7a92f0"
               />
               <MetricBox
-                value={riderData.completed_rides || "0"}
+                value={driverData.completed_rides || "0"}
                 label="Completed"
                 labelColor="#50c878"
               />
               <MetricBox
-                value={riderData.cancelled_rides || "0"}
+                value={driverData.cancelled_rides || "0"}
                 label="Canceled"
                 labelColor="#ff6b6b"
               />

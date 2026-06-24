@@ -5,7 +5,7 @@ import { fetchRiders, getDashboardStats } from "../api/xhrHelper";
 // import AppButton from "../components/common/AppButton";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setCurrentPage } from "../redux/slices/Riders";
-import OverviewCards, { OverviewItem } from "../components/rider/OverviewCard";
+import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import PeopleIcon from "@mui/icons-material/People";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import BlockIcon from "@mui/icons-material/Block";
