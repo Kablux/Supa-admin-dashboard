@@ -5,6 +5,7 @@ import {
   LoginCredentials,
   AuthState,
   RiderQueryParams,
+  DriverQueryParams,
 } from "../types/auth";
 import {
   setStoredTokens,
@@ -50,7 +51,7 @@ export const logoutAdmin = createAsyncThunk<
   void,
   { state: { auth: AuthState } }
 >("auth/logoutAdmin", async (_, { getState, rejectWithValue }) => {
-  // FIX: Read from Redux state. If it's missing or null, pull directly from localStorage
+  // Read from Redux state. If it's missing or null, pull directly from localStorage
   const refreshToken = getState().auth.refreshToken || getStoredRefreshToken();
 
   try {
@@ -112,7 +113,19 @@ export const fetchRiders = createAsyncThunk(
       return await getRiders(params);
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to load riders list",
+        error.response?.data?.message || "Failed to load riders",
+      );
+    }
+  },
+);
+export const fetchDrivers = createAsyncThunk(
+  "riders/fetchDrivers",
+  async (params: DriverQueryParams, { rejectWithValue }) => {
+    try {
+      return await getDriverList(params);
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to load drivers",
       );
     }
   },

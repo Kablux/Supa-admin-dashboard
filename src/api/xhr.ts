@@ -9,6 +9,8 @@ import {
   RiderQueryParams,
   PaginatedResponse,
   Rider,
+  DriverQueryParams,
+  Driver,
 } from "../types/auth";
 import { cleanQueryParams } from "../utils/hook";
 import { TransactionAnalytics } from "../types/common.types";
@@ -37,12 +39,9 @@ export async function logoutRequest(refresh: string): Promise<void> {
 export async function getTransactionAnalytics(
   range: "week" | "month" | "year" = "month",
 ): Promise<TransactionAnalytics> {
-  const { data } = await api.get(
-    "/business-admin/transactions/analytics/",
-    {
-      params: { range },
-    },
-  );
+  const { data } = await api.get("/business-admin/transactions/analytics/", {
+    params: { range },
+  });
 
   return data;
 }
@@ -54,12 +53,32 @@ export async function getUserList(): Promise<PaginatedUsers> {
   return data;
 }
 
-export async function getDriverList(): Promise<PaginatedDrivers> {
-  const { data } = await api.get<PaginatedDrivers>(
-    "/business-admin/drivers/?page=1",
+export async function getDriverList(
+  params?: DriverQueryParams,
+): Promise<PaginatedResponse<Driver>> {
+  const { data } = await api.get<PaginatedResponse<Driver>>(
+    "/business-admin/drivers/",
+    {
+      params: cleanQueryParams(params ?? {}),
+    },
+  );
+
+  return data;
+}
+
+export async function getRiders(
+  params: RiderQueryParams,
+): Promise<PaginatedResponse<Rider>> {
+  const { data } = await api.get<PaginatedResponse<Rider>>(
+    "/business-admin/riders/",
+    {
+      params: cleanQueryParams(params),
+    },
   );
   return data;
 }
+// getDriverList();
+
 export async function getRides(page = 1): Promise<PaginatedRides> {
   const { data } = await api.get<PaginatedRides>(
     `/business-admin/rides/?page=${page}`,
@@ -100,17 +119,10 @@ export const fetchRiderDetails = async (id: string): Promise<Rider> => {
   return data;
 };
 
-export async function getRiders(
-  params: RiderQueryParams,
-): Promise<PaginatedResponse<Rider>> {
-  const { data } = await api.get<PaginatedResponse<Rider>>(
-    "/business-admin/riders/",
-    {
-      params: cleanQueryParams(params),
-    },
-  );
+export const fetchDriverDetails = async (id: string): Promise<Driver> => {
+  const { data } = await api.get<Driver>(`/business-admin/drivers/${id}/`);
   return data;
-}
+};
 
 export async function fetchAdminProfile(
   id: string | number,

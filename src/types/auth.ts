@@ -60,6 +60,40 @@ export interface LoginResponse {
   };
 }
 
+export interface Ride {
+  id: string;
+  driver: string;
+  rider: string;
+  dropoff_address: string;
+  pickup_address: string;
+  agreed_fare: string;
+  fare: string;
+  status: string;
+  start_time: string;
+  end_time: string;
+  arrived_at: string;
+  cancellation_reason: string;
+  cancelled_by: string;
+}
+
+export interface Rider {
+  id: string;
+  email: string;
+  full_name: string;
+  phone_number: string;
+  address: string;
+  rating: string;
+  profile_image: string;
+  profile_image_url: string;
+  loyalty_points: string;
+  total_rides: string;
+  total_of_rides: string;
+  completed_rides: string;
+  number_of_completed_rides: string;
+  cancelled_rides: string;
+  number_of_cancelled_rides: string;
+}
+
 export interface Driver {
   id: string;
   email: string;
@@ -84,41 +118,26 @@ export interface Driver {
   total_amount: string;
 }
 
-// Matches GET /api/v1/business-admin/users/ paginated response
+export interface PaginatedRides {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Ride[];
+}
+
+
 export interface PaginatedUsers {
   count: number;
   next: string | null;
   previous: string | null;
   results: AdminUser[];
 }
+
 export interface PaginatedDrivers {
   count: number;
   next: string | null;
   previous: string | null;
   results: Driver[];
-}
-
-export interface Ride {
-  id: string;
-  driver: string;
-  rider: string;
-  dropoff_address: string;
-  pickup_address: string;
-  agreed_fare: string;
-  fare: string;
-  status: string;
-  start_time: string;
-  end_time: string;
-  arrived_at: string;
-  cancellation_reason: string;
-  cancelled_by: string;
-}
-
-export interface PaginatedRides {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Ride[];
 }
 
 export interface PaginatedResponse<T> {
@@ -128,25 +147,15 @@ export interface PaginatedResponse<T> {
   results: T[];
 }
 
-export interface Rider {
-  id: string;
-  email: string;
-  full_name: string;
-  phone_number: string;
-  address: string;
-  rating: string;
-  profile_image: string;
-  profile_image_url: string;
-  loyalty_points: string;
-  total_rides: string;
-  total_of_rides: string;
-  completed_rides: string;
-  number_of_completed_rides: string;
-  cancelled_rides: string;
-  number_of_cancelled_rides: string;
-}
 
 export interface RiderQueryParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  status?: "active" | "pending_verification" | "suspended" | "deleted" | "";
+}
+
+export interface DriverQueryParams {
   page?: number;
   page_size?: number;
   search?: string;
