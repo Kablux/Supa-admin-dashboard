@@ -9,11 +9,11 @@ import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import PeopleIcon from "@mui/icons-material/People";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import BlockIcon from "@mui/icons-material/Block";
-import SearchFilterRow from "../components/rider/SearchFilterRow";
 import RidersTable from "../components/rider/RidersTable";
 import { TAB_MAPPING } from "../types/common.types";
 import { useNavigate } from "react-router-dom";
 import RiderDetailsModal from "../components/rider/RideDetailsModal";
+import SearchFilterRow from "../components/SearchFilterRow";
 
 type UITabType = keyof typeof TAB_MAPPING;
 

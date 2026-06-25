@@ -6,6 +6,7 @@ import {
   AuthState,
   RiderQueryParams,
   DriverQueryParams,
+  TripQueryParams,
 } from "../types/auth";
 import {
   setStoredTokens,
@@ -20,6 +21,7 @@ import {
   getRiderSummary,
   getRides,
   getTransactionAnalytics,
+  getTrips,
   getUserList,
   getUserSummary,
   loginRequest,
@@ -95,7 +97,7 @@ export const getDashboardStats = createAsyncThunk(
         userSummary,
         driverSummary,
         riderSummary,
-        liveTrips: liveTripsSummary.total,
+        // liveTrips: liveTripsSummary.total,
         liveTripsSummary,
       };
     } catch (error: any) {
@@ -118,6 +120,7 @@ export const fetchRiders = createAsyncThunk(
     }
   },
 );
+
 export const fetchDrivers = createAsyncThunk(
   "riders/fetchDrivers",
   async (params: DriverQueryParams, { rejectWithValue }) => {
@@ -126,6 +129,20 @@ export const fetchDrivers = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to load drivers",
+      );
+    }
+  },
+);
+
+export const fetchTrips = createAsyncThunk(
+  "trips/fetchTrips",
+  async (params: TripQueryParams, { rejectWithValue }) => {
+    try {
+      return await getTrips(params);
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to load trips",
       );
     }
   },

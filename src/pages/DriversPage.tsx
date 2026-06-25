@@ -10,7 +10,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import { TAB_MAPPING } from "../types/common.types";
 import { useNavigate } from "react-router-dom";
 import DriversTable from "../components/driver/DriversTable";
-import SearchFilterRow from "../components/driver/SearchFilterRow";
+import SearchFilterRow from "../components/SearchFilterRow";
 import DriverDetailsModal from "../components/driver/DriverDetailModal";
 
 type UITabType = keyof typeof TAB_MAPPING;

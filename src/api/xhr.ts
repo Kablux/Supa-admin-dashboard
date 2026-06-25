@@ -11,6 +11,8 @@ import {
   Rider,
   DriverQueryParams,
   Driver,
+  TripQueryParams,
+  PaginatedTripsResponse,
 } from "../types/auth";
 import { cleanQueryParams } from "../utils/hook";
 import { TransactionAnalytics } from "../types/common.types";
@@ -107,6 +109,21 @@ export async function getRiderSummary() {
   );
   return data.data;
 }
+
+///LIVE TRIPS
+export async function getTrips(
+  params: TripQueryParams,
+): Promise<PaginatedTripsResponse> {
+  const { data } = await api.get(
+    "/business-admin/rides/live/",
+    {
+      params: cleanQueryParams(params),
+    },
+  );
+
+  return data;
+}
+
 
 export async function getLiveTripsSummary() {
   const { data } = await api.get("/business-admin/rides/live/");

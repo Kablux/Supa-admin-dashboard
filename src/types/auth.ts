@@ -3,7 +3,11 @@
 //   password: string;
 //   role: string;
 
-import { LiveTripsSummary, RideSummaryData, TransactionAnalytics } from "./common.types";
+import {
+  LiveTripsSummary,
+  RideSummaryData,
+  TransactionAnalytics,
+} from "./common.types";
 
 // }
 
@@ -23,7 +27,7 @@ export type AuthStatus = "idle" | "submitting" | "error" | "success";
 export interface DashboardState {
   totalDrivers: number;
   totalUsers: number;
-  liveTrips: number;
+  // liveTrips: number;
   liveTripsSummary: LiveTripsSummary;
   usersummary: RideSummaryData;
   driversummary: RideSummaryData;
@@ -125,7 +129,6 @@ export interface PaginatedRides {
   results: Ride[];
 }
 
-
 export interface PaginatedUsers {
   count: number;
   next: string | null;
@@ -146,7 +149,6 @@ export interface PaginatedResponse<T> {
   previous: string | null;
   results: T[];
 }
-
 
 export interface RiderQueryParams {
   page?: number;
@@ -173,4 +175,40 @@ export interface AuthState {
   status: RequestStatus;
   error: string | null;
   isAuthenticated: boolean;
+}
+
+///TRIPS
+export interface Trip {
+  id: string;
+  driver: string;
+  rider: string;
+  pickup_address: string;
+  dropoff_address: string;
+  agreed_fare: string;
+  fare: string;
+  status:
+    | "driver_on_way"
+    | "arrived"
+    | "started"
+    | "completed"
+    | "cancelled";
+  start_time: string;
+  end_time: string;
+  arrived_at: string;
+  cancellation_reason: string;
+  cancelled_by: string;
+}
+
+export interface TripQueryParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  status?: string;
+}
+
+export interface PaginatedTripsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Trip[];
 }

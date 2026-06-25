@@ -22,7 +22,7 @@ const emptyLiveTripsSummary: LiveTripsSummary = {
 const initialState: DashboardState = {
   totalDrivers: 0,
   totalUsers: 0,
-  liveTrips: 0,
+  // liveTrips: 0,
   liveTripsSummary: emptyLiveTripsSummary,
   isLoading: false,
   error: null,
@@ -47,7 +47,7 @@ const dashboardSlice = createSlice({
         state.isLoading = false;
         state.totalDrivers = action.payload.totalDrivers;
         state.totalUsers = action.payload.totalUsers;
-        state.liveTrips = action.payload.liveTrips;
+        // state.liveTrips = action.payload.liveTrips;
         state.liveTripsSummary = action.payload.liveTripsSummary;
         state.usersummary = action.payload.userSummary;
         state.driversummary = action.payload.driverSummary;
