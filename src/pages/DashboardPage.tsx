@@ -22,7 +22,6 @@ export default function DashboardPage() {
     driversummary,
     isLoading,
   } = useAppSelector((state) => state.dashboard);
-  // const { isLoading } = useAppSelector((state) => state.dashboard);
 
   useEffect(() => {
     dispatch(getDashboardStats());
