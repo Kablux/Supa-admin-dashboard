@@ -84,7 +84,7 @@ export default function Header() {
       </Box>
 
       {/* Search */}
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           alignItems: "center",
@@ -121,7 +121,7 @@ export default function Header() {
             "& .MuiChip-label": { px: 0.75 },
           }}
         />
-      </Box>
+      </Box> */}
 
       <Box sx={{ flex: 1 }} />
 

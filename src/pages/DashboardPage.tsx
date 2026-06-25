@@ -16,7 +16,7 @@ export default function DashboardPage() {
   const {
     totalUsers,
     totalDrivers,
-    liveTrips,
+    // liveTrips,
     liveTripsSummary,
     usersummary,
     driversummary,
@@ -31,8 +31,8 @@ export default function DashboardPage() {
   const statsData: Stat[] = [
     {
       id: "live_trips",
-      label: "Total Live Trips",
-      value: liveTrips.toLocaleString(),
+      label: "Total Trips",
+      value: liveTripsSummary.total,
       icon: "DirectionsCar",
       color: "#FEB40E",
       bg: "#2a2000",

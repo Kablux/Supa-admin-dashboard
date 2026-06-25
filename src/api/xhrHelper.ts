@@ -95,7 +95,7 @@ export const getDashboardStats = createAsyncThunk(
         userSummary,
         driverSummary,
         riderSummary,
-        liveTrips: liveTripsSummary.total,
+        // liveTrips: liveTripsSummary.total,
         liveTripsSummary,
       };
     } catch (error: any) {

@@ -23,7 +23,7 @@ export type AuthStatus = "idle" | "submitting" | "error" | "success";
 export interface DashboardState {
   totalDrivers: number;
   totalUsers: number;
-  liveTrips: number;
+  // liveTrips: number;
   liveTripsSummary: LiveTripsSummary;
   usersummary: RideSummaryData;
   driversummary: RideSummaryData;
