@@ -4,7 +4,7 @@ import dashboardReducer from "./slices/Dashboard";
 import ridersReducer from "./slices/Riders";
 import driversReducer from "./slices/Drivers";
 import tripsReducer from "./slices/Trips";
-import transactionReducer from "./slices/transaction"
+import transactionReducer from "./slices/Transaction";
 
 export const store = configureStore({
   reducer: {
