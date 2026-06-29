@@ -29,14 +29,3 @@ export function cleanQueryParams<T extends Record<string, any>>(
     ),
   );
 }
-
-export function formatNaira(n: number): string {
-  return `₦${n.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
-
-export function formatCompact(n: number): string {
-  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(0)}B`;
-  if (n >= 1_000_000)     return `${(n / 1_000_000).toFixed(0)}M`;
-  if (n >= 1_000)         return `${(n / 1_000).toFixed(0)}K`;
-  return `${n}`;
-}

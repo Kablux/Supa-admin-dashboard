@@ -139,7 +139,7 @@ export default function TripsPage() {
       </Box>
 
       {/* Trips Table  */}
-      {/* <TripsTable
+      <TripsTable
         isLoading={isLoading}
         tripsList={tripList}
         totalCount={totalCount}
@@ -148,7 +148,7 @@ export default function TripsPage() {
         onPageChange={handleChangePage}
         onPageSizeChange={handlePageSizeChange}
         // onViewDriver={(id) => setSelectedTripId(id)}
-      /> */}
+      />
     </Box>
   );
 }
