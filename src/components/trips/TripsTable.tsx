@@ -111,10 +111,10 @@ export default function TripsTable({
                 sx={{
                   fontSize: 12,
                   fontWeight: 600,
-                  color: "primary.main",
+                  color: "primary",
                 }}
               >
-                {trip.rider || "Unknown Rider"}
+                {trip.rider }
               </Typography>
             </Box>
 
@@ -163,7 +163,7 @@ export default function TripsTable({
                 pr: 2,
               }}
             >
-              Staus not availablee
+              {trip.status}
             </Typography>
 
             {/* Dummy Trip Type */}

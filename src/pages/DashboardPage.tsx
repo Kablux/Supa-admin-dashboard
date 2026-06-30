@@ -30,7 +30,7 @@ export default function DashboardPage() {
   const statsData: Stat[] = [
     {
       id: "live_trips",
-      label: "Total Trips",
+      label: "Live Trips",
       value: liveTripsSummary.total,
       icon: "DirectionsCar",
       color: "#FEB40E",

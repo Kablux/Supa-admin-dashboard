@@ -114,16 +114,12 @@ export async function getRiderSummary() {
 export async function getTrips(
   params: TripQueryParams,
 ): Promise<PaginatedTripsResponse> {
-  const { data } = await api.get(
-    "/business-admin/rides/live/",
-    {
-      params: cleanQueryParams(params),
-    },
-  );
+  const { data } = await api.get("/business-admin/rides", {
+    params: cleanQueryParams(params),
+  });
 
   return data;
 }
-
 
 export async function getLiveTripsSummary() {
   const { data } = await api.get("/business-admin/rides/live/");

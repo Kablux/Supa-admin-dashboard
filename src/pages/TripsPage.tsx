@@ -19,13 +19,16 @@ export default function TripsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [pageSize, setPageSize] = useState(10);
-  const { liveTripsSummary } = useAppSelector((state) => state.dashboard);
   const {
     items: tripList,
     totalCount,
     currentPage,
     isLoading,
   } = useAppSelector((state) => state.trips);
+
+const liveTripCount = tripList.filter(
+  (trip) => trip.status === "driver_on_way"
+).length;
 
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -68,12 +71,12 @@ export default function TripsPage() {
   const liveStats: OverviewItem[] = [
     {
       title: "Live Trip",
-      value: liveTripsSummary.driver_on_way,
+      value: liveTripCount,
       icon: <DirectionsCarIcon />,
     },
     {
       title: "Total Trip",
-      value: liveTripsSummary.total,
+      value: totalCount,
       icon: <ReceiptLongIcon />,
     },
   ];
@@ -139,7 +142,7 @@ export default function TripsPage() {
       </Box>
 
       {/* Trips Table  */}
-      {/* <TripsTable
+      <TripsTable
         isLoading={isLoading}
         tripsList={tripList}
         totalCount={totalCount}
@@ -148,7 +151,7 @@ export default function TripsPage() {
         onPageChange={handleChangePage}
         onPageSizeChange={handlePageSizeChange}
         // onViewDriver={(id) => setSelectedTripId(id)}
-      /> */}
+      />
     </Box>
   );
 }
