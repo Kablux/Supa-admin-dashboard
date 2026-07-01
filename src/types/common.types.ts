@@ -62,6 +62,12 @@ export const TAB_MAPPING = {
   pending: "pending_verification",
   cancelled: "deleted",
 } as const;
+export const TRIP_TAB_MAPPING = {
+  all: "",
+  active: "driver_on_way",
+  completed: "completed",
+  cancelled: "cancelled",
+} as const;
 
 
 export interface AnalyticsPoint {

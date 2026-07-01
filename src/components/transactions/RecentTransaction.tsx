@@ -12,11 +12,6 @@ import {
 import { RECENT_TRANSACTIONS } from "../../data/transactionMockData";
 
 export function RecentTransactions() {
-  //   const typeColors: Record<string, string> = {
-  //     Standard: "#42A5F5",
-  //     Fleet: "#F5C518",
-  //     Luxury: "#AB47BC",
-  //   };
 
   return (
     <Box
