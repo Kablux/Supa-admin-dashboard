@@ -6,12 +6,12 @@ import { setCurrentPage } from "../redux/slices/Drivers";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import { TAB_MAPPING } from "../types/common.types";
+import { TAB_MAPPING, TRIP_TAB_MAPPING } from "../types/common.types";
 import { useNavigate } from "react-router-dom";
 import SearchFilterRow from "../components/SearchFilterRow";
 import TripsTable from "../components/trips/TripsTable";
 
-type UITabType = keyof typeof TAB_MAPPING;
+type UITabType = keyof typeof TRIP_TAB_MAPPING;
 
 export default function TripsPage() {
   const dispatch = useAppDispatch();
@@ -19,13 +19,16 @@ export default function TripsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [pageSize, setPageSize] = useState(10);
-  const { liveTripsSummary } = useAppSelector((state) => state.dashboard);
   const {
     items: tripList,
     totalCount,
     currentPage,
     isLoading,
   } = useAppSelector((state) => state.trips);
+
+  const liveTripCount = tripList.filter(
+    (trip) => trip.status === "driver_on_way",
+  ).length;
 
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -37,7 +40,7 @@ export default function TripsPage() {
         page: currentPage,
         page_size: pageSize,
         search: searchQuery,
-        status: TAB_MAPPING[activeTab],
+        status: TRIP_TAB_MAPPING[activeTab],
       }),
     );
   }, [dispatch, currentPage, pageSize, activeTab, searchQuery]);
@@ -68,12 +71,12 @@ export default function TripsPage() {
   const liveStats: OverviewItem[] = [
     {
       title: "Live Trip",
-      value: liveTripsSummary.driver_on_way,
+      value: liveTripCount,
       icon: <DirectionsCarIcon />,
     },
     {
       title: "Total Trip",
-      value: liveTripsSummary.total,
+      value: totalCount,
       icon: <ReceiptLongIcon />,
     },
   ];
@@ -104,7 +107,7 @@ export default function TripsPage() {
         }}
       >
         <Box sx={{ display: "flex", gap: 3 }}>
-          {(["all", "approved", "pending", "cancelled"] as const).map((tab) => (
+          {(["all", "active", "completed", "cancelled"] as const).map((tab) => (
             <Typography
               key={tab}
               onClick={() => handleTabChange(tab)}
@@ -139,7 +142,7 @@ export default function TripsPage() {
       </Box>
 
       {/* Trips Table  */}
-      {/* <TripsTable
+      <TripsTable
         isLoading={isLoading}
         tripsList={tripList}
         totalCount={totalCount}
@@ -148,7 +151,7 @@ export default function TripsPage() {
         onPageChange={handleChangePage}
         onPageSizeChange={handlePageSizeChange}
         // onViewDriver={(id) => setSelectedTripId(id)}
-      /> */}
+      />
     </Box>
   );
 }

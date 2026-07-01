@@ -6,9 +6,16 @@ import {
   Rating,
   IconButton,
   TablePagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Rider } from "../../types/auth";
+import { FaPersonBiking } from "react-icons/fa6";
 
 interface RidersTableProps {
   isLoading: boolean;
@@ -31,143 +38,262 @@ export default function RidersTable({
   onPageSizeChange,
   onViewRider,
 }: RidersTableProps) {
-  const gridTemplate = "1.2fr 1fr 1.5fr 1fr 0.8fr 40px";
-
   return (
-    <Box sx={{ mt: 1, position: "relative" }}>
-      {/* Table Header */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: gridTemplate,
-          pb: 1.5,
-          px: 1,
-          borderBottom: "1px solid var(--border)",
-        }}
-      >
-        {[
-          "Name",
-          "Phone number",
-          "Address",
-          "Completed Rides",
-          "Ratings",
-          "",
-        ].map((header, idx) => (
-          <Typography
-            key={idx}
-            sx={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: "secondary.main",
-            }}
-          >
-            {header}
-          </Typography>
-        ))}
-      </Box>
-
-      {/* List Content States */}
+    <Box>
       {isLoading ? (
         <Box
           sx={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
             py: 8,
           }}
         >
           <CircularProgress size={28} sx={{ color: "var(--accent-gold)" }} />
         </Box>
       ) : ridersList.length === 0 ? (
-        <Typography
+        <Box
           sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            py: 10,
+            px: 3,
+            my: 4,
+            mx: "auto",
+            maxWidth: 450,
             textAlign: "center",
-            py: 6,
-            fontSize: 14,
-            color: "var(--text-muted)",
+            borderRadius: 3,
           }}
         >
-          No rider match profiles located.
-        </Typography>
-      ) : (
-        ridersList.map((rider) => (
           <Box
-            key={rider.id}
             sx={{
-              display: "grid",
-              gridTemplateColumns: gridTemplate,
+              width: 80,
+              height: 80,
+              borderRadius: "50%",
+              backgroundColor: "rgba(255, 193, 7, 0.05)",
+              display: "flex",
               alignItems: "center",
-              py: 2,
-              px: 1,
-              borderBottom: "1px solid rgba(255,255,255,0.05)",
-              "&:hover": { backgroundColor: "rgba(255,255,255,0.01)" },
+              justifyContent: "center",
+              mb: 2,
             }}
           >
-            {/* Profile Identity */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
-              <Avatar
-                src={rider.profile_image_url}
-                sx={{
-                  width: 28,
-                  height: 28,
-                  fontSize: 12,
-                  bgcolor: "var(--border)",
-                }}
-              >
-                {rider.full_name ? rider.full_name[0].toUpperCase() : "?"}
-              </Avatar>
-              <Box sx={{ minWidth: 0 }}>
-                <Typography
-                  sx={{ fontSize: 12, fontWeight: 600, color: "primary" }}
-                  noWrap
-                >
-                  {rider.full_name}
-                </Typography>
-                <Typography
-                  sx={{ fontSize: 10, color: "secondary.main" }}
-                  noWrap
-                >
-                  {rider.email}
-                </Typography>
-              </Box>
-            </Box>
-
-            {/* Contacts */}
-            <Typography sx={{ fontSize: 12, color: "secondary.main" }}>
-              {rider.phone_number || "—"}
-            </Typography>
-
-            {/* Address */}
-            <Typography
-              sx={{ fontSize: 12, color: "secondary.main", pr: 2 }}
-              noWrap
-            >
-              {rider.address || "No Address Added"}
-            </Typography>
-
-            {/* Ride Metrics */}
-            <Typography sx={{ fontSize: 12, color: "secondary.main" }}>
-              {rider.completed_rides || "0"} rides
-            </Typography>
-
-            {/* Ratings Component */}
-            <Rating
-              readOnly
-              value={parseFloat(rider.rating || "0")}
-              precision={0.5}
-              size="small"
-              sx={{ color: "var(--accent-gold)", fontSize: 12 }}
-            />
-
-            <IconButton
-              size="small"
-              sx={{ color: "secondary.main" }}
-              onClick={() => onViewRider(rider.id)}
-            >
-              <MoreVertIcon sx={{ fontSize: 16 }} />
-            </IconButton>
+            <FaPersonBiking size={20} />
           </Box>
-        ))
+
+          <Typography
+            sx={{ fontSize: 18, fontWeight: 600, color: "#fff", mb: 1 }}
+          >
+            No Rider Found
+          </Typography>
+
+          <Typography
+            sx={{
+              fontSize: 14,
+              color: "rgba(255,255,255,0.5)",
+              maxWidth: 300,
+              lineHeight: 1.5,
+            }}
+          >
+            No rider match this Profile by filter.
+          </Typography>
+        </Box>
+      ) : (
+        <TableContainer>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                {[
+                  "Name",
+                  "Phone Number",
+                  "Address",
+                  "Completed Rides",
+                  "Ratings",
+                  "Actions",
+                ].map((header) => (
+                  <TableCell
+                    key={header}
+                    sx={{
+                      fontSize: 12,
+                      fontWeight: 500,
+                      color: "var(--text-secondary)",
+                      borderBottom: "1px solid var(--text-secondary)",
+                      borderTop: "1px solid var(--text-secondary)",
+                      p: 1.25,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {header}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {ridersList.map((rider) => (
+                <TableRow
+                  key={rider.id}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "var(--bg-card-hover)",
+                    },
+                    transition: "background 0.12s",
+                  }}
+                >
+                  {/* Profile */}
+                  <TableCell
+                    sx={{
+                      py: 1.25,
+                      px: 2,
+                      borderBottom: "1px solid var(--border-subtle)",
+                      maxWidth: 220,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1.25,
+                      }}
+                    >
+                      <Avatar
+                        src={rider.profile_image_url}
+                        sx={{
+                          width: 32,
+                          height: 32,
+                          fontSize: 12,
+                          bgcolor: "var(--border)",
+                        }}
+                      >
+                        {rider.full_name?.charAt(0)?.toUpperCase() || "?"}
+                      </Avatar>
+
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography
+                          sx={{
+                            fontSize: 12.5,
+                            fontWeight: 500,
+                            color: "var(--text-primary)",
+                          }}
+                          noWrap
+                        >
+                          {rider.full_name}
+                        </Typography>
+
+                        <Typography
+                          sx={{
+                            fontSize: 11,
+                            color: "var(--text-secondary)",
+                          }}
+                          noWrap
+                        >
+                          {rider.email}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </TableCell>
+
+                  {/* Phone */}
+                  <TableCell
+                    sx={{
+                      py: 1.25,
+                      px: 2,
+                      borderBottom: "1px solid var(--border-subtle)",
+                      maxWidth: 220,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        color: "var(--text-primary)",
+                      }}
+                    >
+                      {rider.phone_number || "—"}
+                    </Typography>
+                  </TableCell>
+
+                  {/* Address */}
+                  <TableCell
+                    sx={{
+                      py: 1.25,
+                      px: 2,
+                      borderBottom: "1px solid var(--border-subtle)",
+                      maxWidth: 220,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        color: "var(--text-secondary)",
+                        whiteSpace: "normal",
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {rider.address || "No Address Added"}
+                    </Typography>
+                  </TableCell>
+
+                  {/* Completed Rides */}
+                  <TableCell
+                    sx={{
+                      py: 1.25,
+                      px: 2,
+                      borderBottom: "1px solid var(--border-subtle)",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        fontWeight: 500,
+                        color: "var(--text-primary)",
+                      }}
+                    >
+                      {rider.completed_rides || 0}
+                    </Typography>
+                  </TableCell>
+
+                  {/* Rating */}
+                  <TableCell
+                    sx={{
+                      py: 1.25,
+                      px: 2,
+                      borderBottom: "1px solid var(--border-subtle)",
+                    }}
+                  >
+                    <Rating
+                      readOnly
+                      value={parseFloat(rider.rating || "0")}
+                      precision={0.5}
+                      size="small"
+                      sx={{
+                        color: "var(--accent-gold)",
+                        fontSize: 14,
+                      }}
+                    />
+                  </TableCell>
+
+                  {/* Actions */}
+                  <TableCell
+                    sx={{
+                      py: 1.25,
+                      px: 2,
+                      borderBottom: "1px solid var(--border-subtle)",
+                      width: 50,
+                    }}
+                  >
+                    <IconButton
+                      size="small"
+                      sx={{ color: "secondary.main" }}
+                      onClick={() => onViewRider(rider.id)}
+                    >
+                      <MoreVertIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
 
       {/* Server-Side Pagination Controller */}

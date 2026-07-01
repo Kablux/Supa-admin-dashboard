@@ -151,8 +151,6 @@ export default function Sidebar({ activeNav, setActiveNav }: SidebarProps) {
         ))}
       </Box>
 
-      {/* Upgrade CTA */}
-      <UpgradeBox />
     </Box>
   );
 }

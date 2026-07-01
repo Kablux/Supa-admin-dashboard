@@ -4,8 +4,15 @@ import {
   CircularProgress,
   Avatar,
   TablePagination,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import { Trip } from "../../types/auth";
+import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 
 interface TripsTableProps {
   isLoading: boolean;
@@ -26,37 +33,8 @@ export default function TripsTable({
   onPageChange,
   onPageSizeChange,
 }: TripsTableProps) {
-  const gridTemplate = "1.2fr 1fr 1.5fr 1fr 0.8fr 40px";
-
   return (
-    <Box sx={{ mt: 1, position: "relative" }}>
-      {/* Table Header */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: gridTemplate,
-          pb: 1.5,
-          px: 1,
-          borderBottom: "1px solid var(--border)",
-        }}
-      >
-        {["Name", "Date", "Pick up", "Destination", "Status", "TripType"].map(
-          (header, idx) => (
-            <Typography
-              key={idx}
-              sx={{
-                fontSize: 14,
-                fontWeight: 500,
-                color: "secondary.main",
-              }}
-            >
-              {header}
-            </Typography>
-          ),
-        )}
-      </Box>
-
-      {/* List Content States */}
+    <Box>
       {isLoading ? (
         <Box
           sx={{
@@ -68,136 +46,256 @@ export default function TripsTable({
           <CircularProgress size={28} sx={{ color: "var(--accent-gold)" }} />
         </Box>
       ) : tripsList.length === 0 ? (
-        <Typography
+        <Box
           sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            py: 10,
+            px: 3,
+            my: 4,
+            mx: "auto",
+            maxWidth: 450,
             textAlign: "center",
-            py: 6,
-            fontSize: 14,
-            color: "var(--text-muted)",
+            borderRadius: 3,
           }}
         >
-          No trip found.
-        </Typography>
-      ) : (
-        tripsList.map((trip) => (
           <Box
-            key={trip.id}
             sx={{
-              display: "grid",
-              gridTemplateColumns: gridTemplate,
+              width: 80,
+              height: 80,
+              borderRadius: "50%",
+              backgroundColor: "rgba(255, 193, 7, 0.05)",
+              display: "flex",
               alignItems: "center",
-              py: 2,
-              px: 1,
-              borderBottom: "1px solid rgba(255,255,255,0.05)",
-              "&:hover": {
-                backgroundColor: "rgba(255,255,255,0.01)",
-              },
+              justifyContent: "center",
+              mb: 2,
             }}
           >
-            {/* trips */}
-            <Box sx={{ display: "flex", gap: 1.2, alignItems: "center" }}>
-              <Avatar
-                sx={{
-                  width: 28,
-                  height: 28,
-                  fontSize: 12,
-                  bgcolor: "var(--border)",
-                }}
-              >
-                {trip.rider?.charAt(0)?.toUpperCase() || "R"}
-              </Avatar>
-
-              <Typography
-                sx={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: "primary.main",
-                }}
-              >
-                {trip.rider || "Unknown Rider"}
-              </Typography>
-            </Box>
-
-            {/* Date */}
-            <Typography
-              sx={{
-                fontSize: 12,
-                color: "secondary.main",
-              }}
-            >
-              {trip.start_time
-                ? new Date(trip.start_time).toLocaleDateString()
-                : "N/A"}
-            </Typography>
-
-            {/* Pickup */}
-            <Typography
-              noWrap
-              sx={{
-                fontSize: 12,
-                color: "secondary.main",
-                pr: 2,
-              }}
-            >
-              {trip.pickup_address}
-            </Typography>
-
-            {/* Destination */}
-            <Typography
-              noWrap
-              sx={{
-                fontSize: 12,
-                color: "secondary.main",
-                pr: 2,
-              }}
-            >
-              {trip.dropoff_address}
-            </Typography>
-
-            {/* Status */}
-            <Typography
-              noWrap
-              sx={{
-                fontSize: 12,
-                color: "secondary.main",
-                pr: 2,
-              }}
-            >
-              Staus not availablee
-            </Typography>
-
-            {/* Dummy Trip Type */}
-            <Typography
-              noWrap
-              sx={{
-                fontSize: 12,
-                color: "secondary.main",
-              }}
-            >
-              not available
-            </Typography>
+            <RouteOutlinedIcon
+              sx={{ fontSize: 40, color: "var(--accent-gold, #FFC107)" }}
+            />
           </Box>
-        ))
-      )}
 
-      {/* Server-Side Pagination Controller */}
-      {!isLoading && tripsList.length > 0 && (
-        <TablePagination
-          component="div"
-          count={totalCount}
-          page={currentPage - 1}
-          onPageChange={onPageChange}
-          rowsPerPage={pageSize}
-          onRowsPerPageChange={(e) => {
-            onPageSizeChange(parseInt(e.target.value, 10));
-          }}
-          rowsPerPageOptions={[5, 10, 25]}
-          sx={{
-            color: "rgba(255,255,255,0.6)",
-            "& .MuiTablePagination-actions": { color: "var(--accent-gold)" },
-            borderTop: "1px solid rgba(255,255,255,0.05)",
-          }}
-        />
+          <Typography
+            sx={{ fontSize: 18, fontWeight: 600, color: "#fff", mb: 1 }}
+          >
+            No Trips Found
+          </Typography>
+
+          <Typography
+            sx={{
+              fontSize: 14,
+              color: "rgba(255,255,255,0.5)",
+              maxWidth: 300,
+              lineHeight: 1.5,
+            }}
+          >
+            There are currently no trips matching this status or filter
+            criteria.
+          </Typography>
+        </Box>
+      ) : (
+        <>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {[
+                    "Name",
+                    "Date",
+                    "Pick up",
+                    "Destination",
+                    "Status",
+                    "TripType",
+                  ].map((header) => (
+                    <TableCell
+                      key={header}
+                      sx={{
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: "var(--text-secondary)",
+                        borderBottom: "1px solid var(--text-secondary)",
+                        borderTop: "1px solid var(--text-secondary)",
+                        p: 1.25,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {header}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {tripsList.map((trip) => (
+                  <TableRow
+                    key={trip.id}
+                    sx={{
+                      "&:last-child td": { borderBottom: "none" },
+                      "&:hover": { backgroundColor: "var(--bg-card-hover)" },
+                      transition: "background 0.12s",
+                    }}
+                  >
+                    <TableCell
+                      sx={{
+                        p: 1.25,
+                        borderBottom: "1px solid var(--border-subtle)",
+                        maxWidth: 180,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1.25,
+                        }}
+                      >
+                        <Avatar
+                          sx={{
+                            width: 32,
+                            height: 32,
+                            fontSize: 12,
+                            bgcolor: "var(--border)",
+                          }}
+                        >
+                          {trip.rider?.charAt(0)?.toUpperCase() || "R"}
+                        </Avatar>
+
+                        <Typography
+                          sx={{
+                            fontSize: 12.5,
+                            fontWeight: 500,
+                            color: "var(--text-primary)",
+                          }}
+                        >
+                          {trip.rider}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+
+                    {/* Date */}
+                    <TableCell
+                      sx={{
+                        py: 1.25,
+                        px: 2,
+                        borderBottom: "1px solid var(--border-subtle)",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: 12,
+                          color: "var(--text-primary)",
+                        }}
+                      >
+                        {trip.start_time
+                          ? new Date(trip.start_time).toLocaleDateString()
+                          : "N/A"}
+                      </Typography>
+                    </TableCell>
+
+                    {/* Pickup */}
+                    <TableCell
+                      sx={{
+                        py: 1.25,
+                        px: 2,
+                        borderBottom: "1px solid var(--border-subtle)",
+                        maxWidth: 180,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: 12,
+                          color: "var(--text-primary)",
+                          whiteSpace: "normal",
+                        }}
+                      >
+                        {trip.pickup_address}
+                      </Typography>
+                    </TableCell>
+
+                    {/* Destination */}
+                    <TableCell
+                      sx={{
+                        py: 1.25,
+                        px: 2,
+                        borderBottom: "1px solid var(--border-subtle)",
+                        maxWidth: 180,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: 12,
+                          color: "var(--text-primary)",
+                          whiteSpace: "normal",
+                        }}
+                      >
+                        {trip.dropoff_address}
+                      </Typography>
+                    </TableCell>
+
+                    {/* Status */}
+                    <TableCell
+                      sx={{
+                        py: 1.25,
+                        px: 2,
+                        borderBottom: "1px solid var(--border-subtle)",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: 12,
+                          color: "var(--text-secondary)",
+                          whiteSpace: "normal",
+                        }}
+                      >
+                        {trip.status}
+                      </Typography>
+                    </TableCell>
+
+                    {/* Trip Type */}
+                    <TableCell
+                      sx={{
+                        py: 1.25,
+                        px: 2,
+                        borderBottom: "1px solid var(--border-subtle)",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: 12,
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        Standard
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <TablePagination
+            component="div"
+            count={totalCount}
+            page={currentPage - 1}
+            onPageChange={onPageChange}
+            rowsPerPage={pageSize}
+            onRowsPerPageChange={(e) =>
+              onPageSizeChange(parseInt(e.target.value, 10))
+            }
+            rowsPerPageOptions={[5, 10, 25]}
+            sx={{
+              color: "rgba(255,255,255,0.6)",
+              "& .MuiTablePagination-actions": {
+                color: "var(--accent-gold)",
+              },
+              borderTop: "1px solid rgba(255,255,255,0.05)",
+            }}
+          />
+        </>
       )}
     </Box>
   );

@@ -15,9 +15,7 @@ interface SearchFilterRowProps {
 export default function SearchFilterRow({
   value,
   onChange,
-  placeholder = "Search...",
-  onFilterClick,
-  filterButtonText = "Add filter",
+  placeholder = "Search for a trip...",
 }: SearchFilterRowProps) {
   return (
     <Box
@@ -29,27 +27,6 @@ export default function SearchFilterRow({
         width: "100%",
       }}
     >
-      {/* Dynamic Filter Action Button */}
-      <Button
-        onClick={onFilterClick}
-        startIcon={<FilterListIcon sx={{ fontSize: 16 }} />}
-        sx={{
-          backgroundColor: "var(--bg-card, #181818)",
-          border: "1px solid var(--border, #222)",
-          color: "var(--text-primary,)",
-          borderRadius: "10px",
-          textTransform: "none",
-          height: 44,
-          px: 2,
-          whiteSpace: "nowrap",
-          "&:hover": {
-            backgroundColor: "var(--border, #222)",
-          },
-        }}
-      >
-        {filterButtonText}
-      </Button>
-
       <AdminTextField
         value={value}
         onChange={onChange}
@@ -67,7 +44,7 @@ export default function SearchFilterRow({
         sx={{
           flex: 1,
           maxWidth: { xs: "100%", sm: 540 },
-          // Safely overriding AdminTextField structural sizes for a search context
+
           "& .MuiOutlinedInput-root": {
             height: 44,
             fontSize: 14,
