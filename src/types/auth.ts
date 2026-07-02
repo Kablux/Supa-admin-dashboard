@@ -1,7 +1,3 @@
-// export interface LoginFormValues {
-//   email: string;
-//   password: string;
-//   role: string;
 
 import {
   LiveTripsSummary,
@@ -9,7 +5,6 @@ import {
   TransactionAnalytics,
 } from "./common.types";
 
-// }
 
 export interface LoginCredentials {
   email: string;

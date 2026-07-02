@@ -90,3 +90,45 @@ export interface TransactionAnalytics {
     total_expense: number;
   };
 }
+
+
+// NOTIFICATION TYPES
+export type NotifCategory = 'cooperate' | 'standard' | 'premium';
+
+export interface Reminder {
+  id: number;
+  title: string;
+  subtitle: string;
+  time: string;
+  avatar: string | null;
+}
+
+export interface NotificationItem {
+  id: string;
+  userName: string;
+  userAvatar: string | null;
+  date: string;
+  message: string;
+  read: boolean;
+  category: NotifCategory;
+}
+
+export type SosTab = 'drivers' | 'riders';
+
+export interface SosMessage {
+  id: number;
+  name: string;
+  plate: string;       // driver plate or rider name
+  complaint: string;
+  time: string;
+  avatar: string | null;
+  read: boolean;
+}
+
+export interface NotificationsState {
+  reminders: Reminder[];
+  sosMessages: { drivers: SosMessage[]; riders: SosMessage[] };
+  notifications: NotificationItem[];
+  activeSosTab: SosTab;
+  activeCategory: NotifCategory;
+}

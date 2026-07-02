@@ -14,7 +14,7 @@ import { MdOutlineSettings } from "react-icons/md";
 import { MdOutlineFeedback } from "react-icons/md";
 import { HiUsers } from "react-icons/hi";
 import { MdOutlineHelpOutline } from "react-icons/md";
-import type { MessagesData, NavSection } from "../types/common.types.ts";
+import type { MessagesData, NavSection, NotifCategory } from "../types/common.types.ts";
 
 export const navSections: NavSection[] = [
   {
@@ -198,20 +198,6 @@ export const quickActions = [
   },
 ];
 
-export const financeData = [
-  { month: "Jan", expenses: 3200, income: 5800 },
-  { month: "Feb", expenses: 2800, income: 6200 },
-  { month: "Mar", expenses: 4100, income: 7100 },
-  { month: "Apr", expenses: 3600, income: 6800 },
-  { month: "May", expenses: 2900, income: 8200 },
-  { month: "Jun", expenses: 3800, income: 7600 },
-  { month: "Jul", expenses: 4200, income: 9100 },
-  { month: "Aug", expenses: 3100, income: 8400 },
-  { month: "Sep", expenses: 3700, income: 7900 },
-  { month: "Oct", expenses: 4500, income: 10200 },
-  { month: "Nov", expenses: 3900, income: 9600 },
-  { month: "Dec", expenses: 4800, income: 11500 },
-];
 
 export const messagesData: MessagesData = {
   drivers: [
@@ -288,4 +274,10 @@ export const RIDER_STATUS_TABS = [
   { key: "active", label: "Approved" },
   { key: "pending_verification", label: "Pending" },
   { key: "suspended", label: "Cancelled" },
+];
+
+export const NOTIFICATION_CATEGORY_TABS: { key: NotifCategory; label: string; color?: string }[] = [
+  { key: 'cooperate', label: 'Cooperate', color: 'var(--accent-gold)' },
+  { key: 'standard',  label: 'Standard',  color: '#EF5350' },
+  { key: 'premium',   label: 'Premium',   color: '#EF5350' },
 ];
