@@ -1,0 +1,58 @@
+import { Reminder, SosMessage, NotificationItem } from "../types/common.types";
+
+
+export const REMINDERS: Reminder[] = [
+  {
+    id: 1,
+    title: 'Maintenance reminders',
+    subtitle: 'Toyota corolla 2018',
+    time: 'Today',
+    avatar: 'https://i.pravatar.cc/150?img=11',
+  },
+  {
+    id: 2,
+    title: 'Maintenance reminders',
+    subtitle: 'Toyota corolla 2018',
+    time: 'Today',
+    avatar: 'https://i.pravatar.cc/150?img=12',
+  },
+  {
+    id: 3,
+    title: 'Maintenance reminders',
+    subtitle: 'Toyota corolla 2018',
+    time: 'Today',
+    avatar: 'https://i.pravatar.cc/150?img=13',
+  },
+];
+
+export const SOS_DRIVERS: SosMessage[] = [
+  { id: 1, name: 'Driver', plate: '123tyy, Red Camry',       complaint: 'Complain about rider', time: 'Today',     avatar: 'https://i.pravatar.cc/150?img=14', read: false },
+  { id: 2, name: 'Driver', plate: '12tyy, Red Camry',        complaint: 'Complain about rider', time: 'Today',     avatar: 'https://i.pravatar.cc/150?img=15', read: false },
+  { id: 3, name: 'Driver', plate: '12tyy, Red Camry',        complaint: 'Complain about rider', time: 'Today',     avatar: 'https://i.pravatar.cc/150?img=16', read: true  },
+  { id: 4, name: 'Driver', plate: 'XYZ456, Blue Civic',      complaint: 'Payment dispute',      time: '2h ago',    avatar: 'https://i.pravatar.cc/150?img=17', read: true  },
+  { id: 5, name: 'Driver', plate: 'ABC789, White Corolla',   complaint: 'App issue reported',   time: 'Yesterday', avatar: 'https://i.pravatar.cc/150?img=18', read: true  },
+];
+
+export const SOS_RIDERS: SosMessage[] = [
+  { id: 1, name: 'Rider', plate: 'Adeyemi Bola',  complaint: 'Driver was rude',      time: 'Today',  avatar: 'https://i.pravatar.cc/150?img=47', read: false },
+  { id: 2, name: 'Rider', plate: 'Chukwu Emeka',  complaint: 'Overcharged fare',     time: '1h ago', avatar: 'https://i.pravatar.cc/150?img=33', read: true  },
+  { id: 3, name: 'Rider', plate: 'Fatima Musa',   complaint: 'Wrong route taken',    time: '3h ago', avatar: null,                               read: true  },
+  { id: 4, name: 'Rider', plate: 'Tunde Okafor',  complaint: 'Driver arrived late',  time: '5h ago', avatar: 'https://i.pravatar.cc/150?img=52', read: true  },
+];
+
+// Notifications table — all categories share the same item shape; the
+// category field controls which tab they appear under.
+export const NOTIFICATIONS: NotificationItem[] = [
+  { id: 'n-01', userName: 'David Demo', userAvatar: 'https://i.pravatar.cc/150?img=11', date: '08/04/2022', message: 'new rider have been added',    read: false, category: 'cooperate' },
+  { id: 'n-02', userName: 'David Demo', userAvatar: 'https://i.pravatar.cc/150?img=12', date: '08/04/2022', message: 'new rider have been added',    read: true,  category: 'cooperate' },
+  { id: 'n-03', userName: 'David Demo', userAvatar: 'https://i.pravatar.cc/150?img=13', date: '08/04/2022', message: 'new rider have been added',    read: false, category: 'cooperate' },
+  { id: 'n-04', userName: 'David Demo', userAvatar: 'https://i.pravatar.cc/150?img=14', date: '08/04/2022', message: 'new rider have been added',    read: true,  category: 'cooperate' },
+  { id: 'n-05', userName: 'David Demo', userAvatar: 'https://i.pravatar.cc/150?img=15', date: '08/04/2022', message: 'new rider have been added',    read: false, category: 'cooperate' },
+  { id: 'n-06', userName: 'David Demo', userAvatar: 'https://i.pravatar.cc/150?img=16', date: '09/04/2022', message: 'new driver has been approved',  read: true,  category: 'cooperate' },
+  { id: 'n-07', userName: 'Emeka Bolu', userAvatar: 'https://i.pravatar.cc/150?img=17', date: '05/04/2022', message: 'ride completed successfully',  read: false, category: 'standard' },
+  { id: 'n-08', userName: 'Emeka Bolu', userAvatar: 'https://i.pravatar.cc/150?img=18', date: '05/04/2022', message: 'payment received',             read: true,  category: 'standard' },
+  { id: 'n-09', userName: 'Emeka Bolu', userAvatar: 'https://i.pravatar.cc/150?img=19', date: '06/04/2022', message: 'trip cancelled by rider',      read: false, category: 'standard' },
+  { id: 'n-10', userName: 'Sade Adams', userAvatar: 'https://i.pravatar.cc/150?img=47', date: '03/04/2022', message: 'premium subscription renewed', read: false, category: 'premium'  },
+  { id: 'n-11', userName: 'Sade Adams', userAvatar: 'https://i.pravatar.cc/150?img=48', date: '04/04/2022', message: 'premium feature accessed',     read: true,  category: 'premium'  },
+  { id: 'n-12', userName: 'Sade Adams', userAvatar: 'https://i.pravatar.cc/150?img=49', date: '04/04/2022', message: 'premium account upgraded',     read: false, category: 'premium'  },
+];
