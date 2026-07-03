@@ -132,3 +132,24 @@ export interface NotificationsState {
   activeSosTab: SosTab;
   activeCategory: NotifCategory;
 }
+
+////ADMIN ROLE
+export interface AdminRole {
+  id: string;
+  full_name: string;
+  email: string;
+  role: string;
+  created_at: string;
+}
+
+export interface AdminRoleSummary {
+  role: string;
+  count: number;
+}
+
+export interface AdminRoleState {
+  roles: AdminRole[];
+  summary: AdminRoleSummary[];
+  isLoading: boolean;
+  error: string | null;
+}

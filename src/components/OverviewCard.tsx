@@ -19,22 +19,23 @@ export default function OverviewCards({
   loading = false,
 }: OverviewCardsProps) {
   const totalItems = items.length;
-
+  const columns = Math.min(totalItems, 5);
   return (
     <Box
       sx={{
         backgroundColor: "var(--bg-card, #181818)",
         border: "1px solid var(--border, #222)",
         borderRadius: "14px",
-        maxWidth: maxWidth,
+        maxWidth,
         display: "grid",
         gridTemplateColumns: {
           xs: "1fr",
-          md: `repeat(${totalItems}, 1fr)`,
+          sm: "repeat(2, 1fr)",
+          md: "repeat(3, 1fr)",
+          lg: `repeat(${columns}, 1fr)`,
         },
         overflow: "hidden",
       }}
-      className="text-center"
     >
       {items.map((item, index) => {
         const isLast = index === totalItems - 1;
@@ -50,12 +51,13 @@ export default function OverviewCards({
               alignItems: "center",
               justifyContent: "center",
               borderRight: {
-                xs: "none",
-                md: isLast ? "none" : "1px solid var(--border, #222)",
+                lg:
+                  (index + 1) % columns === 0
+                    ? "none"
+                    : "1px solid var(--border, #222)",
               },
               borderBottom: {
                 xs: isLast ? "none" : "1px solid var(--border, #222)",
-                md: "none",
               },
             }}
           >
@@ -66,20 +68,20 @@ export default function OverviewCards({
                   mb: 1,
                   display: "flex",
                   color: "primary.main",
-                  "& svg": { fontSize: 22 },
+                  "& svg": { fontSize: 32 },
                 }}
               >
                 {item.icon}
               </Box>
             )}
 
-            <Typography
-              sx={{ fontSize: 12, color: "secondary.main", mb: 0.5 }}
-            >
+            <Typography sx={{ fontSize: 16, color: "primary", mb: 0.5 }}>
               {item.title}
             </Typography>
 
-            <Typography sx={{ fontSize: 24, fontWeight: 700, color: "primary" }}>
+            <Typography
+              sx={{ fontSize: 24, fontWeight: 700, color: "primary" }}
+            >
               {loading ? (
                 <Skeleton
                   variant="text"

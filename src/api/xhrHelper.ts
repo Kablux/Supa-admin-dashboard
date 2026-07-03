@@ -14,6 +14,9 @@ import {
   getStoredRefreshToken,
 } from "./axios";
 import {
+  createAdminRole,
+  deleteAdminRole,
+  getAdminRoles,
   getDriverList,
   getDriverSummary,
   getLiveTripsSummary,
@@ -26,7 +29,9 @@ import {
   getUserSummary,
   loginRequest,
   logoutRequest,
+  updateAdminRole,
 } from "./xhr";
+import { AdminRole } from "../types/common.types";
 
 export const loginAdmin = createAsyncThunk<
   LoginResponse,
@@ -141,8 +146,7 @@ export const fetchTrips = createAsyncThunk(
       return await getTrips(params);
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to load trips",
+        error.response?.data?.message || "Failed to load trips",
       );
     }
   },
@@ -150,17 +154,76 @@ export const fetchTrips = createAsyncThunk(
 
 export const fetchTransactionAnalytics = createAsyncThunk(
   "dashboard/fetchTransactionAnalytics",
-  async (
-    range: "week" | "month" | "year" = "month",
-    { rejectWithValue },
-  ) => {
+  async (range: "week" | "month" | "year" = "month", { rejectWithValue }) => {
     try {
       return await getTransactionAnalytics(range);
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to load analytics",
+        error.response?.data?.message || "Failed to load analytics",
       );
+    }
+  },
+);
+
+/////Admin Roles Thunks
+export const fetchAdminRoles = createAsyncThunk(
+  "adminRole/fetchAdminRoles",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getAdminRoles();
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to fetch admin roles");
+    }
+  },
+);
+
+export const createAdminRoleThunk = createAsyncThunk(
+  "adminRole/createAdminRole",
+  async (payload: AdminRole, { rejectWithValue }) => {
+    try {
+      const response = await createAdminRole(payload);
+
+      toast.success("Admin role created successfully");
+
+      return response;
+    } catch (error: any) {
+      toast.error("Unable to create admin role");
+
+      return rejectWithValue(error.message || "Failed to create admin role");
+    }
+  },
+);
+
+export const updateAdminRoleThunk = createAsyncThunk(
+  "adminRole/updateAdminRole",
+  async (payload: AdminRole, { rejectWithValue }) => {
+    try {
+      const response = await updateAdminRole(payload);
+
+      toast.success("Admin role updated successfully");
+
+      return response;
+    } catch (error: any) {
+      toast.error("Unable to update admin role");
+
+      return rejectWithValue(error.message || "Failed to update admin role");
+    }
+  },
+);
+
+export const deleteAdminRoleThunk = createAsyncThunk(
+  "adminRole/deleteAdminRole",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await deleteAdminRole(id);
+
+      toast.success("Admin role deleted successfully");
+
+      return id;
+    } catch (error: any) {
+      toast.error("Unable to delete admin role");
+
+      return rejectWithValue(error.message || "Failed to delete admin role");
     }
   },
 );
