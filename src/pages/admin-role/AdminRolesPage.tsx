@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { FiUsers } from "react-icons/fi";
 import AdminRolesTable from "../../components/admin-role/AdminRoleTable";
 import AdminRoleEmptyState from "../../components/admin-role/EmptyRole";
+import AppButton from "../../components/common/AppButton";
 
 export default function AdminRolePage() {
   const dispatch = useAppDispatch();
@@ -46,22 +47,13 @@ export default function AdminRolePage() {
           justifyContent: "flex-end",
         }}
       >
-        <Button
+        <AppButton
           startIcon={<AddIcon />}
-          variant="contained"
           onClick={() => navigate("/admin-role/create")}
-          sx={{
-            bgcolor: "var(--accent-gold)",
-            color: "#000",
-            fontWeight: 600,
-            textTransform: "none",
-            "&:hover": {
-              bgcolor: "var(--accent-gold)",
-            },
-          }}
+          sx={{ borderRadius: "8px", px: 3 }}
         >
-          Add New
-        </Button>
+          Add Rider
+        </AppButton>
       </Box>
 
       {/* Overview Cards */}

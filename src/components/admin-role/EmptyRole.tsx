@@ -37,16 +37,13 @@ export default function AdminRoleEmptyState() {
           mt: 1,
         }}
       >
-        Create your first admin role to start
-        managing permissions.
+        Create your first admin role to start managing permissions.
       </Typography>
 
       <Button
         variant="contained"
         sx={{ mt: 3 }}
-        onClick={() =>
-          navigate("/admin-role/create")
-        }
+        onClick={() => navigate("/admin-role/create")}
       >
         Add New Role
       </Button>

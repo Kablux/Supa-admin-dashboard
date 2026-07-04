@@ -23,6 +23,7 @@ import HelpPage from "./pages/HelpPage";
 import LoginPage from "./pages/auth/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
+import CreateAdminRolePage from "./pages/admin-role/CreateAdminPage";
 // import AddNewRider from "./pages/AddNewRider";
 
 function ThemedApp() {
@@ -45,7 +46,6 @@ function ThemedApp() {
           >
             <Route index element={<DashboardPage />} />
             <Route path="riders" element={<RidersPage />} />
-            {/* <Route path="/riders/new" element={<AddNewRider />} /> */}
             <Route path="drivers" element={<DriversPage />} />
             <Route path="trips" element={<TripsPage />} />
             <Route path="cooperate" element={<CooperatePage />} />
@@ -53,7 +53,10 @@ function ThemedApp() {
             <Route path="premium" element={<PremiumPage />} />
             <Route path="inspection" element={<InspectionPage />} />
             <Route path="transactions" element={<TransactionsPage />} />
-            <Route path="admin-roles" element={<AdminRolesPage />} />
+            <Route path="admin-role">
+              <Route index element={<AdminRolesPage />} />
+              <Route path="create" element={<CreateAdminRolePage />} />
+            </Route>
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="sos" element={<SOSPage />} />
             <Route path="settings" element={<SettingsPage />} />

@@ -178,18 +178,18 @@ export const fetchAdminRoles = createAsyncThunk(
 );
 
 export const createAdminRoleThunk = createAsyncThunk(
-  "adminRole/createAdminRole",
-  async (payload: AdminRole, { rejectWithValue }) => {
+  "adminRole/create",
+  async (
+    payload: AdminRole,
+    { rejectWithValue },
+  ) => {
     try {
-      const response = await createAdminRole(payload);
-
-      toast.success("Admin role created successfully");
-
-      return response;
+      return await createAdminRole(payload);
     } catch (error: any) {
-      toast.error("Unable to create admin role");
-
-      return rejectWithValue(error.message || "Failed to create admin role");
+      return rejectWithValue(
+        error.message ||
+          "Failed to create admin role",
+      );
     }
   },
 );

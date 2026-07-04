@@ -13,13 +13,15 @@ import {
 } from "@mui/material";
 
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { AdminRole } from "../../types/common.types";
+import { useState } from "react";
 
 interface AdminRolesTableProps {
   roles: AdminRole[];
   isLoading: boolean;
   onViewRole?: (roleId: string) => void;
+  onDeleteRole?: (roleId: string) => void;
+  onTogglePermission?: (roleId: string, currentPermission: boolean) => void;
 }
 
 export default function AdminRolesTable({
@@ -27,6 +29,21 @@ export default function AdminRolesTable({
   isLoading,
   onViewRole,
 }: AdminRolesTableProps) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedRole, setSelectedRole] = useState<AdminRole | null>(null);
+
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLElement>,
+    role: AdminRole,
+  ) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedRole(role);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedRole(null);
+  };
   if (isLoading) {
     return (
       <Box
@@ -55,7 +72,8 @@ export default function AdminRolesTable({
                   color: "var(--text-secondary)",
                   borderBottom: "1px solid var(--text-secondary)",
                   borderTop: "1px solid var(--text-secondary)",
-                  p: 1.25,
+                  px: 1.2,
+                  py: 1.5,
                   whiteSpace: "nowrap",
                 }}
               >
@@ -69,6 +87,7 @@ export default function AdminRolesTable({
           {roles.map((role) => (
             <TableRow
               key={role.id}
+              onClick={() => onViewRole?.(role.id)}
               sx={{
                 "&:last-child td": { borderBottom: "none" },
                 "&:hover": { backgroundColor: "var(--bg-card-hover)" },
@@ -83,15 +102,30 @@ export default function AdminRolesTable({
                   maxWidth: 180,
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: "var(--text-primary)",
-                  }}
-                >
-                  {role.full_name || "No name assigned"}
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                  <Avatar
+                    src={role.avatar || undefined}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      backgroundColor: "var(--accent-gold, #FFC107)",
+                      color: "#000",
+                    }}
+                  >
+                    {role.full_name.charAt(0)}
+                  </Avatar>
+                  <Typography
+                    sx={{
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: "var(--text-primary)",
+                    }}
+                  >
+                    {role.full_name}
+                  </Typography>
+                </Box>
               </TableCell>
 
               {/* Users Assigned */}
@@ -141,7 +175,10 @@ export default function AdminRolesTable({
                   // maxWidth: 180,
                 }}
               >
-                <IconButton size="small" onClick={() => onViewRole?.(role.id)}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => handleMenuOpen(e, role)}
+                >
                   <MoreVertIcon fontSize="small" />
                 </IconButton>
               </TableCell>
