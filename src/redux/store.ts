@@ -6,6 +6,7 @@ import driversReducer from "./slices/Drivers";
 import tripsReducer from "./slices/Trips";
 import transactionReducer from "./slices/Transaction";
 import notificationReducer from "./slices/Notification";
+import adminRoleReducer from "./slices/AdminRole";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     trips: tripsReducer,
     transaction: transactionReducer,
     notification: notificationReducer,
+    adminRole: adminRoleReducer,
   },
 });
 

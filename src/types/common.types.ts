@@ -132,3 +132,39 @@ export interface NotificationsState {
   activeSosTab: SosTab;
   activeCategory: NotifCategory;
 }
+
+////ADMIN ROLE
+
+export type AdminRoleType =
+  | "Support Agent"
+  | "Operations Officer"
+  | "Finance Officer"
+  | "Fleet Manager"
+  | "Corporate Manager"
+  | "Compliance Officer"
+  | "Driver Officer"
+  | "Rider Officer"
+  | "Engineering Officer"
+  
+  
+export interface AdminRole {
+  id: string;
+  full_name: string;
+  email: string;
+  avatar: string | null;
+  role: AdminRoleType;
+  permission: boolean;
+  created_at: string;
+}
+
+export interface AdminRoleSummary {
+  role: string;
+  count: number;
+}
+
+export interface AdminRoleState {
+  roles: AdminRole[];
+  summary: AdminRoleSummary[];
+  isLoading: boolean;
+  error: string | null;
+}

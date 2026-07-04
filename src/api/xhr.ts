@@ -15,7 +15,7 @@ import {
   PaginatedTripsResponse,
 } from "../types/auth";
 import { cleanQueryParams } from "../utils/hook";
-import { TransactionAnalytics } from "../types/common.types";
+import { AdminRole, TransactionAnalytics } from "../types/common.types";
 
 export interface SummaryResponse {
   data: {
@@ -81,14 +81,6 @@ export async function getRiders(
 }
 // getDriverList();
 
-export async function getRides(page = 1): Promise<PaginatedRides> {
-  const { data } = await api.get<PaginatedRides>(
-    `/business-admin/rides/?page=${page}`,
-  );
-
-  return data;
-}
-
 export async function getUserSummary() {
   const { data } = await api.get<SummaryResponse>(
     "/business-admin/users/summary/",
@@ -111,6 +103,14 @@ export async function getRiderSummary() {
 }
 
 ///LIVE TRIPS
+export async function getRides(page = 1): Promise<PaginatedRides> {
+  const { data } = await api.get<PaginatedRides>(
+    `/business-admin/rides/?page=${page}`,
+  );
+
+  return data;
+}
+
 export async function getTrips(
   params: TripQueryParams,
 ): Promise<PaginatedTripsResponse> {
@@ -142,4 +142,96 @@ export async function fetchAdminProfile(
 ): Promise<AdminUser> {
   const { data } = await api.get<AdminUser>(`/business-admin/users/${id}/`);
   return data;
+}
+
+////ADMIN ROLES
+
+const ADMIN_ROLE_STORAGE_KEY = "admin_roles";
+
+/////default roles to initialize local storage if not present
+const defaultRoles: AdminRole[] = [
+  {
+    id: "1",
+    full_name: "David Demo",
+    email: "david@test.com",
+    role: "Corporate Manager",
+    created_at: "2026-05-04",
+    permission: false,
+    avatar: null,
+  },
+  {
+    id: "2",
+    full_name: "John Smith",
+    email: "john@test.com",
+    role: "Fleet Manager",
+    created_at: "2026-05-04",
+    permission: true,
+    avatar:
+      "https://unsplash.com/photos/man-in-black-button-up-shirt-ZHvM3XIOHoE",
+  },
+  {
+    id: "3",
+    full_name: "Sarah Johnson",
+    email: "sarah@test.com",
+    role: "Engineering Officer",
+    permission: true,
+    created_at: "2026-05-04",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+  },
+];
+
+const initializeRoles = () => {
+  const existing = localStorage.getItem(ADMIN_ROLE_STORAGE_KEY);
+
+  if (!existing) {
+    localStorage.setItem(ADMIN_ROLE_STORAGE_KEY, JSON.stringify(defaultRoles));
+  }
+};
+
+const getStoredRoles = (): AdminRole[] => {
+  initializeRoles();
+
+  return JSON.parse(localStorage.getItem(ADMIN_ROLE_STORAGE_KEY) || "[]");
+};
+
+const saveRoles = (roles: AdminRole[]) => {
+  localStorage.setItem(ADMIN_ROLE_STORAGE_KEY, JSON.stringify(roles));
+};
+
+///// fetch, create, update, and delete admin roles
+export async function getAdminRoles(): Promise<AdminRole[]> {
+  return getStoredRoles();
+}
+
+export async function createAdminRole(payload: AdminRole): Promise<AdminRole> {
+  const roles = getStoredRoles();
+
+  roles.unshift(payload);
+
+  saveRoles(roles);
+
+  return payload;
+}
+
+////UPDATE AND DELETE
+export async function updateAdminRole(payload: AdminRole): Promise<AdminRole> {
+  const roles = getStoredRoles();
+
+  const updated = roles.map((role) =>
+    role.id === payload.id ? payload : role,
+  );
+
+  saveRoles(updated);
+
+  return payload;
+}
+
+export async function deleteAdminRole(id: string): Promise<string> {
+  const roles = getStoredRoles();
+
+  const updated = roles.filter((role) => role.id !== id);
+
+  saveRoles(updated);
+
+  return id;
 }

@@ -18,7 +18,7 @@ export default function AppButton({
         {
           py: 1.2,
           px: 4,
-          borderRadius: "14px",
+          borderRadius: "8px",
           backgroundColor: "var(--accent-gold)",
           color: "#000",
           fontSize: 14,

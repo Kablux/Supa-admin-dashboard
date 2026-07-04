@@ -14,7 +14,11 @@ import { MdOutlineSettings } from "react-icons/md";
 import { MdOutlineFeedback } from "react-icons/md";
 import { HiUsers } from "react-icons/hi";
 import { MdOutlineHelpOutline } from "react-icons/md";
-import type { MessagesData, NavSection, NotifCategory } from "../types/common.types.ts";
+import type {
+  MessagesData,
+  NavSection,
+  NotifCategory,
+} from "../types/common.types.ts";
 
 export const navSections: NavSection[] = [
   {
@@ -96,7 +100,7 @@ export const navSections: NavSection[] = [
         id: "admin_role",
         label: "Admin Role",
         icon: FaRegCircleUser,
-        path: "/admin-roles",
+        path: "/admin-role",
       },
     ],
   },
@@ -161,7 +165,8 @@ export const ROUTE_LABELS: Record<string, string> = {
   "/premium": "Premium",
   "/inspection": "Inspection",
   "/transactions": "Transactions",
-  "/admin-roles": "Admin Roles",
+  "/admin-role": "Admin Role",
+  "/admin-role/create": "Create Admin Role",
   "/notifications": "Notifications",
   "/sos": "SOS",
   "/settings": "Settings",
@@ -197,7 +202,6 @@ export const quickActions = [
     path: "/fleet",
   },
 ];
-
 
 export const messagesData: MessagesData = {
   drivers: [
@@ -276,8 +280,12 @@ export const RIDER_STATUS_TABS = [
   { key: "suspended", label: "Cancelled" },
 ];
 
-export const NOTIFICATION_CATEGORY_TABS: { key: NotifCategory; label: string; color?: string }[] = [
-  { key: 'cooperate', label: 'Cooperate', color: 'var(--accent-gold)' },
-  { key: 'standard',  label: 'Standard',  color: '#EF5350' },
-  { key: 'premium',   label: 'Premium',   color: '#EF5350' },
+export const NOTIFICATION_CATEGORY_TABS: {
+  key: NotifCategory;
+  label: string;
+  color?: string;
+}[] = [
+  { key: "cooperate", label: "Cooperate", color: "var(--accent-gold)" },
+  { key: "standard", label: "Standard", color: "#EF5350" },
+  { key: "premium", label: "Premium", color: "#EF5350" },
 ];

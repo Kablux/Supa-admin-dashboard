@@ -15,7 +15,7 @@ const PATH_TO_ID: Record<string, string> = {
   "/premium": "premium",
   "/inspection": "inspection",
   "/transactions": "transaction",
-  "/admin-roles": "admin_role",
+  "/admin-role": "admin_role",
   "/notifications": "notification",
   "/sos": "sos",
   "/settings": "setting",
