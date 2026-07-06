@@ -52,7 +52,7 @@ export default function AdminRolePage() {
           onClick={() => navigate("/admin-role/create")}
           sx={{ borderRadius: "8px", px: 3 }}
         >
-          Add Rider
+          Add New Role
         </AppButton>
       </Box>
 
