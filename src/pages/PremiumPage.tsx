@@ -3,11 +3,11 @@ import PremiumInfoCard from "../components/premium/InfoCard";
 import { useAppSelector } from "../redux/hooks";
 import StatCard from "../components/premium/StatCard";
 import { PremiumStat } from "../types/common.types";
+import PremiumTransactionsTable from "../components/premium/PremiumTable";
+import { premiumTransactions } from "../data/data";
 
 export default function PremiumPage() {
-  const { stats, transactions, isLoading } = useAppSelector(
-    (state) => state.premium,
-  );
+  const { isLoading } = useAppSelector((state) => state.premium);
 
   const premiumStats: PremiumStat[] = [
     {
@@ -127,11 +127,10 @@ export default function PremiumPage() {
       </Box>
 
       {/* Transactions Table */}
-
-      {/* <PremiumTransactionsTable
-        data={transactions}
+      <PremiumTransactionsTable
+        data={premiumTransactions}
         isLoading={isLoading}
-      /> */}
+      />
     </Box>
   );
 }

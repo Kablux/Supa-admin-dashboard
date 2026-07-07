@@ -198,7 +198,7 @@ export interface PremiumTransaction {
   date: string;
   pickup: string;
   destination: string;
-  status: string;
+ status: string;
 }
 
 export interface PremiumState {
