@@ -18,7 +18,7 @@ import type {
   MessagesData,
   NavSection,
   NotifCategory,
-} from "../types/common.types.ts";
+} from "../types/common.types.js";
 
 export const navSections: NavSection[] = [
   {

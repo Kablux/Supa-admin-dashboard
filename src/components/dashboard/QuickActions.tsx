@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import { quickActions } from "../../data/mockData";
+import { quickActions } from "../../data/data";
 import { useNavigate } from "react-router-dom";
 
 export default function QuickActions() {
