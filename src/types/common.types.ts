@@ -168,3 +168,42 @@ export interface AdminRoleState {
   isLoading: boolean;
   error: string | null;
 }
+
+// ── Premium Stat cards ────────────────────────────────────────────────────────────────
+
+// export interface PremiumStat {
+//   id: string;
+//   label: string;
+//   value: number;
+//   icon: keyof typeof Icons;
+//   color: string;
+//   bg: string;
+//   trend?: number;
+// }
+export interface PremiumStat {
+  id: string;
+  label: string;
+  value: string | number;
+  icon: keyof typeof Icons;
+  color: string;
+  bg: string;
+  description?: string;
+  details?: string[];
+}
+
+export interface PremiumTransaction {
+  id: string;
+  rider: string;
+  avatar?: string;
+  date: string;
+  pickup: string;
+  destination: string;
+ status: string;
+}
+
+export interface PremiumState {
+  stats: PremiumStat[];
+  transactions: PremiumTransaction[];
+  isLoading: boolean;
+  error: string | null;
+}

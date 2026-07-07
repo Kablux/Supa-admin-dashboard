@@ -12,18 +12,16 @@ import {
 } from "@mui/material";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import { NOTIFICATION_CATEGORY_TABS } from "../../data/mockData";
+import { NOTIFICATION_CATEGORY_TABS } from "../../data/data";
 import { NotifRow } from "./NotificationRow";
 import { NotifCategory, NotificationItem } from "../../types/common.types";
 
-
-
 interface NotificationsTablePanelProps {
-  activeCategory: NotifCategory; 
-  notifications: NotificationItem[]; 
-  filteredNotifs: NotificationItem[]; 
+  activeCategory: NotifCategory;
+  notifications: NotificationItem[];
+  filteredNotifs: NotificationItem[];
   unreadCount: number;
-  onCategoryChange: (category: NotifCategory) => void
+  onCategoryChange: (category: NotifCategory) => void;
   onMarkAllRead: () => void;
 }
 
@@ -38,7 +36,6 @@ export default function NotificationsTablePanel({
   return (
     <Box>
       <Box sx={{ transition: "background-color 0.25s" }}>
-        
         {/* Toolbar */}
         <Box
           sx={{
@@ -58,7 +55,7 @@ export default function NotificationsTablePanel({
             {NOTIFICATION_CATEGORY_TABS.map((tab) => {
               const isActive = activeCategory === tab.key;
               const catUnread = notifications.filter(
-                (n) => n.category === tab.key && !n.read
+                (n) => n.category === tab.key && !n.read,
               ).length;
 
               return (
@@ -86,7 +83,9 @@ export default function NotificationsTablePanel({
                     sx={{
                       fontSize: 13.5,
                       fontWeight: isActive ? 600 : 400,
-                      color: isActive ? "var(--accent-gold)" : "var(--text-muted)",
+                      color: isActive
+                        ? "var(--accent-gold)"
+                        : "var(--text-muted)",
                       transition: "color 0.15s",
                     }}
                   >

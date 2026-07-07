@@ -8,7 +8,7 @@ import {
   Typography,
   Divider,
 } from "@mui/material";
-import { navSections } from "../../data/mockData";
+import { navSections } from "../../data/data";
 import logoImg from "../../assets/Kablux-logo.svg";
 import UpgradeBox from "./Upgrade";
 import type { NavItem } from "../../types/common.types";
@@ -18,15 +18,13 @@ export const SIDEBAR_WIDTH = 220;
 interface SidebarProps {
   activeNav: string;
 
-  setActiveNav: React.Dispatch<
-    React.SetStateAction<string>
-  >;
+  setActiveNav: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function Sidebar({ activeNav, setActiveNav }: SidebarProps) {
   const navigate = useNavigate();
 
-  const handleNav = (item:NavItem) => {
+  const handleNav = (item: NavItem) => {
     setActiveNav(item.id);
     navigate(item.path);
   };
@@ -150,7 +148,6 @@ export default function Sidebar({ activeNav, setActiveNav }: SidebarProps) {
           </Box>
         ))}
       </Box>
-
     </Box>
   );
 }

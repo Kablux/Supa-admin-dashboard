@@ -21,7 +21,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { useThemeMode } from "../../theme/ThemeContext";
-import { ROUTE_LABELS } from "../../data/mockData";
+import { ROUTE_LABELS } from "../../data/data";
 import { logoutAdmin } from "../../api/xhrHelper";
 import { useAppDispatch } from "../../redux/hooks";
 

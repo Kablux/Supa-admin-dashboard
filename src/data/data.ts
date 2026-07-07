@@ -18,7 +18,8 @@ import type {
   MessagesData,
   NavSection,
   NotifCategory,
-} from "../types/common.types.ts";
+  PremiumTransaction,
+} from "../types/common.types.js";
 
 export const navSections: NavSection[] = [
   {
@@ -288,4 +289,48 @@ export const NOTIFICATION_CATEGORY_TABS: {
   { key: "cooperate", label: "Cooperate", color: "var(--accent-gold)" },
   { key: "standard", label: "Standard", color: "#EF5350" },
   { key: "premium", label: "Premium", color: "#EF5350" },
+];
+
+// premiumDummy.ts
+export const premiumTransactions: PremiumTransaction[] = [
+  {
+    id: "1",
+    rider: "David Demo",
+    date: "2026-05-04",
+    pickup: "Abraham Adesanya, Ajah Lagos",
+    destination: "Lekki Phase 1, Lagos",
+    status: "Completed",
+  },
+  {
+    id: "2",
+    rider: "Sarah Johnson",
+    date: "2026-05-04",
+    pickup: "Victoria Island",
+    destination: "Ikoyi Lagos",
+    status: "Pending",
+  },
+  {
+    id: "3",
+    rider: "Michael Brown",
+    date: "2026-05-05",
+    pickup: "Yaba",
+    destination: "Lekki",
+    status: "Completed",
+  },
+  {
+    id: "4",
+    rider: "John Smith",
+    date: "2026-05-05",
+    pickup: "Surulere",
+    destination: "Ikeja",
+    status: "Failed",
+  },
+  {
+    id: "5",
+    rider: "Samuel James",
+    date: "2026-05-06",
+    pickup: "Ajah",
+    destination: "Victoria Island",
+    status: "Completed",
+  },
 ];
