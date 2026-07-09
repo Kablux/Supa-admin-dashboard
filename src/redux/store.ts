@@ -7,6 +7,7 @@ import tripsReducer from "./slices/Trips";
 import transactionReducer from "./slices/Transaction";
 import notificationReducer from "./slices/Notification";
 import adminRoleReducer from "./slices/AdminRole";
+import corporateReducer from "./slices/corporate";
 import premiumReducer from "./slices/Premium";
 
 export const store = configureStore({
@@ -19,7 +20,8 @@ export const store = configureStore({
     transaction: transactionReducer,
     notification: notificationReducer,
     adminRole: adminRoleReducer,
-     premium:       premiumReducer,
+    corporate: corporateReducer,
+    premium: premiumReducer,
   },
 });
 

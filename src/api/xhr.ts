@@ -15,7 +15,13 @@ import {
   PaginatedTripsResponse,
 } from "../types/auth";
 import { cleanQueryParams } from "../utils/hook";
-import { AdminRole, TransactionAnalytics } from "../types/common.types";
+import {
+  AdminRole,
+  CorporateInfo,
+  CorporateOwner,
+  CorporateStat,
+  TransactionAnalytics,
+} from "../types/common.types";
 
 export interface SummaryResponse {
   data: {
@@ -234,4 +240,89 @@ export async function deleteAdminRole(id: string): Promise<string> {
   saveRoles(updated);
 
   return id;
+}
+
+///corporate
+const corporateData = {
+  stats: [
+    {
+      id: "1",
+      label: "Total Accounts",
+      value: 45,
+      icon: "BusinessCenter",
+      color: "#32D583",
+      bg: "#12361F",
+    },
+    {
+      id: "2",
+      label: "Active Companies",
+      value: 45,
+      icon: "Groups",
+      color: "#8B5CF6",
+      bg: "#241A38",
+    },
+    {
+      id: "3",
+      label: "Total Revenue",
+      value: 45,
+      icon: "Payments",
+      color: "#EF4444",
+      bg: "#3A1111",
+    },
+    {
+      id: "4",
+      label: "Corporate Rides",
+      value: 45,
+      icon: "DirectionsCar",
+      color: "#FACC15",
+      bg: "#433306",
+    },
+  ] as CorporateStat[],
+
+  companyInfo: {
+    companyName: "Vik Kreative",
+    contactPerson: "Mr. Victor",
+    staff: 20,
+    accountBalance: 150000,
+    uniqueCode: "137087KJA",
+    year: 2025,
+  } as CorporateInfo,
+
+  owners: [
+    {
+      id: "1",
+      name: "David Demo",
+      avatar: null,
+      date: "2026-05-04",
+      carName: "Camry 2026",
+      carQty: 1,
+      amount: 500000,
+    },
+    {
+      id: "2",
+      name: "Sarah Johnson",
+      avatar: null,
+      date: "2026-05-04",
+      carName: "Ferarri",
+      carQty: 3,
+      amount: 850000,
+    },
+    {
+      id: "3",
+      name: "Michael Adams",
+      avatar: null,
+      date: "2026-05-04",
+      carName: "Hummer Jeep",
+      carQty: 2,
+      amount: 450000,
+    },
+  ] as CorporateOwner[],
+};
+
+export async function getCorporateData() {
+  return new Promise<typeof corporateData>((resolve) => {
+    setTimeout(() => {
+      resolve(corporateData);
+    }, 500);
+  });
 }

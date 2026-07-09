@@ -12,7 +12,7 @@ const BALANCE_ICONS: Record<string, React.ReactElement> = {
 };
 
 const BALANCE_ACCENT: Record<string, string> = {
-  cooperate: "#F5C518",
+  corporate: "#F5C518",
   fleet: "#42A5F5",
   luxury: "#4CAF50",
 };

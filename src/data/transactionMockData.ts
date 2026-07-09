@@ -9,8 +9,8 @@ import {
 
 export const INCOME_CARDS: IncomeCard[] = [
   {
-    id: "cooperate",
-    label: "COOPERATE",
+    id: "corporate",
+    label: "corporate",
     amount: 900.0,
     trend: -1.9,
     comparedAmount: 986.0,
@@ -115,8 +115,8 @@ export const RECENT_TRANSACTIONS: RecentTransaction[] = [
 
 export const BALANCES: BalanceCard[] = [
   {
-    id: "cooperate",
-    label: "Cooperate Balance",
+    id: "corporate",
+    label: "corporate Balance",
     amount: 60000,
     icon: "AccountBalanceWallet",
     iconBg: "rgba(245,197,24,0.15)",
@@ -183,7 +183,7 @@ export const MICRO_STATS: MicroStat[] = [
 ];
 
 export const DONUT_DATA = [
-  { name: "Cooperate", value: 23, color: "#4CAF50" },
+  { name: "corporate", value: 23, color: "#4CAF50" },
   { name: "Fleet", value: 14, color: "#2196F3" },
   { name: "Luxury", value: 8, color: "#9C27B0" },
   { name: "Standard", value: 31, color: "#F5C518" },

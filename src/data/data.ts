@@ -56,10 +56,10 @@ export const navSections: NavSection[] = [
         path: "/trips",
       },
       {
-        id: "cooperate",
-        label: "Cooperate",
+        id: "corporate",
+        label: "corporate",
         icon: HiOutlineBuildingOffice,
-        path: "/cooperate",
+        path: "/corporate",
       },
       {
         id: "fleet",
@@ -161,7 +161,7 @@ export const ROUTE_LABELS: Record<string, string> = {
   "/riders/new": "Riders",
   "/drivers": "Drivers",
   "/trips": "Trips",
-  "/cooperate": "Cooperate",
+  "/corporate": "corporate",
   "/fleet": "Fleet",
   "/premium": "Premium",
   "/inspection": "Inspection",
@@ -190,7 +190,7 @@ export const quickActions = [
   {
     label: "Create promo code",
     icon: "LocalOffer",
-    path: "/cooperate",
+    path: "/corporate",
   },
   {
     label: "Send broadcast message",
@@ -286,7 +286,7 @@ export const NOTIFICATION_CATEGORY_TABS: {
   label: string;
   color?: string;
 }[] = [
-  { key: "cooperate", label: "Cooperate", color: "var(--accent-gold)" },
+  { key: "corporate", label: "corporate", color: "var(--accent-gold)" },
   { key: "standard", label: "Standard", color: "#EF5350" },
   { key: "premium", label: "Premium", color: "#EF5350" },
 ];
