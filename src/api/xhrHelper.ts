@@ -17,12 +17,12 @@ import {
   createAdminRole,
   deleteAdminRole,
   getAdminRoles,
+  getCorporateData,
   getDriverList,
   getDriverSummary,
   getLiveTripsSummary,
   getRiders,
   getRiderSummary,
-  getRides,
   getTransactionAnalytics,
   getTrips,
   getUserList,
@@ -32,6 +32,8 @@ import {
   updateAdminRole,
 } from "./xhr";
 import { AdminRole } from "../types/common.types";
+import { setCorporateData, setLoading } from "../redux/slices/corporate";
+import { AppDispatch } from "../redux/store";
 
 export const loginAdmin = createAsyncThunk<
   LoginResponse,
@@ -179,17 +181,11 @@ export const fetchAdminRoles = createAsyncThunk(
 
 export const createAdminRoleThunk = createAsyncThunk(
   "adminRole/create",
-  async (
-    payload: AdminRole,
-    { rejectWithValue },
-  ) => {
+  async (payload: AdminRole, { rejectWithValue }) => {
     try {
       return await createAdminRole(payload);
     } catch (error: any) {
-      return rejectWithValue(
-        error.message ||
-          "Failed to create admin role",
-      );
+      return rejectWithValue(error.message || "Failed to create admin role");
     }
   },
 );
@@ -227,3 +223,19 @@ export const deleteAdminRoleThunk = createAsyncThunk(
     }
   },
 );
+
+////CORPORATE THUNKS
+
+export const fetchCorporateData = () => async (dispatch: AppDispatch) => {
+  try {
+    dispatch(setLoading(true));
+
+    const response = await getCorporateData();
+
+    dispatch(setCorporateData(response));
+  } catch (error) {
+    console.error("Failed to fetch corporate data", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};

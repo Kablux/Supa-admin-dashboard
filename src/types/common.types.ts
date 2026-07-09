@@ -69,7 +69,6 @@ export const TRIP_TAB_MAPPING = {
   cancelled: "cancelled",
 } as const;
 
-
 export interface AnalyticsPoint {
   x: string;
   y: number;
@@ -91,9 +90,8 @@ export interface TransactionAnalytics {
   };
 }
 
-
 // NOTIFICATION TYPES
-export type NotifCategory = 'cooperate' | 'standard' | 'premium';
+export type NotifCategory = "corporate" | "standard" | "premium";
 
 export interface Reminder {
   id: number;
@@ -113,12 +111,12 @@ export interface NotificationItem {
   category: NotifCategory;
 }
 
-export type SosTab = 'drivers' | 'riders';
+export type SosTab = "drivers" | "riders";
 
 export interface SosMessage {
   id: number;
   name: string;
-  plate: string;       // driver plate or rider name
+  plate: string; // driver plate or rider name
   complaint: string;
   time: string;
   avatar: string | null;
@@ -144,9 +142,8 @@ export type AdminRoleType =
   | "Compliance Officer"
   | "Driver Officer"
   | "Rider Officer"
-  | "Engineering Officer"
-  
-  
+  | "Engineering Officer";
+
 export interface AdminRole {
   id: string;
   full_name: string;
@@ -198,12 +195,49 @@ export interface PremiumTransaction {
   date: string;
   pickup: string;
   destination: string;
- status: string;
+  status: string;
 }
 
 export interface PremiumState {
   stats: PremiumStat[];
   transactions: PremiumTransaction[];
+  isLoading: boolean;
+  error: string | null;
+}
+
+////CORPORATE TYPES
+export interface CorporateStat {
+  id: string;
+  label: string;
+  value: number;
+  icon: keyof typeof Icons;
+  color: string;
+  bg: string;
+}
+
+export interface CorporateOwner {
+  id: string;
+  name: string;
+  avatar: string | null;
+  date: string;
+  carName: string;
+  carQty: number;
+  amount: number;
+}
+
+export interface CorporateInfo {
+  companyName: string;
+  contactPerson: string;
+  staff: number;
+  accountBalance: number;
+  uniqueCode: string;
+  year: number;
+}
+
+export interface CorporateState {
+  stats: CorporateStat[];
+  owners: CorporateOwner[];
+  companyInfo: CorporateInfo | null;
   isLoading: boolean;
   error: string | null;
 }

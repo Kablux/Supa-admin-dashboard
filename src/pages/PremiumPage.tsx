@@ -65,6 +65,7 @@ export default function PremiumPage() {
             display: "grid",
             gridTemplateColumns: {
               xs: "1fr",
+              sm: "repeat(3,1fr)",
               md: "repeat(4,1fr)",
             },
             gap: 2,

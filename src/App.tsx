@@ -8,7 +8,6 @@ import DashboardPage from "./pages/DashboardPage";
 import RidersPage from "./pages/RidersPage";
 import DriversPage from "./pages/DriversPage";
 import TripsPage from "./pages/TripsPage";
-import CooperatePage from "./pages/CooperatePage";
 import FleetPage from "./pages/FleetPage";
 import PremiumPage from "./pages/PremiumPage";
 import InspectionPage from "./pages/InspectionPage";
@@ -24,7 +23,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import CreateAdminRolePage from "./pages/admin-role/CreateAdminPage";
-// import AddNewRider from "./pages/AddNewRider";
+import CorporatePage from "./pages/CorporatePage";
 
 function ThemedApp() {
   const { mode } = useThemeMode();
@@ -48,7 +47,7 @@ function ThemedApp() {
             <Route path="riders" element={<RidersPage />} />
             <Route path="drivers" element={<DriversPage />} />
             <Route path="trips" element={<TripsPage />} />
-            <Route path="cooperate" element={<CooperatePage />} />
+            <Route path="corporate" element={<CorporatePage />} />
             <Route path="fleet" element={<FleetPage />} />
             <Route path="premium" element={<PremiumPage />} />
             <Route path="inspection" element={<InspectionPage />} />

@@ -13,14 +13,14 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IconButton from "@mui/material/IconButton";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import { PremiumTransaction } from "../../types/common.types";
+import { CorporateOwner } from "../../types/common.types";
 
 interface Props {
-  data: PremiumTransaction[];
+  data: CorporateOwner[];
   isLoading: boolean;
 }
 
-export default function PremiumTransactionsTable({ data, isLoading }: Props) {
+export default function CorporateTransactionTable({ data, isLoading }: Props) {
   if (isLoading) {
     return (
       <Box
@@ -89,7 +89,7 @@ export default function PremiumTransactionsTable({ data, isLoading }: Props) {
             lineHeight: 1.5,
           }}
         >
-          Premium transactions will appear here once activity is recorded.
+          Corporate transactions will appear here once activity is recorded.
         </Typography>
       </Box>
     );
@@ -100,7 +100,7 @@ export default function PremiumTransactionsTable({ data, isLoading }: Props) {
       <Table>
         <TableHead>
           <TableRow>
-            {["Name", "Date", "Pickup", "Destination", "Status", "Action"].map(
+            {["Name", "Date", "Cars", "Amount of Cars", "Earning", "Action"].map(
               (header) => (
                 <TableCell
                   key={header}
@@ -148,14 +148,14 @@ export default function PremiumTransactionsTable({ data, isLoading }: Props) {
                   }}
                 >
                   <Avatar
-                    src={transaction.avatar}
+                    src={transaction.avatar || undefined}
                     sx={{
                       width: 32,
                       height: 32,
                       bgcolor: "var(--border)",
                     }}
                   >
-                    {transaction.rider[0]}
+                    {transaction.name[0]}
                   </Avatar>
 
                   <Typography
@@ -165,7 +165,7 @@ export default function PremiumTransactionsTable({ data, isLoading }: Props) {
                       color: "var(--text-primary)",
                     }}
                   >
-                    {transaction.rider}
+                    {transaction.name}
                   </Typography>
                 </Box>
               </TableCell>
@@ -199,7 +199,7 @@ export default function PremiumTransactionsTable({ data, isLoading }: Props) {
                     whiteSpace: "normal",
                   }}
                 >
-                  {transaction.pickup}
+                  {transaction.carName}
                 </Typography>
               </TableCell>
 
@@ -216,7 +216,7 @@ export default function PremiumTransactionsTable({ data, isLoading }: Props) {
                     whiteSpace: "normal",
                   }}
                 >
-                  {transaction.destination}
+                  {transaction.carQty}
                 </Typography>
               </TableCell>
 
@@ -232,7 +232,7 @@ export default function PremiumTransactionsTable({ data, isLoading }: Props) {
                     whiteSpace: "normal",
                   }}
                 >
-                  {transaction.status}
+                  {transaction.amount}
                 </Typography>
               </TableCell>
 
