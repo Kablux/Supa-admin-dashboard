@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { Box, Skeleton, Typography } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import * as Icons from "@mui/icons-material";
-import { PremiumStat } from "../../types/common.types";
+import { FleetStat } from "../../types/common.types";
 
 interface DynamicIconProps {
   name: keyof typeof Icons;
 }
 
 interface StatCardProps {
-  stat: PremiumStat;
+  stat: FleetStat;
   delay?: number;
   loading?: boolean;
 }

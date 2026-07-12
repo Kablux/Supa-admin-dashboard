@@ -326,3 +326,182 @@ export async function getCorporateData() {
     }, 500);
   });
 }
+
+///Fleet
+export async function getFleetData() {
+  return {
+    stats: [
+      {
+        id: "1",
+        label: "Account",
+        value: 45,
+        icon: "AccountBalanceWallet",
+        color: "#4CAF50",
+        bg: "#12301D",
+      },
+      {
+        id: "2",
+        label: "Fleet Pool",
+        value: 45,
+        icon: "DirectionsCar",
+        color: "#8E44AD",
+        bg: "#2B1E38",
+      },
+      {
+        id: "3",
+        label: "Income Generated",
+        value: 45,
+        icon: "Payments",
+        color: "#D32F2F",
+        bg: "#3D1313",
+      },
+      {
+        id: "4",
+        label: "Active Vehicle",
+        value: 45,
+        icon: "LocalTaxi",
+        color: "#FBC02D",
+        bg: "#403100",
+      },
+    ],
+
+    vehicles: [
+      {
+        id: "1",
+        name: "SUV 2025",
+        model: "2025",
+        amount: 500000,
+        year: 2025,
+        insuranceYear: 2029,
+        plateNumber: "137087KJA",
+        image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+        inspectionReminder:
+          "Reminder 4 months before next inspection and paper registration",
+      },
+
+      {
+        id: "2",
+        name: "Toyota Highlander",
+        model: "2024",
+        amount: 450000,
+        year: 2024,
+        insuranceYear: 2028,
+        plateNumber: "LAG204RT",
+        image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d",
+      },
+
+      {
+        id: "3",
+        name: "Volkswagen Tiguan",
+        model: "2023",
+        amount: 420000,
+        year: 2023,
+        insuranceYear: 2027,
+        plateNumber: "ABJ908KL",
+        image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b",
+      },
+
+      {
+        id: "4",
+        name: "Ford Escape",
+        model: "2025",
+        amount: 520000,
+        year: 2025,
+        insuranceYear: 2030,
+        plateNumber: "FLEET901",
+        image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7",
+      },
+    ],
+
+    gallery: [
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+      "https://images.unsplash.com/photo-1553440569-bcc63803a83d",
+      "https://images.unsplash.com/photo-1544636331-e26879cd4d9b",
+      "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7",
+    ],
+
+    reminders: [
+      {
+        id: "1",
+        avatar: null,
+        title: "Maintenance reminders",
+        subtitle: "Toyota corolla 2025",
+        time: "Today",
+      },
+      {
+        id: "2",
+        avatar: null,
+        title: "Maintenance reminders",
+        subtitle: "Toyota corolla 2025",
+        time: "Today",
+      },
+      {
+        id: "3",
+        avatar: null,
+        title: "Maintenance reminders",
+        subtitle: "Toyota corolla 2025",
+        time: "Today",
+      },
+    ],
+
+    pairings: [
+      {
+        id: "1",
+        avatar: null,
+        title: "Assign drivers",
+        subtitle: "Toyota corolla 2025",
+        // time: "Today",
+      },
+      {
+        id: "2",
+        avatar: null,
+        title: "Assign drivers",
+        subtitle: "Toyota corolla 2025",
+        // time: "Today",
+      },
+      {
+        id: "3",
+        avatar: null,
+        title: "Assign drivers",
+        subtitle: "Toyota corolla 2025",
+        // time: "Today",
+      },
+    ],
+
+    status: {
+      active: 20,
+      offline: 10,
+      blocked: 3,
+    },
+
+    owners: [
+      {
+        id: "1",
+        name: "David Demo",
+        avatar: null,
+        date: "2026-05-04",
+        car: "Ferrari",
+        quantity: 1,
+        earning: 30000,
+      },
+      {
+        id: "2",
+        name: "David Demo",
+        avatar: null,
+        date: "2026-05-04",
+        car: "Ferrari",
+        quantity: 1,
+        earning: 30000,
+      },
+      {
+        id: "3",
+        name: "David Demo",
+        avatar: null,
+        date: "2026-05-04",
+        car: "Ferrari",
+        quantity: 1,
+        earning: 30000,
+      },
+    ],
+  };
+}

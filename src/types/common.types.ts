@@ -241,3 +241,68 @@ export interface CorporateState {
   isLoading: boolean;
   error: string | null;
 }
+
+////FLEET TYPES
+export interface FleetStat {
+  id: string;
+  label: string;
+  value: number;
+  icon: keyof typeof Icons;
+  color: string;
+  bg: string;
+}
+
+export interface FleetVehicle {
+  id: string;
+  name: string;
+  model: string;
+  amount: number;
+  year: number;
+  insuranceYear: number;
+  plateNumber: string;
+  image: string;
+  inspectionReminder?: string;
+}
+
+export interface FleetReminder {
+  id: string;
+  avatar: string | null;
+  title: string;
+  subtitle: string;
+  time: string;
+}
+
+export interface VehiclePairing {
+  id: string;
+  avatar: string | null;
+  title: string;
+  subtitle: string;
+  time?: string;
+}
+
+export interface FleetOwner {
+  id: string;
+  name: string;
+  avatar?: string;
+  date: string;
+  car: string;
+  quantity: number;
+  earning: number;
+}
+
+export interface FleetStatus {
+  active: number;
+  offline: number;
+  blocked: number;
+}
+
+export interface FleetState {
+  stats: FleetStat[];
+  vehicles: FleetVehicle[];
+  gallery: string[];
+  reminders: FleetReminder[];
+  pairings: VehiclePairing[];
+  owners: FleetOwner[];
+  status: FleetStatus;
+  isLoading: boolean;
+}

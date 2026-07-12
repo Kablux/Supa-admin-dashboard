@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
-import PremiumInfoCard from "../components/premium/InfoCard";
 import { useAppSelector } from "../redux/hooks";
 import StatCard from "../components/premium/StatCard";
 import { PremiumStat } from "../types/common.types";
 import PremiumTransactionsTable from "../components/premium/PremiumTable";
 import { premiumTransactions } from "../data/data";
+import InfoCard from "../components/InfoCard";
 
 export default function PremiumPage() {
   const { isLoading } = useAppSelector((state) => state.premium);
@@ -81,7 +81,7 @@ export default function PremiumPage() {
           ))}
         </Box>
 
-        <PremiumInfoCard
+        <InfoCard
           title="Wallet Transactions"
           subtitle="Transactions"
           items={[
@@ -105,7 +105,7 @@ export default function PremiumPage() {
           gap: 3,
         }}
       >
-        <PremiumInfoCard
+        <InfoCard
           title="Payout Management"
           subtitle="Payout"
           items={[
@@ -116,7 +116,7 @@ export default function PremiumPage() {
           ]}
         />
 
-        <PremiumInfoCard
+        <InfoCard
           title="Reconciliation Tools"
           subtitle="Tools"
           items={[

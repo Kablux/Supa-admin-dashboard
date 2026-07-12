@@ -4,11 +4,11 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 interface Props {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   items: string[];
 }
 
-export default function CorporateInfoCard({ title, subtitle, items }: Props) {
+export default function InfoCard({ title, subtitle, items }: Props) {
   return (
     <Box
       sx={{

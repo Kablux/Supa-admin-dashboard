@@ -40,7 +40,7 @@ export default function StatCard({
           animationDelay: `${delay}ms`,
           position: "relative",
           overflow: "hidden",
-          minHeight: 108,
+          minHeight: 179,
           maxHeight: 197,
           display: "flex",
           flexDirection: "column",
