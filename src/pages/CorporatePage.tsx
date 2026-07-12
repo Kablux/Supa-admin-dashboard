@@ -5,10 +5,10 @@ import AdjustOutlinedIcon from "@mui/icons-material/AdjustOutlined";
 import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useEffect } from "react";
-import StatCard from "../components/dashboard/StatCard";
 import { fetchCorporateData } from "../api/xhrHelper";
-import CorporateInfoCard from "../components/corporate/InfoCard";
 import CorporateTransactionTable from "../components/corporate/CorporateTable";
+import StatCard from "../components/corporate/StatCard";
+import InfoCard from "../components/InfoCard";
 
 export default function CorporatePage() {
   const dispatch = useAppDispatch();
@@ -43,7 +43,7 @@ export default function CorporatePage() {
             gridTemplateColumns: {
               xs: "1fr",
               sm: "repeat(3,1fr)",
-              md: "repeat(4,1fr)",
+              lg: "repeat(4,1fr)",
             },
             gap: 2,
           }}
@@ -53,7 +53,7 @@ export default function CorporatePage() {
               key={stat.id}
               stat={stat}
               loading={isLoading}
-              delay={index * 100}
+              // delay={index * 100}
             />
           ))}
         </Box>
@@ -72,7 +72,9 @@ export default function CorporatePage() {
             >
               {/* Left Side: Company Name */}
               <Box>
-                <Typography sx={{ fontSize: 14, color: "secondary.main", mb: 0.5 }}>
+                <Typography
+                  sx={{ fontSize: 14, color: "secondary.main", mb: 0.5 }}
+                >
                   Company Name:
                 </Typography>
                 <Typography
@@ -84,14 +86,18 @@ export default function CorporatePage() {
                 >
                   {companyInfo.companyName}
                 </Typography>
-                <Typography sx={{ fontSize: 14, color: "secondary.main", mt: 1 }}>
+                <Typography
+                  sx={{ fontSize: 14, color: "secondary.main", mt: 1 }}
+                >
                   ibrahimvictor2001@gmail.com
                 </Typography>
               </Box>
 
               {/* Right Side: Contact Person */}
               <Box>
-                <Typography sx={{ fontSize: 14, color: "secondary.main", mb: 0.5 }}>
+                <Typography
+                  sx={{ fontSize: 14, color: "secondary.main", mb: 0.5 }}
+                >
                   Contact Person:
                 </Typography>
                 <Typography
@@ -216,10 +222,10 @@ export default function CorporatePage() {
             lg: "1fr 1fr",
           },
           gap: 3,
-          mb:4
+          mb: 4,
         }}
       >
-        <CorporateInfoCard
+        <InfoCard
           title="Corporate Reports"
           subtitle="Summary"
           items={[
@@ -229,7 +235,7 @@ export default function CorporatePage() {
             "Corporate savings & promo usage",
           ]}
         />
-        <CorporateInfoCard
+        <InfoCard
           title="Billing & Invoicing"
           subtitle="transactions"
           items={[
@@ -242,7 +248,7 @@ export default function CorporatePage() {
       </Box>
 
       {/* Transactions Table */}
-      
+
       <CorporateTransactionTable data={owners} isLoading={isLoading} />
     </Box>
   );

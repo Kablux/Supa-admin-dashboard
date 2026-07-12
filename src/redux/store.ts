@@ -9,6 +9,7 @@ import notificationReducer from "./slices/Notification";
 import adminRoleReducer from "./slices/AdminRole";
 import corporateReducer from "./slices/corporate";
 import premiumReducer from "./slices/Premium";
+import fleetReducer from "./slices/Fleet";
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
     notification: notificationReducer,
     adminRole: adminRoleReducer,
     corporate: corporateReducer,
+    fleet: fleetReducer,
     premium: premiumReducer,
   },
 });

@@ -20,6 +20,7 @@ import {
   getCorporateData,
   getDriverList,
   getDriverSummary,
+  getFleetData,
   getLiveTripsSummary,
   getRiders,
   getRiderSummary,
@@ -34,6 +35,7 @@ import {
 import { AdminRole } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
+import { setFleetData } from "../redux/slices/Fleet";
 
 export const loginAdmin = createAsyncThunk<
   LoginResponse,
@@ -235,6 +237,19 @@ export const fetchCorporateData = () => async (dispatch: AppDispatch) => {
     dispatch(setCorporateData(response));
   } catch (error) {
     console.error("Failed to fetch corporate data", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+///FLEET THUNKS
+export const fetchFleetData = () => async (dispatch: AppDispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const response = await getFleetData();
+    dispatch(setFleetData(response));
+  } catch (error) {
+    console.error("Failed to fetch fleet data:", error);
   } finally {
     dispatch(setLoading(false));
   }
