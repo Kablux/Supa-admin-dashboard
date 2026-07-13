@@ -93,6 +93,37 @@ export interface Rider {
   number_of_cancelled_rides: string;
 }
 
+export interface VehicleImage {
+  image_type: "interior" | "left" | "back" | "front" | string;
+  image_url: string;
+  status: string;
+}
+
+export interface VehicleCondition {
+  is_car_in_good_condition: boolean;
+  is_ac_working: boolean;
+  is_interior_neat: boolean;
+  car_body_condition: string;
+}
+
+export interface DriverVehicle {
+  id: string;
+  model: string;
+  year: string;
+  plate_number: string;
+  color: string;
+  vehicle_info: VehicleCondition;
+  status: string;
+  images: VehicleImage[];
+}
+
+export interface TransferRecipient {
+  recipient_code: string;
+  bank_code: string;
+  account_number: string;
+  account_name: string;
+}
+
 export interface Driver {
   id: string;
   email: string;
@@ -104,17 +135,17 @@ export interface Driver {
   full_name: string;
   profile_picture: string;
   profile_picture_url: string;
-  loyalty_points: string;
-  mileage_points: string;
-  mileage_point: string;
-  total_rides: string;
-  total_ride: string;
-  completed_rides: string;
-  cancelled_rides: string;
-  vehicle_information: string;
-  vehicle: string;
-  transfer_recipient: string;
-  total_amount: string;
+  loyalty_points: number;
+  mileage_points: number;
+  mileage_point: number;
+  total_rides: number;
+  total_ride: number;
+  completed_rides: number;
+  cancelled_rides: number;
+  vehicle_information: DriverVehicle;
+  vehicle: DriverVehicle;
+  transfer_recipient: TransferRecipient;
+  total_amount: number;
 }
 
 export interface PaginatedRides {

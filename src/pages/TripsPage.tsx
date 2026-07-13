@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-import { fetchDrivers, fetchTrips, getDashboardStats } from "../api/xhrHelper";
+import { fetchTrips, getDashboardStats } from "../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setCurrentPage } from "../redux/slices/Drivers";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import { TAB_MAPPING, TRIP_TAB_MAPPING } from "../types/common.types";
-import { useNavigate } from "react-router-dom";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { TRIP_TAB_MAPPING } from "../types/common.types";
 import SearchFilterRow from "../components/SearchFilterRow";
 import TripsTable from "../components/trips/TripsTable";
 
@@ -25,10 +26,19 @@ export default function TripsPage() {
     currentPage,
     isLoading,
   } = useAppSelector((state) => state.trips);
+   const {
+      liveTripsSummary,
+    } = useAppSelector((state) => state.dashboard);
 
-  const liveTripCount = tripList.filter(
-    (trip) => trip.status === "driver_on_way",
-  ).length;
+  // const liveTripCount = tripList.filter(
+  //   (trip) => trip.status === "driver_on_way",
+  // ).length;
+  // const completedCount = tripList.filter(
+  //   (trip) => trip.status === "completed",
+  // ).length;
+  // const cancelledCount = tripList.filter(
+  //   (trip) => trip.status === "cancelled",
+  // ).length;
 
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -71,8 +81,18 @@ export default function TripsPage() {
   const liveStats: OverviewItem[] = [
     {
       title: "Live Trip",
-      value: liveTripCount,
+      value: liveTripsSummary.driver_on_way,
       icon: <DirectionsCarIcon />,
+    },
+    {
+      title: "Completed Trip",
+      value: liveTripsSummary.completed,
+      icon: <CheckCircleIcon color="success" />,
+    },
+    {
+      title: "Cancelled Trip",
+      value: liveTripsSummary.cancelled,
+      icon: <CancelIcon color="error" />,
     },
     {
       title: "Total Trip",
@@ -95,7 +115,7 @@ export default function TripsPage() {
       />
 
       {/* Overview Cards Block */}
-      <OverviewCards items={liveStats} maxWidth={548} loading={isLoading} />
+      <OverviewCards items={liveStats} maxWidth={900} loading={isLoading} />
 
       {/* Tabs and Add New Button */}
       <Box

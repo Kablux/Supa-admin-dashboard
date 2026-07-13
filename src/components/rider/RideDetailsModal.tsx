@@ -133,7 +133,7 @@ export default function RiderDetailsModal({
           </Box>
 
           {/* Points Section */}
-          <Box>
+          <Box className="w-1/3">
             <Typography sx={{ fontSize: 14, mb: 1.5, color: "secondary.main" }}>
               Points
             </Typography>
@@ -144,7 +144,7 @@ export default function RiderDetailsModal({
                 labelColor="#7a92f0"
               />
               {/* Not available yet */}
-              <MetricBox value="0" label="Millage" labelColor="#50c878" />{" "}
+              {/* <MetricBox value="0" label="Millage" labelColor="#50c878" />{" "} */}
             </Box>
           </Box>
 

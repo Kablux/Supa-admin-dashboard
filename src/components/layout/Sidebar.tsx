@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { navSections } from "../../data/data";
 import logoImg from "../../assets/Kablux-logo.svg";
-import UpgradeBox from "./Upgrade";
 import type { NavItem } from "../../types/common.types";
 
 export const SIDEBAR_WIDTH = 220;
