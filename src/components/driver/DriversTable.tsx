@@ -134,7 +134,9 @@ export default function DriversTable({
                   {driversList.map((driver) => (
                     <TableRow
                       key={driver.id}
+                      onClick={() => onViewDriver(driver.id)}
                       sx={{
+                        cursor: "pointer",
                         "&:hover": {
                           backgroundColor: "var(--bg-card-hover)",
                         },
@@ -284,7 +286,6 @@ export default function DriversTable({
                         <IconButton
                           size="small"
                           sx={{ color: "secondary.main" }}
-                          onClick={() => onViewDriver(driver.id)}
                         >
                           <MoreVertIcon sx={{ fontSize: 16 }} />
                         </IconButton>

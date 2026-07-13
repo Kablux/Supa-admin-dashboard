@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import DriversTable from "../components/driver/DriversTable";
 import SearchFilterRow from "../components/SearchFilterRow";
 import DriverDetailsModal from "../components/driver/DriverDetailModal";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 type UITabType = keyof typeof TAB_MAPPING;
 
@@ -81,6 +82,11 @@ export default function DriversPage() {
       icon: <CheckCircleIcon color="success" />,
     },
     {
+      title: "Drivers In Review",
+      value: "N/A",
+      icon: <VisibilityIcon color="secondary" />,
+    },
+    {
       title: "Suspended Drivers",
       value: driversummary?.suspended,
       icon: <BlockIcon color="error" />,
@@ -101,7 +107,7 @@ export default function DriversPage() {
       />
 
       {/* Overview Cards Block */}
-      <OverviewCards items={driverStats} maxWidth={768} loading={isLoading} />
+      <OverviewCards items={driverStats} maxWidth={900} loading={isLoading} />
 
       {/* Tabs and Add New Button */}
       <Box

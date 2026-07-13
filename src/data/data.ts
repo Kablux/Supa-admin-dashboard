@@ -1,4 +1,4 @@
-import { FaPersonBiking } from "react-icons/fa6";
+import { MdAirlineSeatReclineNormal } from "react-icons/md";
 import { BiTrip } from "react-icons/bi";
 import { FaCarOn } from "react-icons/fa6";
 import { MdOutlineWorkspacePremium } from "react-icons/md";
@@ -40,7 +40,7 @@ export const navSections: NavSection[] = [
       {
         id: "rider",
         label: "Rider",
-        icon: FaPersonBiking,
+        icon: MdAirlineSeatReclineNormal,
         path: "/riders",
       },
       {

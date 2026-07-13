@@ -17,6 +17,8 @@ const emptyLiveTripsSummary: LiveTripsSummary = {
   driver_on_way: 0,
   arrived: 0,
   started: 0,
+  completed: 0,
+  cancelled: 0,
 };
 
 const initialState: DashboardState = {

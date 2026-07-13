@@ -14,6 +14,7 @@ import { TAB_MAPPING } from "../types/common.types";
 import { useNavigate } from "react-router-dom";
 import RiderDetailsModal from "../components/rider/RideDetailsModal";
 import SearchFilterRow from "../components/SearchFilterRow";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 type UITabType = keyof typeof TAB_MAPPING;
 
@@ -73,17 +74,22 @@ export default function RidersPage() {
 
   const riderStats: OverviewItem[] = [
     {
-      title: "Total Riders",
+      title: "Total Rider",
       value: ridersummary?.total,
       icon: <PeopleIcon />,
     },
     {
-      title: "Active Riders",
+      title: "Active Rider",
       value: ridersummary?.active,
       icon: <CheckCircleIcon color="success" />,
     },
     {
-      title: "Suspended Riders",
+          title: "Pending Rider",
+          value: "N/A",
+          icon: <VisibilityIcon color="secondary" />,
+        },
+    {
+      title: "Suspended Rider",
       value: ridersummary?.suspended,
       icon: <BlockIcon color="error" />,
     },
@@ -103,7 +109,7 @@ export default function RidersPage() {
       />
 
       {/* Overview Cards Block */}
-      <OverviewCards items={riderStats} maxWidth={768} loading={isLoading} />
+      <OverviewCards items={riderStats} maxWidth={900} loading={isLoading} />
 
       {/* Tabs and Add New Button */}
       <Box
@@ -148,13 +154,6 @@ export default function RidersPage() {
           ))}
         </Box>
 
-        {/* <AppButton
-          onClick={() => navigate("/riders/new")}
-          startIcon={<AddIcon sx={{ fontSize: 14 }} />}
-          sx={{ borderRadius: "6px", px: 2, fontSize: 14 }}
-        >
-          Add New
-        </AppButton> */}
       </Box>
 
       {/* Riders Table  */}

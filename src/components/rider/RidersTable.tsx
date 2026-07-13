@@ -133,7 +133,9 @@ export default function RidersTable({
               {ridersList.map((rider) => (
                 <TableRow
                   key={rider.id}
+                  onClick={() => onViewRider(rider.id)}
                   sx={{
+                    cursor: "pointer",
                     "&:hover": {
                       backgroundColor: "var(--bg-card-hover)",
                     },
@@ -281,11 +283,7 @@ export default function RidersTable({
                       width: 50,
                     }}
                   >
-                    <IconButton
-                      size="small"
-                      sx={{ color: "secondary.main" }}
-                      onClick={() => onViewRider(rider.id)}
-                    >
+                    <IconButton size="small" sx={{ color: "secondary.main" }}>
                       <MoreVertIcon sx={{ fontSize: 16 }} />
                     </IconButton>
                   </TableCell>

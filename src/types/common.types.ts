@@ -54,6 +54,8 @@ export interface LiveTripsSummary {
   driver_on_way: number;
   arrived: number;
   started: number;
+  completed: number;
+  cancelled: number;
 }
 
 export const TAB_MAPPING = {
