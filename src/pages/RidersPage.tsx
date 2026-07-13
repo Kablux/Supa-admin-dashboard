@@ -85,7 +85,7 @@ export default function RidersPage() {
     },
     {
           title: "Pending Rider",
-          value: "N/A",
+          value: "0",
           icon: <VisibilityIcon color="secondary" />,
         },
     {

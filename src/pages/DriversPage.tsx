@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import DriversTable from "../components/driver/DriversTable";
 import SearchFilterRow from "../components/SearchFilterRow";
 import DriverDetailsModal from "../components/driver/DriverDetailModal";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 type UITabType = keyof typeof TAB_MAPPING;
 
@@ -46,6 +46,14 @@ export default function DriversPage() {
       }),
     );
   }, [dispatch, currentPage, pageSize, activeTab, searchQuery]);
+
+  const handleDriverAction = (
+    driverId: string,
+    actionType: "approve" | "reject" | "suspend" | "delete",
+  ) => {
+    console.log(`Executing ${actionType} on driver ID: ${driverId}`);
+    // dispatch(updateDriverStatus({ driverId, status: actionType }))
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -83,7 +91,7 @@ export default function DriversPage() {
     },
     {
       title: "Drivers In Review",
-      value: "N/A",
+      value: "0",
       icon: <VisibilityIcon color="secondary" />,
     },
     {
@@ -163,6 +171,7 @@ export default function DriversPage() {
         onPageChange={handleChangePage}
         onPageSizeChange={handlePageSizeChange}
         onViewDriver={(id) => setSelectedDriverId(id)}
+        onDriverAction={handleDriverAction}
       />
 
       {/*Render the details modal here */}
