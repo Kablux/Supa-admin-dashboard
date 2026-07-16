@@ -308,3 +308,46 @@ export interface FleetState {
   status: FleetStatus;
   isLoading: boolean;
 }
+
+/////Inspection
+export type InspectionStatus = 'approved' | 'pending' | 'failed' ;
+export type CarCategory = 'Premium' | 'Business' | 'Standard' | 'Economy';
+export interface InspectedCar {
+  id: string;
+  make: string;             // e.g. "Koenigsegg"
+  model: string;            // e.g. "GT-R"
+  category: CarCategory;
+  imageUrl: string | null;
+  engineSize: string;       // e.g. "90L"
+  transmission: string;     // e.g. "Manual"
+  seats: number;
+  pricePerDay: number;
+  originalPricePerDay?: number;
+  status: InspectionStatus;
+  isFavourite: boolean;
+  submittedAt: string;      // ISO date
+  inspectedAt?: string;     // ISO date — set when approved or failed
+  ownerName: string;
+  ownerAvatar: string | null;
+  notes?: string;           // inspector's notes
+}
+
+// ── Top-5 chart data ──────────────────────────────────────────────────────────
+
+export interface CarTypeStats {
+  label: string;
+  count: number;
+  color: string;
+  percentage: number;
+}
+
+export type InspectionFilter = 'all' | InspectionStatus;
+
+
+export interface InspectionState {
+  cars: InspectedCar[];
+  filter: InspectionFilter;
+  search: string;
+  carTypeStats: CarTypeStats[];
+  totalInspectedValue: number;
+}

@@ -83,11 +83,6 @@ export default function RidersPage() {
       value: ridersummary?.active,
       icon: <CheckCircleIcon color="success" />,
     },
-    // {
-    //       title: "Pending Rider",
-    //       value: "0",
-    //       icon: <VisibilityIcon color="secondary" />,
-    //     },
     {
       title: "Suspended Rider",
       value: ridersummary?.suspended,
