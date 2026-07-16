@@ -7,6 +7,8 @@ import {
   CircularProgress,
   IconButton,
   Chip,
+  Button,
+  DialogActions,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -22,6 +24,7 @@ import {
 import { MetricBox } from "../ModalMetricsBox";
 import { fetchDriverDetails } from "../../api/xhr";
 import { Driver, VehicleImage } from "../../types/auth";
+import { FiCameraOff } from "react-icons/fi";
 import { Collapse } from "@mui/material";
 
 const infoBoxStyle = {
@@ -38,38 +41,54 @@ interface DriverDetailsModalProps {
   driverId: string | null;
   isOpen: boolean;
   onClose: () => void;
+  onDriverAction?: (
+    driverId: string,
+    actionType: "approve" | "activate" | "reject" | "suspend" | "delete",
+  ) => void;
 }
 
 export default function DriverDetailsModal({
   driverId,
   isOpen,
   onClose,
+  onDriverAction,
 }: DriverDetailsModalProps) {
   const [loading, setLoading] = useState(false);
   const [driverData, setDriverData] = useState<Driver | null>(null);
+  const [activeImgUrl, setActiveImgUrl] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (isOpen && driverId) {
       setLoading(true);
       fetchDriverDetails(driverId)
-        .then((data) => setDriverData(data))
+        .then((data) => {
+          setDriverData(data);
+          const fallbackImg =
+            data?.vehicle?.images?.find(
+              (img: any) => img.image_type === "front",
+            )?.image_url ||
+            data?.vehicle?.images?.[0]?.image_url ||
+            null;
+          setActiveImgUrl(fallbackImg);
+        })
         .catch((err) => console.error("Failed to fetch driver details", err))
         .finally(() => setLoading(false));
     } else {
       setDriverData(null);
+      setActiveImgUrl(null);
     }
   }, [isOpen, driverId]);
 
   const handleCopyEmail = () => {
-    if (driverData?.email) navigator.clipboard.writeText(driverData.email);
+    if (driverData?.email) {
+      navigator.clipboard.writeText(driverData.email);
+    }
   };
 
-  const [expanded, setExpanded] = useState(false);
-
-  // Extract front image from vehicle array fallback to index 0
-  const vehicleImage =
-    driverData?.vehicle?.images?.find((img) => img.image_type === "front")
-      ?.image_url || driverData?.vehicle?.images?.[0]?.image_url;
+  const isPending = driverData?.status === "pending_verification";
+  const isActive = driverData?.status === "active";
+  const isSuspended = driverData?.status === "suspended";
 
   return (
     <Dialog
@@ -140,7 +159,7 @@ export default function DriverDetailsModal({
                     ? "rgba(80,200,120,0.15)"
                     : "rgba(255,107,107,0.15)",
                 color: driverData.status === "active" ? "#50c878" : "#ff6b6b",
-                fontWeight: 700,
+                fontWeight: 600,
                 fontSize: 12,
               }}
             />
@@ -170,55 +189,210 @@ export default function DriverDetailsModal({
           </Box>
 
           {/* Dynamic Metrics Section */}
-          <Box className="flex gap-4 flex-wrap sm:flex-nowrap">
-            {/* Points Section */}
-            <Box className="w-[55%]">
-              <Typography sx={{ fontSize: 14, mb: 1.5, color: "primary" }}>
-                Points
-              </Typography>
-              <Box sx={{ display: "flex", gap: 2 }}>
-                <MetricBox
-                  value={driverData.loyalty_points || "0"}
-                  label="Bonus"
-                  labelColor="#6467F2"
-                />
-                <MetricBox
-                  value={driverData.mileage_points || "0"}
-                  label="Millage"
-                  labelColor="#21C45D"
-                />
+          {isActive && (
+            <Box className="flex gap-4 flex-wrap sm:flex-nowrap">
+              {/* Points Section */}
+              <Box className="w-[55%]">
+                <Typography sx={{ fontSize: 14, mb: 1.5, color: "primary" }}>
+                  Points
+                </Typography>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <MetricBox
+                    value={driverData.loyalty_points || "0"}
+                    label="Bonus"
+                    labelColor="#6467F2"
+                  />
+                  <MetricBox
+                    value={driverData.mileage_points || "0"}
+                    label="Millage"
+                    labelColor="#21C45D"
+                  />
+                </Box>
               </Box>
-            </Box>
 
-            {/* Ride Overview Section */}
-            <Box className="w-full">
-              <Typography sx={{ fontSize: 14, mb: 1.5, color: "primary" }}>
-                Ride overview
-              </Typography>
-              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-                <MetricBox
-                  value={driverData.total_rides || "0"}
-                  label="Total Ride"
-                  labelColor="#7a92f0"
-                />
-                <MetricBox
-                  value={driverData.completed_rides || "0"}
-                  label="Completed"
-                  labelColor="#50c878"
-                />
-                <MetricBox
-                  value={driverData.cancelled_rides || "0"}
-                  label="Canceled"
-                  labelColor="#ff6b6b"
-                />
+              {/* Ride Overview Section */}
+              <Box className="w-full">
+                <Typography sx={{ fontSize: 14, mb: 1.5, color: "primary" }}>
+                  Ride overview
+                </Typography>
+                <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                  <MetricBox
+                    value={driverData.total_rides || "0"}
+                    label="Total Ride"
+                    labelColor="#7a92f0"
+                  />
+                  <MetricBox
+                    value={driverData.completed_rides || "0"}
+                    label="Completed"
+                    labelColor="#50c878"
+                  />
+                  <MetricBox
+                    value={driverData.cancelled_rides || "0"}
+                    label="Canceled"
+                    labelColor="#ff6b6b"
+                  />
+                </Box>
               </Box>
             </Box>
-          </Box>
+          )}
 
           {/* Core Vehicle Information Section */}
+          {isPending && (
+            <Box>
+              {activeImgUrl ? (
+                /* Primary Large Active Display Showcase Frame */
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: 280,
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    backgroundColor: "#1c1c1c",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    position: "relative",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    mb: 1.5,
+                  }}
+                >
+                  <img
+                    src={activeImgUrl}
+                    alt="Active Preview Panel"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                    onError={() => setActiveImgUrl(null)} // Triggers placeholder fallback on bad/dead links
+                  />
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: 229,
+                    borderRadius: "8px",
+                    backgroundColor: "rgba(255, 255, 255, 0.01)",
+                    border: "1px dashed rgba(255, 255, 255, 0.12)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 1.5,
+                    mb: 1.5,
+                    p: 3,
+                    textAlign: "center",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 52,
+                      height: 52,
+                      borderRadius: "50%",
+                      backgroundColor: "rgba(255, 215, 0, 0.05)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "var(--accent-gold, #FFD700)",
+                      border: "1px solid rgba(255, 215, 0, 0.12)",
+                    }}
+                  >
+                    <FiCameraOff size={22} />
+                  </Box>
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: "#E5E7EB",
+                        mb: 0.5,
+                      }}
+                    >
+                      No Vehicle Image Available
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        color: "rgba(255, 255, 255, 0.4)",
+                        maxWidth: 300,
+                        mx: "auto",
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      Verification photos haven't been uploaded by this operator
+                      yet or the registry file is unavailable.
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+              {/* Grid Deck for Secondary Thumbnails */}
+              {driverData?.vehicle?.images &&
+                driverData.vehicle.images.length > 0 && (
+                  <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+                    {driverData.vehicle.images.map((img: any, idx: number) => {
+                      const isSelected = activeImgUrl === img.image_url;
+                      return (
+                        <Box
+                          key={img.id || idx}
+                          onClick={() => setActiveImgUrl(img.image_url)}
+                          sx={{
+                            width: 80,
+                            height: 70,
+                            borderRadius: "8px",
+                            overflow: "hidden",
+                            cursor: "pointer",
+                            position: "relative",
+                            border: isSelected
+                              ? "2px solid var(--accent-gold, #FFD700)"
+                              : "1px solid rgba(255,255,255,0.1)",
+                            opacity: isSelected ? 1 : 0.5,
+                            transition: "all 0.2s ease-in-out",
+                            "&:hover": { opacity: 1, transform: "scale(1.02)" },
+                          }}
+                        >
+                          <img
+                            src={img.image_url}
+                            alt={img.image_type}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              bottom: 0,
+                              left: 0,
+                              width: "100%",
+                              background: "rgba(0,0,0,0.6)",
+                              py: 0.2,
+                              px: 0.4,
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                fontSize: 9,
+                                textTransform: "uppercase",
+                                textAlign: "center",
+                                fontWeight: 600,
+                                color: "rgba(255,255,255,0.8)",
+                              }}
+                            >
+                              {img.image_type || `View ${idx + 1}`}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                )}
+            </Box>
+          )}
 
           {/* --- SEE MORE COLLAPSIBLE SECTION --- */}
-          {driverData.vehicle && (
+          {isActive && driverData.vehicle && (
             <Box sx={{ mt: 1 }}>
               {/* Clickable Header Button Link */}
               <Box
@@ -428,7 +602,159 @@ export default function DriverDetailsModal({
               </Collapse>
             </Box>
           )}
+
+          {(isPending || isActive || isSuspended) && (
+            <DialogActions
+              sx={{
+                p: 3,
+                gap: 2,
+                backgroundColor: "", // Optional: e.g., "rgba(0,0,0,0.2)"
+                borderTop: "1px solid rgba(255,255,255,0.05)",
+                display: "flex",
+              }}
+            >
+              {/* Action Suite: Registration Approvals */}
+              {isPending && (
+                <>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    sx={{
+                      py: 1.2,
+                      fontSize: 14,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      color: "#E57373",
+                      borderColor: "rgba(229, 115, 115, 0.3)",
+                      "&:hover": {
+                        borderColor: "#E57373",
+                        backgroundColor: "rgba(229, 115, 115, 0.08)",
+                      },
+                    }}
+                    onClick={() => onDriverAction?.(driverData.id, "reject")}
+                  >
+                    Decline Request
+                  </Button>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                      py: 1.2,
+                      fontSize: 14,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      backgroundColor: "#2E7D32",
+                      color: "#fff",
+                      boxShadow: "none",
+                      "&:hover": {
+                        backgroundColor: "#1B5E20",
+                        boxShadow: "0 4px 12px rgba(46, 125, 50, 0.3)",
+                      },
+                    }}
+                    onClick={() => onDriverAction?.(driverData.id, "approve")}
+                  >
+                    Accept Request
+                  </Button>
+                </>
+              )}
+
+              {/* Action Suite: Active Moderator Controls */}
+              {isActive && (
+                <>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    sx={{
+                      py: 1.2,
+                      fontSize: 14,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      color: "#EF5350",
+                      borderColor: "rgba(239, 83, 80, 0.3)",
+                      "&:hover": {
+                        borderColor: "#EF5350",
+                        backgroundColor: "rgba(239, 83, 80, 0.08)",
+                      },
+                    }}
+                    onClick={() => onDriverAction?.(driverData.id, "delete")}
+                  >
+                    Delete Account
+                  </Button>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                      py: 1.2,
+                      fontSize: 14,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      backgroundColor: "primary.main",
+                      boxShadow: "none",
+                      "&:hover": {
+                        backgroundColor: "primary.dark",
+                      },
+                    }}
+                    onClick={() => onDriverAction?.(driverData.id, "suspend")}
+                  >
+                    Suspend Account
+                  </Button>
+                </>
+              )}
+
+              {/* Action Suite: Suspended Moderator Controls */}
+              {isSuspended && (
+                <>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    sx={{
+                      py: 1.2,
+                      fontSize: 14,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      color: "#EF5350",
+                      borderColor: "rgba(239, 83, 80, 0.3)",
+                      "&:hover": {
+                        borderColor: "#EF5350",
+                        backgroundColor: "rgba(239, 83, 80, 0.08)",
+                      },
+                    }}
+                    onClick={() => onDriverAction?.(driverData.id, "delete")}
+                  >
+                    Delete Account
+                  </Button>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                      py: 1.2,
+                      fontSize: 14,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      backgroundColor: "#2E7D32", // Green to signal reactivation
+                      color: "#fff",
+                      boxShadow: "none",
+                      "&:hover": {
+                        backgroundColor: "#1B5E20",
+                        boxShadow: "0 4px 12px rgba(46, 125, 50, 0.3)",
+                      },
+                    }}
+                    onClick={() => onDriverAction?.(driverData.id, "activate")}
+                  >
+                    Activate Account
+                  </Button>
+                </>
+              )}
+            </DialogActions>
+          )}
         </Box>
+        // </Box>
       )}
     </Dialog>
   );
