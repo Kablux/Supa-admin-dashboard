@@ -7,14 +7,15 @@ import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import PeopleIcon from "@mui/icons-material/People";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import BlockIcon from "@mui/icons-material/Block";
-import { TAB_MAPPING } from "../types/common.types";
+import { DRIVER_TAB_MAPPING, TAB_MAPPING } from "../types/common.types";
 import { useNavigate } from "react-router-dom";
 import DriversTable from "../components/driver/DriversTable";
 import SearchFilterRow from "../components/SearchFilterRow";
 import DriverDetailsModal from "../components/driver/DriverDetailModal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { FaListCheck } from "react-icons/fa6";
 
-type UITabType = keyof typeof TAB_MAPPING;
+type UITabType = keyof typeof DRIVER_TAB_MAPPING;
 
 export default function DriversPage() {
   const dispatch = useAppDispatch();
@@ -42,7 +43,7 @@ export default function DriversPage() {
         page: currentPage,
         page_size: pageSize,
         search: searchQuery,
-        status: TAB_MAPPING[activeTab],
+        kyc_status: DRIVER_TAB_MAPPING[activeTab],
       }),
     );
   }, [dispatch, currentPage, pageSize, activeTab, searchQuery]);
@@ -86,19 +87,24 @@ export default function DriversPage() {
     },
     {
       title: "Active Drivers",
-      value: driversummary?.active,
+      value: driversummary?.online,
       icon: <CheckCircleIcon color="success" />,
     },
     {
-      title: "Drivers In Review",
-      value: "0",
+      title: "Pending Drivers",
+      value: driversummary.not_started_kyc,
       icon: <VisibilityIcon color="secondary" />,
     },
     {
-      title: "Suspended Drivers",
-      value: driversummary?.suspended,
-      icon: <BlockIcon color="error" />,
+      title: "Drivers In Review",
+      value: driversummary.pending_kyc,
+      icon: <FaListCheck color="#4A90E2" />,
     },
+    // {
+    //   title: "Suspended Drivers",
+    //   value: driversummary?.suspended,
+    //   icon: <BlockIcon color="error" />,
+    // },
   ];
 
   return (
@@ -115,7 +121,7 @@ export default function DriversPage() {
       />
 
       {/* Overview Cards Block */}
-      <OverviewCards items={driverStats} maxWidth={900} loading={isLoading} />
+      <OverviewCards items={driverStats} maxWidth={1000} loading={isLoading} />
 
       {/* Tabs and Add New Button */}
       <Box
@@ -127,37 +133,39 @@ export default function DriversPage() {
         }}
       >
         <Box sx={{ display: "flex", gap: 3 }}>
-          {(["all", "approved", "pending", "cancelled"] as const).map((tab) => (
-            <Typography
-              key={tab}
-              onClick={() => handleTabChange(tab)}
-              sx={{
-                fontSize: 14,
-                fontWeight: 500,
-                cursor: "pointer",
-                textTransform: "capitalize",
-                color:
-                  activeTab === tab ? "var(--accent-gold)" : "secondary.main",
-                position: "relative",
-                pb: 0.5,
-                transition: "color 0.2s",
-                "&::after":
-                  activeTab === tab
-                    ? {
-                        content: '""',
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "2px",
-                        backgroundColor: "var(--accent-gold)",
-                      }
-                    : {},
-              }}
-            >
-              {tab}
-            </Typography>
-          ))}
+          {(["all", "approved", "pending", "review", "rejected"] as const).map(
+            (tab) => (
+              <Typography
+                key={tab}
+                onClick={() => handleTabChange(tab)}
+                sx={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  textTransform: "capitalize",
+                  color:
+                    activeTab === tab ? "var(--accent-gold)" : "secondary.main",
+                  position: "relative",
+                  pb: 0.5,
+                  transition: "color 0.2s",
+                  "&::after":
+                    activeTab === tab
+                      ? {
+                          content: '""',
+                          position: "absolute",
+                          bottom: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "2px",
+                          backgroundColor: "var(--accent-gold)",
+                        }
+                      : {},
+                }}
+              >
+                {tab}
+              </Typography>
+            ),
+          )}
         </Box>
       </Box>
 

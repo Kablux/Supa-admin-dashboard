@@ -9,6 +9,7 @@ import {
   Chip,
   Button,
   DialogActions,
+  Grid,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -26,6 +27,7 @@ import { fetchDriverDetails } from "../../api/xhr";
 import { Driver, VehicleImage } from "../../types/auth";
 import { FiCameraOff } from "react-icons/fi";
 import { Collapse } from "@mui/material";
+import KycStatusChip from "./ChipBadge";
 
 const infoBoxStyle = {
   display: "flex",
@@ -64,12 +66,16 @@ export default function DriverDetailsModal({
       fetchDriverDetails(driverId)
         .then((data) => {
           setDriverData(data);
+
+          // Safely target the first vehicle in the new array structure
+          const vehicleData = data?.vehicles?.[0] || data?.vehicle;
+
           const fallbackImg =
-            data?.vehicle?.images?.find(
-              (img: any) => img.image_type === "front",
-            )?.image_url ||
-            data?.vehicle?.images?.[0]?.image_url ||
+            vehicleData?.images?.find((img: any) => img.image_type === "front")
+              ?.image_url ||
+            vehicleData?.images?.[0]?.image_url ||
             null;
+
           setActiveImgUrl(fallbackImg);
         })
         .catch((err) => console.error("Failed to fetch driver details", err))
@@ -86,9 +92,12 @@ export default function DriverDetailsModal({
     }
   };
 
-  const isPending = driverData?.status === "pending_verification";
-  const isActive = driverData?.status === "active";
-  const isSuspended = driverData?.status === "suspended";
+  const isActive = driverData?.kyc_status === "APPROVED";
+  const isInReview = driverData?.kyc_status === "IN_REVIEW";
+  const isPending = driverData?.kyc_status === "PENDING";
+  const isRejected = driverData?.kyc_status === "REJECTED";
+
+  const primaryVehicle = driverData?.vehicles?.[0] || driverData?.vehicle;
 
   return (
     <Dialog
@@ -150,19 +159,7 @@ export default function DriverDetailsModal({
                 </Box>
               </Box>
             </Box>
-            <Chip
-              label={driverData.status.toUpperCase()}
-              size="small"
-              sx={{
-                backgroundColor:
-                  driverData.status === "active"
-                    ? "rgba(80,200,120,0.15)"
-                    : "rgba(255,107,107,0.15)",
-                color: driverData.status === "active" ? "#50c878" : "#ff6b6b",
-                fontWeight: 600,
-                fontSize: 12,
-              }}
-            />
+            <KycStatusChip status={driverData.kyc_status} />
           </Box>
 
           {/* Customer Info Section */}
@@ -237,162 +234,378 @@ export default function DriverDetailsModal({
           )}
 
           {/* Core Vehicle Information Section */}
-          {isPending && (
-            <Box>
-              {activeImgUrl ? (
-                /* Primary Large Active Display Showcase Frame */
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: 280,
-                    borderRadius: "12px",
-                    overflow: "hidden",
-                    backgroundColor: "#1c1c1c",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    position: "relative",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    mb: 1.5,
-                  }}
-                >
-                  <img
-                    src={activeImgUrl}
-                    alt="Active Preview Panel"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                    onError={() => setActiveImgUrl(null)} // Triggers placeholder fallback on bad/dead links
-                  />
-                </Box>
-              ) : (
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: 229,
-                    borderRadius: "8px",
-                    backgroundColor: "rgba(255, 255, 255, 0.01)",
-                    border: "1px dashed rgba(255, 255, 255, 0.12)",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 1.5,
-                    mb: 1.5,
-                    p: 3,
-                    textAlign: "center",
-                  }}
-                >
+          {(isInReview || isPending) && (
+            <Box className="flex justify-center gap-5 w-full">
+              {/* Left Column */}
+              <Box className="w-1/2">
+                {activeImgUrl ? (
                   <Box
                     sx={{
-                      width: 52,
-                      height: 52,
-                      borderRadius: "50%",
-                      backgroundColor: "rgba(255, 215, 0, 0.05)",
+                      width: "100%",
+                      height: 240,
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                      backgroundColor: "#121212",
+                      border: "1px solid rgba(255,255,255,0.08)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "var(--accent-gold, #FFD700)",
-                      border: "1px solid rgba(255, 215, 0, 0.12)",
+                      mb: 1.5,
                     }}
                   >
-                    <FiCameraOff size={22} />
+                    <img
+                      src={activeImgUrl}
+                      alt="Asset Review Display"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                      onError={() => setActiveImgUrl(null)}
+                    />
                   </Box>
-                  <Box>
+                ) : (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: 240,
+                      borderRadius: "10px",
+                      backgroundColor: "rgba(255, 255, 255, 0.02)",
+                      border: "1px dashed rgba(255, 255, 255, 0.12)",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 1,
+                      mb: 1.5,
+                      p: 2,
+                      textAlign: "center",
+                    }}
+                  >
+                    <FiCameraOff
+                      size={24}
+                      style={{ color: "rgba(255,255,255,0.3)" }}
+                    />
                     <Typography
                       sx={{
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: 600,
-                        color: "#E5E7EB",
-                        mb: 0.5,
+                        color: "rgba(255,255,255,0.7)",
                       }}
                     >
-                      No Vehicle Image Available
+                      Select Asset to Preview
                     </Typography>
+                  </Box>
+                )}
+
+                {/* Combined Thumbnail Stream: Vehicles + Documents */}
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                  {primaryVehicle?.images?.map((img: any, idx: number) => {
+                    const isSelected = activeImgUrl === img.image_url;
+                    return (
+                      <Box
+                        key={img.id || `veh-${idx}`}
+                        onClick={() => setActiveImgUrl(img.image_url)}
+                        sx={{
+                          width: 60,
+                          height: 52,
+                          borderRadius: "6px",
+                          overflow: "hidden",
+                          cursor: "pointer",
+                          position: "relative",
+                          border: isSelected
+                            ? "2px solid var(--accent-gold, #FFD700)"
+                            : "1px solid rgba(255,255,255,0.08)",
+                          opacity: isSelected ? 1 : 0.6,
+                          transition: "all 0.15s ease",
+                          "&:hover": { opacity: 1 },
+                        }}
+                      >
+                        <img
+                          src={img.image_url}
+                          alt="Vehicle thumbnail"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            bottom: 0,
+                            width: "100%",
+                            bg: "rgba(0,0,0,0.7)",
+                            py: 0.1,
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontSize: 8,
+                              textTransform: "uppercase",
+                              textAlign: "center",
+                              fontWeight: 700,
+                              color: "#FFF",
+                            }}
+                          >
+                            {img.image_type}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </Box>
+
+              {/* Right Column: Verification Audit Sheet */}
+              <Box
+                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                className="w-1/2"
+              >
+                {/* Section A: Core Vehicle Assets */}
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "rgba(255,255,255,0.4)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                      mb: 1,
+                    }}
+                  >
+                    Vehicle Declaration
+                  </Typography>
+
+                  {primaryVehicle ? (
+                    <Box
+                      sx={{
+                        p: 1.5,
+                        borderRadius: "8px",
+                        border: "1px solid rgba(255,255,255,0.06)",
+                        backgroundColor: "rgba(255,255,255,0.01)",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 0.75,
+                      }}
+                    >
+                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                        {primaryVehicle.model} •{" "}
+                        <span style={{ color: "rgba(255,255,255,0.5)" }}>
+                          {primaryVehicle.year}
+                        </span>
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography
+                          sx={{ fontSize: 12, color: "secondary.main" }}
+                        >
+                          Plate Identifier:
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: 12,
+                            fontWeight: 700,
+                            letterSpacing: "0.02em",
+                          }}
+                        >
+                          {primaryVehicle.plate_number}
+                        </Typography>
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography
+                          sx={{ fontSize: 12, color: "secondary.main" }}
+                        >
+                          Exterior Coat:
+                        </Typography>
+                        <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
+                          {primaryVehicle.color}
+                        </Typography>
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1.5,
+                          mt: 0.5,
+                          pt: 1,
+                          borderTop: "1px dashed rgba(255,255,255,0.06)",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            fontSize: 11,
+                            fontWeight: 600,
+                            color: primaryVehicle.vehicle_info?.is_ac_working
+                              ? "#50c878"
+                              : "#ff6b6b",
+                          }}
+                        >
+                          {primaryVehicle.vehicle_info?.is_ac_working
+                            ? "✓ A/C Good"
+                            : "✗ No A/C"}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: 11,
+                            fontWeight: 600,
+                            color: primaryVehicle.vehicle_info?.is_interior_neat
+                              ? "#50c878"
+                              : "#ff6b6b",
+                          }}
+                        >
+                          {primaryVehicle.vehicle_info?.is_interior_neat
+                            ? "✓ Neat Cabin"
+                            : "✗ Interior Alert"}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  ) : (
                     <Typography
                       sx={{
                         fontSize: 12,
-                        color: "rgba(255, 255, 255, 0.4)",
-                        maxWidth: 300,
-                        mx: "auto",
-                        lineHeight: 1.4,
+                        color: "rgba(255,255,255,0.4)",
+                        fontStyle: "italic",
                       }}
                     >
-                      Verification photos haven't been uploaded by this operator
-                      yet or the registry file is unavailable.
+                      No vehicle metadata associated with request.
                     </Typography>
-                  </Box>
+                  )}
                 </Box>
-              )}
-              {/* Grid Deck for Secondary Thumbnails */}
-              {driverData?.vehicle?.images &&
-                driverData.vehicle.images.length > 0 && (
-                  <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
-                    {driverData.vehicle.images.map((img: any, idx: number) => {
-                      const isSelected = activeImgUrl === img.image_url;
-                      return (
-                        <Box
-                          key={img.id || idx}
-                          onClick={() => setActiveImgUrl(img.image_url)}
-                          sx={{
-                            width: 80,
-                            height: 70,
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                            cursor: "pointer",
-                            position: "relative",
-                            border: isSelected
-                              ? "2px solid var(--accent-gold, #FFD700)"
-                              : "1px solid rgba(255,255,255,0.1)",
-                            opacity: isSelected ? 1 : 0.5,
-                            transition: "all 0.2s ease-in-out",
-                            "&:hover": { opacity: 1, transform: "scale(1.02)" },
-                          }}
-                        >
-                          <img
-                            src={img.image_url}
-                            alt={img.image_type}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
-                          />
+
+                {/* Section B: Document Verification Registry Checklist */}
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "rgba(255,255,255,0.4)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                      mb: 1,
+                    }}
+                  >
+                    Legal Document Registry
+                  </Typography>
+
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                  >
+                    {driverData?.documents &&
+                    driverData.documents.length > 0 ? (
+                      driverData.documents.map((doc: any) => {
+                        const isInspecting = activeImgUrl === doc.file_url;
+                        return (
                           <Box
+                            key={doc.id}
+                            onClick={() =>
+                              doc.file_url && setActiveImgUrl(doc.file_url)
+                            }
                             sx={{
-                              position: "absolute",
-                              bottom: 0,
-                              left: 0,
-                              width: "100%",
-                              background: "rgba(0,0,0,0.6)",
-                              py: 0.2,
-                              px: 0.4,
+                              p: 1.2,
+                              borderRadius: "8px",
+                              border: "1px solid",
+                              borderColor: isInspecting
+                                ? "var(--accent-gold, #FFD700)"
+                                : "rgba(255,255,255,0.06)",
+                              backgroundColor: isInspecting
+                                ? "rgba(255,215,0,0.03)"
+                                : "rgba(0,0,0,0.1)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              cursor: "pointer",
+                              transition: "all 0.15s ease",
+                              "&:hover": {
+                                borderColor: isInspecting
+                                  ? "var(--accent-gold, #FFD700)"
+                                  : "rgba(255,255,255,0.15)",
+                                backgroundColor: isInspecting
+                                  ? "rgba(255,215,0,0.05)"
+                                  : "rgba(255,255,255,0.02)",
+                              },
                             }}
                           >
-                            <Typography
+                            <Box
                               sx={{
-                                fontSize: 9,
-                                textTransform: "uppercase",
-                                textAlign: "center",
-                                fontWeight: 600,
-                                color: "rgba(255,255,255,0.8)",
+                                display: "flex",
+                                flexDirection: "column",
                               }}
                             >
-                              {img.image_type || `View ${idx + 1}`}
-                            </Typography>
+                              <Typography
+                                sx={{
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  color: isInspecting
+                                    ? "var(--accent-gold, #FFD700)"
+                                    : "#FFF",
+                                }}
+                              >
+                                {doc.doc_type?.replace("_", " ")}
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  fontSize: 10,
+                                  color: "rgba(255,255,255,0.4)",
+                                }}
+                              >
+                                Click to verify file
+                              </Typography>
+                            </Box>
+
+                            {/* Small context badge tracking processing status */}
+                            <Box
+                              sx={{
+                                fontSize: 10,
+                                fontWeight: 700,
+                                px: 1,
+                                py: 0.2,
+                                borderRadius: "4px",
+                                textTransform: "uppercase",
+                                backgroundColor:
+                                  doc.status === "APPROVED"
+                                    ? "rgba(80,200,120,0.1)"
+                                    : "rgba(255,179,0,0.1)",
+                                color:
+                                  doc.status === "APPROVED"
+                                    ? "#50c878"
+                                    : "#ffb300",
+                              }}
+                            >
+                              {doc.status}
+                            </Box>
                           </Box>
-                        </Box>
-                      );
-                    })}
+                        );
+                      })
+                    ) : (
+                      <Typography
+                        sx={{
+                          fontSize: 12,
+                          color: "rgba(255,255,255,0.4)",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        No legal attachments filed.
+                      </Typography>
+                    )}
                   </Box>
-                )}
+                </Box>
+              </Box>
             </Box>
           )}
 
           {/* --- SEE MORE COLLAPSIBLE SECTION --- */}
-          {isActive && driverData.vehicle && (
+          {isActive && primaryVehicle && (
             <Box sx={{ mt: 1 }}>
               {/* Clickable Header Button Link */}
               <Box
@@ -437,9 +650,9 @@ export default function DriverDetailsModal({
                   </Typography>
 
                   {/* 1. Image Carousel Block */}
-                  {driverData.vehicle.images &&
-                    driverData.vehicle.images.length > 0 && (
-                      <VehicleImageSlider images={driverData.vehicle.images} />
+                  {primaryVehicle.images &&
+                    primaryVehicle.images.length > 0 && (
+                      <VehicleImageSlider images={primaryVehicle.images} />
                     )}
                 </Box>
                 <Box
@@ -468,7 +681,7 @@ export default function DriverDetailsModal({
                         color="var(--accent-gold, #FFB300)"
                       />
                       <Typography sx={{ fontSize: 15, fontWeight: 600 }}>
-                        {driverData.vehicle.model} ({driverData.vehicle.year})
+                        {primaryVehicle.model} ({primaryVehicle.year})
                       </Typography>
                     </Box>
 
@@ -485,7 +698,7 @@ export default function DriverDetailsModal({
                           component="span"
                           sx={{ color: "var(--text-primary)" }}
                         >
-                          {driverData.vehicle.plate_number}
+                          {primaryVehicle.plate_number}
                         </Typography>
                       </Typography>
                       <Typography sx={{ color: "secondary.main" }}>
@@ -494,7 +707,7 @@ export default function DriverDetailsModal({
                           component="span"
                           sx={{ color: "var(--text-primary)" }}
                         >
-                          {driverData.vehicle.color}
+                          {primaryVehicle.color}
                         </Typography>
                       </Typography>
                       <Typography sx={{ color: "secondary.main" }}>
@@ -502,13 +715,12 @@ export default function DriverDetailsModal({
                         <Typography
                           component="span"
                           sx={{
-                            color: driverData.vehicle.vehicle_info
-                              ?.is_ac_working
+                            color: primaryVehicle.vehicle_info?.is_ac_working
                               ? "#50c878"
                               : "#ff6b6b",
                           }}
                         >
-                          {driverData.vehicle.vehicle_info?.is_ac_working
+                          {primaryVehicle.vehicle_info?.is_ac_working
                             ? "Functional"
                             : "Faulty"}
                         </Typography>
@@ -518,13 +730,12 @@ export default function DriverDetailsModal({
                         <Typography
                           component="span"
                           sx={{
-                            color: driverData.vehicle.vehicle_info
-                              ?.is_interior_neat
+                            color: primaryVehicle.vehicle_info?.is_interior_neat
                               ? "#50c878"
                               : "#ff6b6b",
                           }}
                         >
-                          {driverData.vehicle.vehicle_info?.is_interior_neat
+                          {primaryVehicle.vehicle_info?.is_interior_neat
                             ? "Clean"
                             : "Requires Attention"}
                         </Typography>
@@ -584,7 +795,7 @@ export default function DriverDetailsModal({
                           component="span"
                           sx={{ color: "var(--text-primary)" }}
                         >
-                          {driverData.transfer_recipient.account_name}
+                          {driverData.transfer_recipient?.account_name}
                         </Typography>
                       </Typography>
                       <Typography sx={{ color: "secondary.main" }}>
@@ -593,7 +804,7 @@ export default function DriverDetailsModal({
                           component="span"
                           sx={{ color: "var(--text-primary)" }}
                         >
-                          {driverData.transfer_recipient.account_number}
+                          {driverData.transfer_recipient?.account_number}
                         </Typography>
                       </Typography>
                     </Box>
@@ -603,7 +814,7 @@ export default function DriverDetailsModal({
             </Box>
           )}
 
-          {(isPending || isActive || isSuspended) && (
+          {(isInReview || isActive || isRejected) && (
             <DialogActions
               sx={{
                 p: 3,
@@ -614,7 +825,7 @@ export default function DriverDetailsModal({
               }}
             >
               {/* Action Suite: Registration Approvals */}
-              {isPending && (
+              {isInReview && (
                 <>
                   <Button
                     variant="outlined"
@@ -662,51 +873,68 @@ export default function DriverDetailsModal({
 
               {/* Action Suite: Active Moderator Controls */}
               {isActive && (
-                <>
-                  <Button
-                    variant="outlined"
-                    fullWidth
-                    sx={{
-                      py: 1.2,
-                      fontSize: 14,
-                      textTransform: "none",
-                      fontWeight: 600,
-                      borderRadius: "8px",
-                      color: "#EF5350",
-                      borderColor: "rgba(239, 83, 80, 0.3)",
-                      "&:hover": {
-                        borderColor: "#EF5350",
-                        backgroundColor: "rgba(239, 83, 80, 0.08)",
-                      },
-                    }}
-                    onClick={() => onDriverAction?.(driverData.id, "delete")}
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  {/* Left Side: Professional Financial Metric */}
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                   >
-                    Delete Account
-                  </Button>
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        color: "rgba(255, 255, 255, 0.4)",
+                        textTransform: "uppercase",
+                        fontWeight: 600,
+                        letterSpacing: "0.05em",
+                      }}
+                    >
+                      Total Earnings
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 18,
+                        fontWeight: 700,
+                        textAlign: "center",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {/* Dynamically reads earnings property, gracefully falls back to formatted zero */}
+                      {driverData.total_amount}
+                    </Typography>
+                  </Box>
+
+                  {/* Right Side: Clean Operational Action */}
                   <Button
                     variant="contained"
-                    fullWidth
                     sx={{
                       py: 1.2,
+                      px: 4, // Generous side padding for a premium, non-cramped feel
                       fontSize: 14,
                       textTransform: "none",
                       fontWeight: 600,
                       borderRadius: "8px",
-                      backgroundColor: "primary.main",
+                      backgroundColor: "var(--accent-gold, #FFD700)", // Warm Warning Amber
+                      color: "#000",
                       boxShadow: "none",
+                      minWidth: 160,
                       "&:hover": {
-                        backgroundColor: "primary.dark",
+                        boxShadow: "0 4px 12px rgba(237, 108, 2, 0.2)",
                       },
                     }}
                     onClick={() => onDriverAction?.(driverData.id, "suspend")}
                   >
                     Suspend Account
                   </Button>
-                </>
+                </Box>
               )}
 
-              {/* Action Suite: Suspended Moderator Controls */}
-              {isSuspended && (
+              {isRejected && (
                 <>
                   <Button
                     variant="outlined"

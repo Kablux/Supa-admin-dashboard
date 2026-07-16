@@ -49,6 +49,15 @@ export interface RideSummaryData {
   suspended: number;
 }
 
+export interface DriverSummaryData {
+   total: number,
+    online: number,
+    suspended: number,
+    pending_kyc: number,
+    not_started_kyc: number,
+    approved_kyc: number
+}
+
 export interface LiveTripsSummary {
   total: number;
   driver_on_way: number;
@@ -64,6 +73,15 @@ export const TAB_MAPPING = {
   pending: "pending_verification",
   cancelled: "deleted",
 } as const;
+
+export const DRIVER_TAB_MAPPING = {
+  all: "",
+  approved: "APPROVED",
+  pending: "PENDING",
+  review: "IN_REVIEW",
+  rejected: "REJECTED",
+} as const;
+
 export const TRIP_TAB_MAPPING = {
   all: "",
   active: "driver_on_way",
@@ -310,26 +328,26 @@ export interface FleetState {
 }
 
 /////Inspection
-export type InspectionStatus = 'approved' | 'pending' | 'failed' ;
-export type CarCategory = 'Premium' | 'Business' | 'Standard' | 'Economy';
+export type InspectionStatus = "approved" | "pending" | "failed";
+export type CarCategory = "Premium" | "Business" | "Standard" | "Economy";
 export interface InspectedCar {
   id: string;
-  make: string;             // e.g. "Koenigsegg"
-  model: string;            // e.g. "GT-R"
+  make: string; // e.g. "Koenigsegg"
+  model: string; // e.g. "GT-R"
   category: CarCategory;
   imageUrl: string | null;
-  engineSize: string;       // e.g. "90L"
-  transmission: string;     // e.g. "Manual"
+  engineSize: string; // e.g. "90L"
+  transmission: string; // e.g. "Manual"
   seats: number;
   pricePerDay: number;
   originalPricePerDay?: number;
   status: InspectionStatus;
   isFavourite: boolean;
-  submittedAt: string;      // ISO date
-  inspectedAt?: string;     // ISO date — set when approved or failed
+  submittedAt: string; // ISO date
+  inspectedAt?: string; // ISO date — set when approved or failed
   ownerName: string;
   ownerAvatar: string | null;
-  notes?: string;           // inspector's notes
+  notes?: string; // inspector's notes
 }
 
 // ── Top-5 chart data ──────────────────────────────────────────────────────────
@@ -341,8 +359,7 @@ export interface CarTypeStats {
   percentage: number;
 }
 
-export type InspectionFilter = 'all' | InspectionStatus;
-
+export type InspectionFilter = "all" | InspectionStatus;
 
 export interface InspectionState {
   cars: InspectedCar[];
