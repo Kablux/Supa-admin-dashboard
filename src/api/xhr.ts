@@ -22,6 +22,7 @@ import {
   CorporateStat,
   DriverSummaryData,
   TransactionAnalytics,
+  UpdateDriverPayload,
 } from "../types/common.types";
 
 export interface SummaryResponse {
@@ -105,6 +106,23 @@ export async function getDriverSummary() {
   );
   return data.data;
 }
+
+
+export const approveDriverKyc = async (driverId: string, payload: UpdateDriverPayload) => {
+  const response = await api.post(
+    `/api/v1/business-admin/drivers/${driverId}/approve_kyc/`, 
+    payload
+  );
+  return response.data;
+};
+
+export const suspendDriver = async (driverId: string, payload: UpdateDriverPayload) => {
+  const response = await api.post(
+    `/api/v1/business-admin/drivers/${driverId}/suspend/`,
+    payload
+  );
+  return response.data;
+};
 
 export async function getRiderSummary() {
   const { data } = await api.get<SummaryResponse>(

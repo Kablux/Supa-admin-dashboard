@@ -315,7 +315,7 @@ export default function DriversTable({
                       size="small"
                       sx={{ color: "secondary.main" }}
                       disabled={driver.status === "cancelled"}
-                      onClick={(e) => handleOpenActionModal(e, driver)}
+                      // onClick={(e) => handleOpenActionModal(e, driver)}
                     >
                       <MoreVertIcon sx={{ fontSize: 16 }} />
                     </IconButton>
@@ -347,12 +347,12 @@ export default function DriversTable({
         />
       )}
       
-      <ActionModal
+      {/* <ActionModal
         isOpen={isActionModalOpen}
         onClose={handleCloseActionModal}
         selectedDriver={selectedDriver}
         onExecuteAction={handleExecuteAction}
-      />
+      /> */}
     </Box>
   );
 }

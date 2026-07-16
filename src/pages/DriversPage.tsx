@@ -14,12 +14,12 @@ import SearchFilterRow from "../components/SearchFilterRow";
 import DriverDetailsModal from "../components/driver/DriverDetailModal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { FaListCheck } from "react-icons/fa6";
+import { approveDriverKyc, suspendDriver } from "../api/xhr";
 
 type UITabType = keyof typeof DRIVER_TAB_MAPPING;
 
 export default function DriversPage() {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
@@ -48,12 +48,68 @@ export default function DriversPage() {
     );
   }, [dispatch, currentPage, pageSize, activeTab, searchQuery]);
 
-  const handleDriverAction = (
+  const handleDriverAction = async (
     driverId: string,
-    actionType: "approve" | "reject" | "suspend" | "delete",
+    actionType: "approve" | "activate" | "reject" | "suspend" | "delete",
   ) => {
-    console.log(`Executing ${actionType} on driver ID: ${driverId}`);
-    // dispatch(updateDriverStatus({ driverId, status: actionType }))
+    try {
+      const targetDriver = driversList.find((d: any) => d.id === driverId);
+
+      if (!targetDriver) {
+        console.error("Driver not found in state!");
+        return;
+      }
+
+      if (actionType === "approve") {
+        const payload = {
+          email: targetDriver.email,
+          status: targetDriver.status,
+          phone_number: targetDriver.phone_number || "N/A",
+          address: targetDriver.address || "N/A",
+          rating: targetDriver.rating || "N/A",
+          role: targetDriver.role || "business_admin",
+        };
+        await approveDriverKyc(driverId, payload);
+        setSelectedDriverId(null);
+        dispatch(getDashboardStats());
+        dispatch(
+          fetchDrivers({
+            page: currentPage,
+            page_size: pageSize,
+            search: searchQuery,
+            kyc_status: DRIVER_TAB_MAPPING[activeTab],
+          }),
+        );
+      } else if (actionType === "suspend") {
+        const payload = {
+          email: targetDriver.email,
+          status: targetDriver.status,
+          phone_number: targetDriver.phone_number || "N/A",
+          address: targetDriver.address || "N/A",
+          rating: targetDriver.rating || "N/A",
+          role: targetDriver.role || "business_admin",
+        };
+        await suspendDriver(driverId, payload);
+
+        setSelectedDriverId(null);
+        dispatch(getDashboardStats());
+        dispatch(
+          fetchDrivers({
+            page: currentPage,
+            page_size: pageSize,
+            search: searchQuery,
+            kyc_status: DRIVER_TAB_MAPPING[activeTab],
+          }),
+        );
+
+        console.log(`Driver ${driverId} has been successfully suspended.`);
+      }
+    } catch (error) {
+      console.error(
+        `Failed to execute ${actionType} on driver ID: ${driverId}`,
+        error,
+      );
+    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
