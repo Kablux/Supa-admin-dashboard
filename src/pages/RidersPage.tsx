@@ -14,7 +14,7 @@ import { TAB_MAPPING } from "../types/common.types";
 import { useNavigate } from "react-router-dom";
 import RiderDetailsModal from "../components/rider/RideDetailsModal";
 import SearchFilterRow from "../components/SearchFilterRow";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 type UITabType = keyof typeof TAB_MAPPING;
 
@@ -84,11 +84,6 @@ export default function RidersPage() {
       icon: <CheckCircleIcon color="success" />,
     },
     {
-          title: "Pending Rider",
-          value: "0",
-          icon: <VisibilityIcon color="secondary" />,
-        },
-    {
       title: "Suspended Rider",
       value: ridersummary?.suspended,
       icon: <BlockIcon color="error" />,
@@ -109,7 +104,7 @@ export default function RidersPage() {
       />
 
       {/* Overview Cards Block */}
-      <OverviewCards items={riderStats} maxWidth={900} loading={isLoading} />
+      <OverviewCards items={riderStats} maxWidth={684} loading={isLoading} />
 
       {/* Tabs and Add New Button */}
       <Box
@@ -153,7 +148,6 @@ export default function RidersPage() {
             </Typography>
           ))}
         </Box>
-
       </Box>
 
       {/* Riders Table  */}

@@ -10,6 +10,7 @@ import adminRoleReducer from "./slices/AdminRole";
 import corporateReducer from "./slices/corporate";
 import premiumReducer from "./slices/Premium";
 import fleetReducer from "./slices/Fleet";
+import inspectionReducer from "./slices/Inspection";
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     corporate: corporateReducer,
     fleet: fleetReducer,
     premium: premiumReducer,
+    inspection: inspectionReducer,
   },
 });
 
