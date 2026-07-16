@@ -368,3 +368,14 @@ export interface InspectionState {
   carTypeStats: CarTypeStats[];
   totalInspectedValue: number;
 }
+
+
+///PAYLOAD
+export interface UpdateDriverPayload {
+  email: string;
+  status: string;
+  phone_number?: string;
+  address?: string;
+  rating?: string;
+  role?: string;
+}

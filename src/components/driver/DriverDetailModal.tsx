@@ -9,7 +9,6 @@ import {
   Chip,
   Button,
   DialogActions,
-  Grid,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -69,7 +68,6 @@ export default function DriverDetailsModal({
 
           // Safely target the first vehicle in the new array structure
           const vehicleData = data?.vehicles?.[0] || data?.vehicle;
-
           const fallbackImg =
             vehicleData?.images?.find((img: any) => img.image_type === "front")
               ?.image_url ||
@@ -89,6 +87,25 @@ export default function DriverDetailsModal({
   const handleCopyEmail = () => {
     if (driverData?.email) {
       navigator.clipboard.writeText(driverData.email);
+    }
+  };
+
+  const [actionLoading, setActionLoading] = useState<
+    "approve" | "activate" | "reject" | "suspend" | "delete" | null
+  >(null);
+
+  const executeAction = async (
+    actionType: "approve" | "activate" | "reject" | "suspend" | "delete",
+  ) => {
+    if (!driverData?.id || !onDriverAction) return;
+
+    try {
+      setActionLoading(actionType);
+      await onDriverAction(driverData.id, actionType);
+    } catch (error) {
+      console.error(`Action ${actionType} failed`, error);
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -828,6 +845,7 @@ export default function DriverDetailsModal({
               {isInReview && (
                 <>
                   <Button
+                    disabled={!!actionLoading}
                     variant="outlined"
                     fullWidth
                     sx={{
@@ -843,13 +861,18 @@ export default function DriverDetailsModal({
                         backgroundColor: "rgba(229, 115, 115, 0.08)",
                       },
                     }}
-                    onClick={() => onDriverAction?.(driverData.id, "reject")}
+                    onClick={() => executeAction("reject")}
                   >
-                    Decline Request
+                    {actionLoading === "reject" ? (
+                      <CircularProgress color="inherit" />
+                    ) : (
+                      "Decline Request"
+                    )}
                   </Button>
                   <Button
                     variant="contained"
                     fullWidth
+                    disabled={!!actionLoading}
                     sx={{
                       py: 1.2,
                       fontSize: 14,
@@ -864,9 +887,13 @@ export default function DriverDetailsModal({
                         boxShadow: "0 4px 12px rgba(46, 125, 50, 0.3)",
                       },
                     }}
-                    onClick={() => onDriverAction?.(driverData.id, "approve")}
+                    onClick={() => executeAction("approve")}
                   >
-                    Accept Request
+                    {actionLoading === "approve" ? (
+                      <CircularProgress sx={{ color: "#fff" }} />
+                    ) : (
+                      "Accept Request"
+                    )}
                   </Button>
                 </>
               )}
@@ -912,14 +939,15 @@ export default function DriverDetailsModal({
                   {/* Right Side: Clean Operational Action */}
                   <Button
                     variant="contained"
+                    disabled={!!actionLoading}
                     sx={{
                       py: 1.2,
-                      px: 4, // Generous side padding for a premium, non-cramped feel
+                      px: 4,
                       fontSize: 14,
                       textTransform: "none",
                       fontWeight: 600,
                       borderRadius: "8px",
-                      backgroundColor: "var(--accent-gold, #FFD700)", // Warm Warning Amber
+                      backgroundColor: "var(--accent-gold, #FFD700)",
                       color: "#000",
                       boxShadow: "none",
                       minWidth: 160,
@@ -927,16 +955,20 @@ export default function DriverDetailsModal({
                         boxShadow: "0 4px 12px rgba(237, 108, 2, 0.2)",
                       },
                     }}
-                    onClick={() => onDriverAction?.(driverData.id, "suspend")}
+                    onClick={() => executeAction("suspend")}
                   >
-                    Suspend Account
+                    {actionLoading === "reject" ? (
+                      <CircularProgress sx={{ color: "#000" }} />
+                    ) : (
+                      " Suspend Account"
+                    )}
                   </Button>
                 </Box>
               )}
 
               {isRejected && (
                 <>
-                  <Button
+                  {/* <Button
                     variant="outlined"
                     fullWidth
                     sx={{
@@ -955,7 +987,7 @@ export default function DriverDetailsModal({
                     onClick={() => onDriverAction?.(driverData.id, "delete")}
                   >
                     Delete Account
-                  </Button>
+                  </Button> */}
                   <Button
                     variant="contained"
                     fullWidth
@@ -982,7 +1014,6 @@ export default function DriverDetailsModal({
             </DialogActions>
           )}
         </Box>
-        // </Box>
       )}
     </Dialog>
   );

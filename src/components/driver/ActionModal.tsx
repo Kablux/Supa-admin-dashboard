@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -25,7 +24,6 @@ interface ActionModalProps {
   ) => void;
 }
 
-// Helper to determine premium dynamic colors for the status chip
 const getStatusTheme = (status?: string) => {
   switch (status) {
     case "active":
@@ -72,7 +70,6 @@ export default function ActionModal({
     <Dialog
       open={isOpen}
       onClose={onClose}
-      //   TransitionComponent={Fade}
       transitionDuration={300}
       slotProps={{
         backdrop: {
