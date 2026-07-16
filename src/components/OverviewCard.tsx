@@ -15,7 +15,7 @@ interface OverviewCardsProps {
 
 export default function OverviewCards({
   items,
-  maxWidth = 768,
+  maxWidth = "100%",
   loading = false,
 }: OverviewCardsProps) {
   const totalItems = items.length;

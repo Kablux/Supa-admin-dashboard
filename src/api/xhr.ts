@@ -20,6 +20,7 @@ import {
   CorporateInfo,
   CorporateOwner,
   CorporateStat,
+  DriverSummaryData,
   TransactionAnalytics,
 } from "../types/common.types";
 
@@ -29,6 +30,10 @@ export interface SummaryResponse {
     active: number;
     suspended: number;
   };
+}
+
+export interface DriverSummaryResponse {
+  data: DriverSummaryData;
 }
 
 export async function loginRequest(
@@ -95,7 +100,7 @@ export async function getUserSummary() {
 }
 
 export async function getDriverSummary() {
-  const { data } = await api.get<SummaryResponse>(
+  const { data } = await api.get<DriverSummaryResponse>(
     "/business-admin/drivers/summary/",
   );
   return data.data;

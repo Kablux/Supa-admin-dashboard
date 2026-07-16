@@ -4,12 +4,25 @@ import {
   getDashboardStats,
 } from "../../api/xhrHelper";
 import { DashboardState } from "../../types/auth";
-import { LiveTripsSummary, RideSummaryData } from "../../types/common.types";
+import {
+  DriverSummaryData,
+  LiveTripsSummary,
+  RideSummaryData,
+} from "../../types/common.types";
 
 const emptySummary: RideSummaryData = {
   total: 0,
   active: 0,
   suspended: 0,
+};
+
+const emptyDriverSummary: DriverSummaryData = {
+  total: 0,
+  online: 0,
+  suspended: 0,
+  pending_kyc: 0,
+  not_started_kyc: 0,
+  approved_kyc: 0,
 };
 
 const emptyLiveTripsSummary: LiveTripsSummary = {
@@ -29,7 +42,7 @@ const initialState: DashboardState = {
   isLoading: false,
   error: null,
   usersummary: emptySummary,
-  driversummary: emptySummary,
+  driversummary: emptyDriverSummary,
   ridersummary: emptySummary,
   analytics: null,
   analyticsLoading: false,

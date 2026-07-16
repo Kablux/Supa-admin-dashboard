@@ -1,5 +1,6 @@
 
 import {
+  DriverSummaryData,
   LiveTripsSummary,
   RideSummaryData,
   TransactionAnalytics,
@@ -25,7 +26,7 @@ export interface DashboardState {
   // liveTrips: number;
   liveTripsSummary: LiveTripsSummary;
   usersummary: RideSummaryData;
-  driversummary: RideSummaryData;
+  driversummary: DriverSummaryData;
   ridersummary: RideSummaryData;
   isLoading: boolean;
   error: string | null;
@@ -124,10 +125,21 @@ export interface TransferRecipient {
   account_name: string;
 }
 
+export interface DriverDocument {
+  id: string;
+  doc_type: string;
+  status: string;
+  file_url: string;
+  rejection_reason: string;
+  expiry_date: string | null;
+  reviewed_at: string | null;
+}
+
 export interface Driver {
   id: string;
   email: string;
   status: string;
+  kyc_status: string;
   phone_number: string;
   address: string;
   rating: string;
@@ -142,10 +154,13 @@ export interface Driver {
   total_ride: number;
   completed_rides: number;
   cancelled_rides: number;
-  vehicle_information: DriverVehicle;
-  vehicle: DriverVehicle;
-  transfer_recipient: TransferRecipient;
+  vehicle: DriverVehicle | null;
+  vehicles: DriverVehicle[];
+  transfer_recipient: TransferRecipient | null;
   total_amount: number;
+  is_online: boolean;
+  ready_for_dispatch: boolean;
+  documents: DriverDocument[];
 }
 
 export interface PaginatedRides {
@@ -188,6 +203,7 @@ export interface DriverQueryParams {
   page_size?: number;
   search?: string;
   status?: "active" | "pending_verification" | "suspended" | "deleted" | "";
+  kyc_status?: "APPROVED" | "PENDING" | "IN_REVIEW" | "REJECTED" | "";
 }
 // ─────────────────────────────────────────────
 // Redux slice state
