@@ -156,11 +156,11 @@ export default function DriversPage() {
       value: driversummary.pending_kyc,
       icon: <FaListCheck color="#4A90E2" />,
     },
-    // {
-    //   title: "Suspended Drivers",
-    //   value: driversummary?.suspended,
-    //   icon: <BlockIcon color="error" />,
-    // },
+    {
+      title: "Suspended Drivers",
+      value: driversummary.suspended,
+      icon: <BlockIcon color="error" />,
+    },
   ];
 
   return (
@@ -177,9 +177,9 @@ export default function DriversPage() {
       />
 
       {/* Overview Cards Block */}
-      <OverviewCards items={driverStats} maxWidth={1000} loading={isLoading} />
+      <OverviewCards items={driverStats} loading={isLoading} />
 
-      {/* Tabs and Add New Button */}
+    
       <Box
         sx={{
           display: "flex",
