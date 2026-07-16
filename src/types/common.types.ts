@@ -332,22 +332,22 @@ export type InspectionStatus = "approved" | "pending" | "failed";
 export type CarCategory = "Premium" | "Business" | "Standard" | "Economy";
 export interface InspectedCar {
   id: string;
-  make: string; // e.g. "Koenigsegg"
-  model: string; // e.g. "GT-R"
+  make: string; 
+  model: string; 
   category: CarCategory;
   imageUrl: string | null;
-  engineSize: string; // e.g. "90L"
-  transmission: string; // e.g. "Manual"
+  engineSize: string; 
+  transmission: string; 
   seats: number;
   pricePerDay: number;
   originalPricePerDay?: number;
   status: InspectionStatus;
   isFavourite: boolean;
-  submittedAt: string; // ISO date
-  inspectedAt?: string; // ISO date — set when approved or failed
+  submittedAt: string;
+  inspectedAt?: string; 
   ownerName: string;
   ownerAvatar: string | null;
-  notes?: string; // inspector's notes
+  notes?: string;
 }
 
 // ── Top-5 chart data ──────────────────────────────────────────────────────────
