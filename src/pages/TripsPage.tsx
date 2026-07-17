@@ -11,6 +11,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { TRIP_TAB_MAPPING } from "../types/common.types";
 import SearchFilterRow from "../components/SearchFilterRow";
 import TripsTable from "../components/trips/TripsTable";
+import TripDetailsModal from "../components/trips/TripDetailModal";
 
 type UITabType = keyof typeof TRIP_TAB_MAPPING;
 
@@ -20,6 +21,7 @@ export default function TripsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [pageSize, setPageSize] = useState(10);
+  const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
   const {
     items: tripList,
     totalCount,
@@ -29,16 +31,6 @@ export default function TripsPage() {
    const {
       liveTripsSummary,
     } = useAppSelector((state) => state.dashboard);
-
-  // const liveTripCount = tripList.filter(
-  //   (trip) => trip.status === "driver_on_way",
-  // ).length;
-  // const completedCount = tripList.filter(
-  //   (trip) => trip.status === "completed",
-  // ).length;
-  // const cancelledCount = tripList.filter(
-  //   (trip) => trip.status === "cancelled",
-  // ).length;
 
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -170,8 +162,14 @@ export default function TripsPage() {
         pageSize={pageSize}
         onPageChange={handleChangePage}
         onPageSizeChange={handlePageSizeChange}
-        // onViewDriver={(id) => setSelectedTripId(id)}
+        onViewTrip={(id) => setSelectedTripId(id)}
       />
+      
+      <TripDetailsModal
+              tripId={selectedTripId}
+              isOpen={!!selectedTripId}
+              onClose={() => setSelectedTripId(null)}
+            />
     </Box>
   );
 }
