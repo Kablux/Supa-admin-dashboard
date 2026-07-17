@@ -13,6 +13,7 @@ import {
   Driver,
   TripQueryParams,
   PaginatedTripsResponse,
+  Ride,
 } from "../types/auth";
 import { cleanQueryParams } from "../utils/hook";
 import {
@@ -147,6 +148,11 @@ export async function getTrips(
     params: cleanQueryParams(params),
   });
 
+  return data;
+}
+
+export async function getTripById(tripId: string): Promise<Ride> {
+  const { data } = await api.get(`/business-admin/rides/${tripId}/`);
   return data;
 }
 

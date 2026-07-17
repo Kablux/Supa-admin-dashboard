@@ -21,6 +21,7 @@ interface TripsTableProps {
   currentPage: number;
   pageSize: number;
   onPageChange: (event: unknown, newPage: number) => void;
+  onViewTrip: (tripId: string) => void;
   onPageSizeChange: (newPageSize: number) => void;
 }
 
@@ -32,6 +33,7 @@ export default function TripsTable({
   pageSize,
   onPageChange,
   onPageSizeChange,
+  onViewTrip,
 }: TripsTableProps) {
   return (
     <Box>
@@ -132,7 +134,9 @@ export default function TripsTable({
                 {tripsList.map((trip) => (
                   <TableRow
                     key={trip.id}
+                    onClick={() => onViewTrip(trip.id)}
                     sx={{
+                      cursor: "pointer",
                       "&:last-child td": { borderBottom: "none" },
                       "&:hover": { backgroundColor: "var(--bg-card-hover)" },
                       transition: "background 0.12s",
