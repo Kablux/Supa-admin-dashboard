@@ -59,18 +59,16 @@ export interface DriverSummaryData {
 }
 
 export interface LiveTripsSummary {
-  total: number;
-  driver_on_way: number;
-  arrived: number;
-  started: number;
+  active: number;
   completed: number;
   cancelled: number;
 }
 
 export const TAB_MAPPING = {
   all: "",
-  approved: "active",
+  active: "active",
   pending: "pending_verification",
+  suspended: "suspended",
   cancelled: "deleted",
 } as const;
 

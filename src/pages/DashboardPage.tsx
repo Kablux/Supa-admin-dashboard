@@ -31,7 +31,7 @@ export default function DashboardPage() {
     {
       id: "live_trips",
       label: "Live Trips",
-      value: liveTripsSummary.total,
+      value: liveTripsSummary.active,
       icon: "DirectionsCar",
       color: "#FEB40E",
       bg: "#2a2000",
@@ -40,16 +40,16 @@ export default function DashboardPage() {
 
       details: [
         {
-          label: "Driver On Way",
-          value: liveTripsSummary.driver_on_way,
+          label: "Active",
+          value: liveTripsSummary.active,
         },
         {
-          label: "Arrived",
-          value: liveTripsSummary.arrived,
+          label: "Completed",
+          value: liveTripsSummary.completed,
         },
         {
-          label: "Total",
-          value: liveTripsSummary.total,
+          label: "Cancelled",
+          value: liveTripsSummary.cancelled,
         },
       ],
     },
@@ -90,7 +90,15 @@ export default function DashboardPage() {
       details: [
         {
           label: "Active",
-          value: driversummary.active,
+          value: driversummary.online,
+        },
+        {
+          label: "In Review",
+          value: driversummary.pending_kyc,
+        },
+        {
+          label: "Pending",
+          value: driversummary.not_started_kyc,
         },
         {
           label: "Suspended",

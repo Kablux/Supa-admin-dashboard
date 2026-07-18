@@ -26,10 +26,7 @@ const emptyDriverSummary: DriverSummaryData = {
 };
 
 const emptyLiveTripsSummary: LiveTripsSummary = {
-  total: 0,
-  driver_on_way: 0,
-  arrived: 0,
-  started: 0,
+  active: 0,
   completed: 0,
   cancelled: 0,
 };
