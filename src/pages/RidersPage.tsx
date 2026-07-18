@@ -11,16 +11,13 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import BlockIcon from "@mui/icons-material/Block";
 import RidersTable from "../components/rider/RidersTable";
 import { TAB_MAPPING } from "../types/common.types";
-import { useNavigate } from "react-router-dom";
 import RiderDetailsModal from "../components/rider/RideDetailsModal";
 import SearchFilterRow from "../components/SearchFilterRow";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 
 type UITabType = keyof typeof TAB_MAPPING;
 
 export default function RidersPage() {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
@@ -116,7 +113,7 @@ export default function RidersPage() {
         }}
       >
         <Box sx={{ display: "flex", gap: 3 }}>
-          {(["all", "approved", "pending", "cancelled"] as const).map((tab) => (
+          {(["all", "active", "suspended"] as const).map((tab) => (
             <Typography
               key={tab}
               onClick={() => handleTabChange(tab)}

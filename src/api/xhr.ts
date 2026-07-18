@@ -108,19 +108,24 @@ export async function getDriverSummary() {
   return data.data;
 }
 
-
-export const approveDriverKyc = async (driverId: string, payload: UpdateDriverPayload) => {
+export const approveDriverKyc = async (
+  driverId: string,
+  payload: UpdateDriverPayload,
+) => {
   const response = await api.post(
-    `/api/v1/business-admin/drivers/${driverId}/approve_kyc/`, 
-    payload
+    `/api/v1/business-admin/drivers/${driverId}/approve_kyc/`,
+    payload,
   );
   return response.data;
 };
 
-export const suspendDriver = async (driverId: string, payload: UpdateDriverPayload) => {
+export const suspendDriver = async (
+  driverId: string,
+  payload: UpdateDriverPayload,
+) => {
   const response = await api.post(
     `/api/v1/business-admin/drivers/${driverId}/suspend/`,
-    payload
+    payload,
   );
   return response.data;
 };
@@ -157,10 +162,15 @@ export async function getTripById(tripId: string): Promise<Ride> {
 }
 
 export async function getLiveTripsSummary() {
-  const { data } = await api.get("/business-admin/rides/live/");
+  const { data } = await api.get("/business-admin/rides/summary/");
 
   return data.data;
 }
+// export async function getLiveTripsSummary() {
+//   const { data } = await api.get("/business-admin/rides/live/");
+
+//   return data.data;
+// }
 
 export const fetchRiderDetails = async (id: string): Promise<Rider> => {
   const { data } = await api.get<Rider>(`/business-admin/riders/${id}/`);

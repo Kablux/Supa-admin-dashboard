@@ -11,6 +11,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
+import CloseIcon from "@mui/icons-material/Close";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -58,6 +59,7 @@ export default function DriverDetailsModal({
   const [driverData, setDriverData] = useState<Driver | null>(null);
   const [activeImgUrl, setActiveImgUrl] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (isOpen && driverId) {
@@ -84,10 +86,13 @@ export default function DriverDetailsModal({
     }
   }, [isOpen, driverId]);
 
-  const handleCopyEmail = () => {
-    if (driverData?.email) {
-      navigator.clipboard.writeText(driverData.email);
-    }
+  const handleCopyEmail = async () => {
+    if (!driverData?.email) return;
+    await navigator.clipboard.writeText(driverData.email);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
   };
 
   const [actionLoading, setActionLoading] = useState<
@@ -134,6 +139,17 @@ export default function DriverDetailsModal({
         },
       }}
     >
+      <IconButton
+        onClick={onClose}
+        sx={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          color: "secondary.main",
+        }}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
       {loading || !driverData ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
           <CircularProgress sx={{ color: "var(--accent-gold)" }} />
@@ -167,12 +183,26 @@ export default function DriverDetailsModal({
                   <Typography sx={{ fontSize: 14, color: "secondary.main" }}>
                     {driverData.email}
                   </Typography>
-                  <IconButton
-                    onClick={handleCopyEmail}
-                    sx={{ color: "#4d8eff", p: 0.5 }}
-                  >
-                    <ContentCopyIcon sx={{ fontSize: 14 }} />
-                  </IconButton>
+
+                  <Box className="flex items-center gap-2">
+                    <IconButton
+                      onClick={handleCopyEmail}
+                      sx={{ color: "#4d8eff", p: 0.5 }}
+                    >
+                      <ContentCopyIcon sx={{ fontSize: 14 }} />
+                    </IconButton>
+                    {copied && (
+                      <Typography
+                        sx={{
+                          fontSize: 12,
+                          fontWeight: 500,
+                          mt: 0.5,
+                        }}
+                      >
+                        Copied
+                      </Typography>
+                    )}
+                  </Box>
                 </Box>
               </Box>
             </Box>
@@ -685,7 +715,7 @@ export default function DriverDetailsModal({
                     sx={{
                       flex: 1,
                       p: 2,
-                      border: "2px dashed var(--border)",
+                      // border: "2px dashed var(--border)",
                       borderRadius: "4px",
                       display: "flex",
                       flexDirection: "column",
@@ -709,25 +739,31 @@ export default function DriverDetailsModal({
                         gap: 0.5,
                       }}
                     >
-                      <Typography sx={{ color: "secondary.main" }}>
+                      <Typography
+                        sx={{ color: "secondary.main", fontSize: 14 }}
+                      >
                         Plate No:{" "}
                         <Typography
                           component="span"
-                          sx={{ color: "var(--text-primary)" }}
+                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
                         >
                           {primaryVehicle.plate_number}
                         </Typography>
                       </Typography>
-                      <Typography sx={{ color: "secondary.main" }}>
+                      <Typography
+                        sx={{ color: "secondary.main", fontSize: 14 }}
+                      >
                         Vehicle Color:{" "}
                         <Typography
                           component="span"
-                          sx={{ color: "var(--text-primary)" }}
+                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
                         >
                           {primaryVehicle.color}
                         </Typography>
                       </Typography>
-                      <Typography sx={{ color: "secondary.main" }}>
+                      <Typography
+                        sx={{ color: "secondary.main", fontSize: 14 }}
+                      >
                         A/C:{" "}
                         <Typography
                           component="span"
@@ -735,6 +771,7 @@ export default function DriverDetailsModal({
                             color: primaryVehicle.vehicle_info?.is_ac_working
                               ? "#50c878"
                               : "#ff6b6b",
+                            fontSize: 14,
                           }}
                         >
                           {primaryVehicle.vehicle_info?.is_ac_working
@@ -742,7 +779,9 @@ export default function DriverDetailsModal({
                             : "Faulty"}
                         </Typography>
                       </Typography>
-                      <Typography sx={{ color: "secondary.main" }}>
+                      <Typography
+                        sx={{ color: "secondary.main", fontSize: 14 }}
+                      >
                         Interior:{" "}
                         <Typography
                           component="span"
@@ -750,6 +789,7 @@ export default function DriverDetailsModal({
                             color: primaryVehicle.vehicle_info?.is_interior_neat
                               ? "#50c878"
                               : "#ff6b6b",
+                            fontSize: 14,
                           }}
                         >
                           {primaryVehicle.vehicle_info?.is_interior_neat
@@ -765,12 +805,10 @@ export default function DriverDetailsModal({
                     sx={{
                       flex: 1,
                       p: 2,
-                      border: "2px dashed var(--border)",
-                      borderRadius: "4px",
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "space-between",
-                      gap: 1.5,
+                      gap: 0.5,
                     }}
                   >
                     <Box>
@@ -797,29 +835,35 @@ export default function DriverDetailsModal({
                         gap: 0.5,
                       }}
                     >
-                      <Typography sx={{ color: "secondary.main" }}>
+                      <Typography
+                        sx={{ color: "secondary.main", fontSize: 14 }}
+                      >
                         Bank Code:{" "}
                         <Typography
                           component="span"
-                          sx={{ color: "var(--text-primary)" }}
+                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
                         >
                           {driverData.transfer_recipient?.bank_code || "N/A"}
                         </Typography>
                       </Typography>
-                      <Typography sx={{ color: "secondary.main" }}>
+                      <Typography
+                        sx={{ color: "secondary.main", fontSize: 14 }}
+                      >
                         Account Name:{" "}
                         <Typography
                           component="span"
-                          sx={{ color: "var(--text-primary)" }}
+                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
                         >
                           {driverData.transfer_recipient?.account_name}
                         </Typography>
                       </Typography>
-                      <Typography sx={{ color: "secondary.main" }}>
+                      <Typography
+                        sx={{ color: "secondary.main", fontSize: 14 }}
+                      >
                         Account No:{" "}
                         <Typography
                           component="span"
-                          sx={{ color: "var(--text-primary)" }}
+                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
                         >
                           {driverData.transfer_recipient?.account_number}
                         </Typography>

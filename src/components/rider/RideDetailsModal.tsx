@@ -11,6 +11,7 @@ import StarIcon from "@mui/icons-material/Star";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import CloseIcon from "@mui/icons-material/Close";
 import { Rider } from "../../types/auth";
 import { fetchRiderDetails } from "../../api/xhr";
 import { MetricBox } from "../ModalMetricsBox";
@@ -37,6 +38,8 @@ export default function RiderDetailsModal({
 }: RiderDetailsModalProps) {
   const [loading, setLoading] = useState(false);
   const [riderData, setRiderData] = useState<Rider | null>(null);
+  const [copied, setCopied] = useState(false);
+
   useEffect(() => {
     if (isOpen && riderId) {
       setLoading(true);
@@ -48,8 +51,14 @@ export default function RiderDetailsModal({
       setRiderData(null);
     }
   }, [isOpen, riderId]);
-  const handleCopyEmail = () => {
-    if (riderData?.email) navigator.clipboard.writeText(riderData.email);
+
+  const handleCopyEmail = async () => {
+    if (!riderData?.email) return;
+    await navigator.clipboard.writeText(riderData.email);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
   };
 
   return (
@@ -70,6 +79,17 @@ export default function RiderDetailsModal({
         },
       }}
     >
+      <IconButton
+        onClick={onClose}
+        sx={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          color: "secondary.main",
+        }}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
       {loading || !riderData ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
           <CircularProgress sx={{ color: "var(--accent-gold)" }} />
@@ -104,9 +124,24 @@ export default function RiderDetailsModal({
                 </Typography>
               </Box>
             </Box>
-            <IconButton onClick={handleCopyEmail} sx={{ color: "#4d8eff" }}>
-              <ContentCopyIcon sx={{ fontSize: 18 }} />
-            </IconButton>
+
+            <Box>
+              <IconButton onClick={handleCopyEmail} sx={{ color: "#4d8eff" }}>
+                <ContentCopyIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+
+              {copied && (
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 500,
+                    mt: 0.5,
+                  }}
+                >
+                  Copied
+                </Typography>
+              )}
+            </Box>
           </Box>
 
           {/* Customer Info Section */}

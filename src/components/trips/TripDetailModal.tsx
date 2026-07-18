@@ -78,12 +78,12 @@ export default function TripDetailsModal({
         onClick={onClose}
         sx={{
           position: "absolute",
-          top: 12,
-          right: 12,
-          color: "rgba(255,255,255,0.5)",
+          top: 8,
+          right: 8,
+          color: "secondary.main",
         }}
       >
-        <CloseIcon />
+        <CloseIcon fontSize="small" />
       </IconButton>
 
       {loading || !tripData ? (
@@ -104,12 +104,12 @@ export default function TripDetailsModal({
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Avatar
                 sx={{
-                  width: 48,
-                  height: 48,
+                  width: 42,
+                  height: 42,
                   bgcolor: "var(--accent-gold, #FFD700)",
                   color: "#000",
-                  fontWeight: 600,
-                  fontSize: 24,
+                  fontWeight: 700,
+                  fontSize: 18,
                 }}
               >
                 {tripData.rider?.charAt(0)?.toUpperCase() || "R"}
@@ -290,14 +290,14 @@ export default function TripDetailsModal({
                       sx={{
                         mt: 1,
                         fontSize: 12,
-                        textAlign:"right",
+                        textAlign: "right",
                       }}
                     >
                       Cancelled by:{" "}
                       <Box
                         component="span"
                         sx={{
-                          textAlign:"right",
+                          textAlign: "right",
                           fontWeight: 500,
                         }}
                       >

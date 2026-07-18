@@ -28,9 +28,7 @@ export default function TripsPage() {
     currentPage,
     isLoading,
   } = useAppSelector((state) => state.trips);
-   const {
-      liveTripsSummary,
-    } = useAppSelector((state) => state.dashboard);
+  const { liveTripsSummary } = useAppSelector((state) => state.dashboard);
 
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -73,7 +71,7 @@ export default function TripsPage() {
   const liveStats: OverviewItem[] = [
     {
       title: "Live Trip",
-      value: liveTripsSummary.driver_on_way,
+      value: liveTripsSummary.active,
       icon: <DirectionsCarIcon />,
     },
     {
@@ -164,12 +162,12 @@ export default function TripsPage() {
         onPageSizeChange={handlePageSizeChange}
         onViewTrip={(id) => setSelectedTripId(id)}
       />
-      
+
       <TripDetailsModal
-              tripId={selectedTripId}
-              isOpen={!!selectedTripId}
-              onClose={() => setSelectedTripId(null)}
-            />
+        tripId={selectedTripId}
+        isOpen={!!selectedTripId}
+        onClose={() => setSelectedTripId(null)}
+      />
     </Box>
   );
 }
