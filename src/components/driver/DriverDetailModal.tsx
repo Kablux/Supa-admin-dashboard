@@ -60,6 +60,8 @@ export default function DriverDetailsModal({
   const [activeImgUrl, setActiveImgUrl] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState({ x: "50%", y: "50%" });
 
   useEffect(() => {
     if (isOpen && driverId) {
@@ -68,7 +70,6 @@ export default function DriverDetailsModal({
         .then((data) => {
           setDriverData(data);
 
-          // Safely target the first vehicle in the new array structure
           const vehicleData = data?.vehicles?.[0] || data?.vehicle;
           const fallbackImg =
             vehicleData?.images?.find((img: any) => img.image_type === "front")
@@ -95,6 +96,15 @@ export default function DriverDetailsModal({
     }, 2000);
   };
 
+  //  Handler to calculate mouse position as a percentage of the image box
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } =
+      e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomOrigin({ x: `${x}%`, y: `${y}%` });
+  };
+
   const [actionLoading, setActionLoading] = useState<
     "approve" | "activate" | "reject" | "suspend" | "delete" | null
   >(null);
@@ -118,7 +128,6 @@ export default function DriverDetailsModal({
   const isInReview = driverData?.kyc_status === "IN_REVIEW";
   const isPending = driverData?.kyc_status === "PENDING";
   const isRejected = driverData?.kyc_status === "REJECTED";
-
   const primaryVehicle = driverData?.vehicles?.[0] || driverData?.vehicle;
 
   return (
@@ -280,16 +289,20 @@ export default function DriverDetailsModal({
             </Box>
           )}
 
-          {/* Core Vehicle Information Section */}
+          {/* IsInReview Core Vehicle Information Section */}
           {(isInReview || isPending) && (
-            <Box className="flex justify-center gap-5 w-full">
+            <Box className="flex justify-center items-center gap-5 w-full">
               {/* Left Column */}
               <Box className="w-1/2">
                 {activeImgUrl ? (
                   <Box
+                    onMouseEnter={() => setIsZoomed(true)}
+                    onMouseLeave={() => setIsZoomed(false)}
+                    onMouseMove={handleMouseMove}
                     sx={{
                       width: "100%",
-                      height: 240,
+                      maxHeight: 300,
+                      height: "100%",
                       borderRadius: "10px",
                       overflow: "hidden",
                       backgroundColor: "#121212",
@@ -298,17 +311,26 @@ export default function DriverDetailsModal({
                       alignItems: "center",
                       justifyContent: "center",
                       mb: 1.5,
+                      position: "relative",
+                      cursor: isZoomed ? "zoom-in" : "default",
                     }}
                   >
-                    <img
+                    <Box
+                      component="img"
                       src={activeImgUrl}
                       alt="Asset Review Display"
-                      style={{
+                      onError={() => setActiveImgUrl(null)}
+                      sx={{
                         width: "100%",
                         height: "100%",
-                        objectFit: "cover",
+                        objectFit: "contain",
+                        transform: isZoomed ? "scale(2.5)" : "scale(1)",
+                        transformOrigin: `${zoomOrigin.x} ${zoomOrigin.y}`,
+                        transition: isZoomed
+                          ? "none"
+                          : "transform 0.3s ease-out",
+                        willChange: "transform",
                       }}
-                      onError={() => setActiveImgUrl(null)}
                     />
                   </Box>
                 ) : (
@@ -346,7 +368,14 @@ export default function DriverDetailsModal({
                 )}
 
                 {/* Combined Thumbnail Stream: Vehicles + Documents */}
-                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                  }}
+                >
                   {primaryVehicle?.images?.map((img: any, idx: number) => {
                     const isSelected = activeImgUrl === img.image_url;
                     return (
@@ -354,8 +383,8 @@ export default function DriverDetailsModal({
                         key={img.id || `veh-${idx}`}
                         onClick={() => setActiveImgUrl(img.image_url)}
                         sx={{
-                          width: 60,
-                          height: 52,
+                          width: 64,
+                          height: 58,
                           borderRadius: "6px",
                           overflow: "hidden",
                           cursor: "pointer",
@@ -606,7 +635,7 @@ export default function DriverDetailsModal({
                                   color: "rgba(255,255,255,0.4)",
                                 }}
                               >
-                                Click to verify file
+                                Click to view file
                               </Typography>
                             </Box>
 
@@ -656,7 +685,18 @@ export default function DriverDetailsModal({
             <Box sx={{ mt: 1 }}>
               {/* Clickable Header Button Link */}
               <Box
-                onClick={() => setExpanded(!expanded)}
+                onClick={() => {
+                  setExpanded(!expanded);
+
+                  if (
+                    !expanded &&
+                    !activeImgUrl &&
+                    primaryVehicle.images &&
+                    primaryVehicle.images.length > 0
+                  ) {
+                    setActiveImgUrl(primaryVehicle.images[0].image_url);
+                  }
+                }}
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -664,12 +704,7 @@ export default function DriverDetailsModal({
                   transition: "all 0.2s ease-in-out",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: 14,
-                    fontWeight: 600,
-                  }}
-                >
+                <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
                   {expanded ? "Show Less" : "See More "}
                 </Typography>
                 <MdExpandMore
@@ -682,192 +717,303 @@ export default function DriverDetailsModal({
                 />
               </Box>
 
-              {/* Collapsible Container Content */}
+              {/* Collapsible Container Content (Split-Pane Layout) */}
               <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "column",
-                    gap: 1.5,
-                    mt: 2,
-                  }}
-                >
-                  <Typography sx={{ fontSize: 14 }}>
-                    Vehicle & Account Information
-                  </Typography>
-
-                  {/* 1. Image Carousel Block */}
-                  {primaryVehicle.images &&
-                    primaryVehicle.images.length > 0 && (
-                      <VehicleImageSlider images={primaryVehicle.images} />
-                    )}
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
+                    flexDirection: { xs: "column", md: "row" },
                     gap: 2,
                     mt: 2,
-                    flexDirection: { xs: "column", sm: "row" },
                   }}
                 >
-                  {/* Left Side: Vehicle Details */}
+                  {/* LEFT COLUMN: Active Image Preview & Thumbnails */}
                   <Box
                     sx={{
                       flex: 1,
-                      p: 2,
-                      // border: "2px dashed var(--border)",
-                      borderRadius: "4px",
                       display: "flex",
                       flexDirection: "column",
-                      gap: 1.5,
+                      gap: 2,
                     }}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <MdDirectionsCar
-                        size={18}
-                        color="var(--accent-gold, #FFB300)"
-                      />
-                      <Typography sx={{ fontSize: 15, fontWeight: 600 }}>
-                        {primaryVehicle.model} ({primaryVehicle.year})
-                      </Typography>
-                    </Box>
-
+                    {/* Main Preview Container */}
                     <Box
+                      onMouseEnter={() => setIsZoomed(true)}
+                      onMouseLeave={() => setIsZoomed(false)}
+                      onMouseMove={handleMouseMove}
                       sx={{
+                        width: "100%",
+                        height: "100%",
+                        maxHeight: 300,
+                        bgcolor: "background.paper",
+                        borderRadius: 2,
                         display: "flex",
-                        flexDirection: "column",
-                        gap: 0.5,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid var(--border)",
+                        overflow: "hidden",
+                        position: "relative",
+                        cursor: activeImgUrl ? "zoom-in" : "default",
                       }}
                     >
-                      <Typography
-                        sx={{ color: "secondary.main", fontSize: 14 }}
-                      >
-                        Plate No:{" "}
-                        <Typography
-                          component="span"
-                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
-                        >
-                          {primaryVehicle.plate_number}
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{ color: "secondary.main", fontSize: 14 }}
-                      >
-                        Vehicle Color:{" "}
-                        <Typography
-                          component="span"
-                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
-                        >
-                          {primaryVehicle.color}
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{ color: "secondary.main", fontSize: 14 }}
-                      >
-                        A/C:{" "}
-                        <Typography
-                          component="span"
+                      {activeImgUrl ? (
+                        <Box
+                          component="img"
+                          src={activeImgUrl}
+                          alt="Active Preview"
                           sx={{
-                            color: primaryVehicle.vehicle_info?.is_ac_working
-                              ? "#50c878"
-                              : "#ff6b6b",
-                            fontSize: 14,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain",
+                            transform: isZoomed ? "scale(2)" : "scale(1)",
+                            transformOrigin: `${zoomOrigin.x} ${zoomOrigin.y}`,
+                            transition: isZoomed
+                              ? "none"
+                              : "transform 0.3s ease-out",
+                            willChange: "transform",
+                          }}
+                        />
+                      ) : (
+                        <FiCameraOff size={48} color="var(--text-secondary)" />
+                      )}
+                    </Box>
+
+                    {/* Thumbnail Wrap-around Row */}
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+                      {primaryVehicle.images?.map((img, idx) => (
+                        <Box
+                          key={`veh-img-${idx}`}
+                          onClick={() => setActiveImgUrl(img.image_url)}
+                          sx={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: 1,
+                            cursor: "pointer",
+                            overflow: "hidden",
+                            border:
+                              activeImgUrl === img.image_url
+                                ? "2px solid var(--accent-gold, #FFB300)"
+                                : "1px solid var(--border)",
+                            transition: "border-color 0.2s ease",
+                            position: "relative",
                           }}
                         >
-                          {primaryVehicle.vehicle_info?.is_ac_working
-                            ? "Functional"
-                            : "Faulty"}
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{ color: "secondary.main", fontSize: 14 }}
-                      >
-                        Interior:{" "}
-                        <Typography
-                          component="span"
-                          sx={{
-                            color: primaryVehicle.vehicle_info?.is_interior_neat
-                              ? "#50c878"
-                              : "#ff6b6b",
-                            fontSize: 14,
-                          }}
-                        >
-                          {primaryVehicle.vehicle_info?.is_interior_neat
-                            ? "Clean"
-                            : "Requires Attention"}
-                        </Typography>
-                      </Typography>
+                          <Box
+                            component="img"
+                            src={img.image_url}
+                            alt={`Thumbnail ${idx}`}
+                            sx={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </Box>
+                      ))}
                     </Box>
                   </Box>
 
-                  {/* Right Side: Settlement Banking Details */}
+                  {/* RIGHT COLUMN: Verification Sheet */}
                   <Box
                     sx={{
                       flex: 1,
-                      p: 2,
                       display: "flex",
                       flexDirection: "column",
-                      justifyContent: "space-between",
-                      gap: 0.5,
+                      gap: 3,
                     }}
                   >
-                    <Box>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <MdAccountBalance size={18} color="#4d8eff" />
-                        <Typography
-                          sx={{
-                            fontSize: 14,
-                            fontWeight: 600,
-                            color: "secondary.main",
-                          }}
-                        >
-                          Account Info
-                        </Typography>
-                      </Box>
-                    </Box>
-
+                    {/* Section 1: Vehicle Declaration */}
                     <Box
                       sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 0.5,
+                        // border: "1px solid var(--border)",
+                        borderRadius: 2,
+                        p: 2,
+                        bgcolor: "background.paper",
                       }}
                     >
-                      <Typography
-                        sx={{ color: "secondary.main", fontSize: 14 }}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          mb: 2,
+                        }}
                       >
-                        Bank Code:{" "}
-                        <Typography
-                          component="span"
-                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
-                        >
-                          {driverData.transfer_recipient?.bank_code || "N/A"}
+                        <MdDirectionsCar
+                          size={20}
+                          color="var(--accent-gold, #FFB300)"
+                        />
+                        <Typography sx={{ fontSize: 16, fontWeight: 600 }}>
+                          Vehicle Declaration
                         </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{ color: "secondary.main", fontSize: 14 }}
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1fr",
+                          gap: 1,
+                        }}
                       >
-                        Account Name:{" "}
-                        <Typography
-                          component="span"
-                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
+                        <Box>
+                          <Typography
+                            sx={{ fontSize: 12, color: "text.secondary" }}
+                          >
+                            Model & Year
+                          </Typography>
+                          <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
+                            {primaryVehicle.model} ({primaryVehicle.year})
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography
+                            sx={{ fontSize: 12, color: "text.secondary" }}
+                          >
+                            Plate Number
+                          </Typography>
+                          <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
+                            {primaryVehicle.plate_number}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography
+                            sx={{ fontSize: 12, color: "text.secondary" }}
+                          >
+                            Color
+                          </Typography>
+                          <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
+                            {primaryVehicle.color}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontSize: 12,
+                              color: "text.secondary",
+                              mb: 0.5,
+                            }}
+                          >
+                            Condition
+                          </Typography>
+                          <Box sx={{ display: "flex", gap: 1 }}>
+                            <Chip
+                              size="small"
+                              label={
+                                primaryVehicle.vehicle_info?.is_ac_working
+                                  ? "Good A/C"
+                                  : "Faulty A/C"
+                              }
+                              sx={{
+                                bgcolor: primaryVehicle.vehicle_info
+                                  ?.is_ac_working
+                                  ? "#e8f5e9"
+                                  : "#ffebee",
+                                color: primaryVehicle.vehicle_info
+                                  ?.is_ac_working
+                                  ? "#2e7d32"
+                                  : "#c62828",
+                                fontSize: 10,
+                                fontWeight: 500,
+                              }}
+                            />
+                            <Chip
+                              size="small"
+                              label={
+                                primaryVehicle.vehicle_info?.is_interior_neat
+                                  ? "Neat Interior"
+                                  : "Requires Attention"
+                              }
+                              sx={{
+                                bgcolor: primaryVehicle.vehicle_info
+                                  ?.is_interior_neat
+                                  ? "#e8f5e9"
+                                  : "#ffebee",
+                                color: primaryVehicle.vehicle_info
+                                  ?.is_interior_neat
+                                  ? "#2e7d32"
+                                  : "#c62828",
+                                fontSize: 11,
+                                fontWeight: 600,
+                              }}
+                            />
+                          </Box>
+                        </Box>
+                      </Box>
+
+                      {/* 2: Bank Info */}
+                      <Box sx={{ mt: 4 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
                         >
-                          {driverData.transfer_recipient?.account_name}
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{ color: "secondary.main", fontSize: 14 }}
+                          <MdAccountBalance size={18} color="#4d8eff" />
+                          <Typography
+                            sx={{
+                              fontSize: 14,
+                              fontWeight: 600,
+                            }}
+                          >
+                            Account Info
+                          </Typography>
+                        </Box>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 1,
+                          mt: 1,
+                        }}
                       >
-                        Account No:{" "}
                         <Typography
-                          component="span"
-                          sx={{ color: "var(--text-primary)", fontSize: 14 }}
+                          sx={{ color: "secondary.main", fontSize: 12 }}
                         >
-                          {driverData.transfer_recipient?.account_number}
+                          Bank Code:{" "}
+                          <Typography
+                            component="span"
+                            sx={{
+                              color: "var(--text-primary)",
+                              fontSize: 12,
+                            }}
+                          >
+                            {driverData.transfer_recipient?.bank_code || "N/A"}
+                          </Typography>
                         </Typography>
-                      </Typography>
+                        <Typography
+                          sx={{ color: "secondary.main", fontSize: 12 }}
+                        >
+                          Account Name:{" "}
+                          <Typography
+                            component="span"
+                            sx={{
+                              color: "var(--text-primary)",
+                              fontSize: 12,
+                            }}
+                          >
+                            {driverData.transfer_recipient?.account_name ||
+                              "N/A"}
+                          </Typography>
+                        </Typography>
+                        <Typography
+                          sx={{ color: "secondary.main", fontSize: 12 }}
+                        >
+                          Account No:{" "}
+                          <Typography
+                            component="span"
+                            sx={{
+                              color: "var(--text-primary)",
+                              fontSize: 12,
+                            }}
+                          >
+                            {driverData.transfer_recipient?.account_number ||
+                              "N/A"}
+                          </Typography>
+                        </Typography>
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
@@ -1012,26 +1158,6 @@ export default function DriverDetailsModal({
 
               {isRejected && (
                 <>
-                  {/* <Button
-                    variant="outlined"
-                    fullWidth
-                    sx={{
-                      py: 1.2,
-                      fontSize: 14,
-                      textTransform: "none",
-                      fontWeight: 600,
-                      borderRadius: "8px",
-                      color: "#EF5350",
-                      borderColor: "rgba(239, 83, 80, 0.3)",
-                      "&:hover": {
-                        borderColor: "#EF5350",
-                        backgroundColor: "rgba(239, 83, 80, 0.08)",
-                      },
-                    }}
-                    onClick={() => onDriverAction?.(driverData.id, "delete")}
-                  >
-                    Delete Account
-                  </Button> */}
                   <Button
                     variant="contained"
                     fullWidth
@@ -1081,7 +1207,7 @@ function VehicleImageSlider({ images }: { images: VehicleImage[] }) {
       sx={{
         position: "relative",
         width: "100%",
-        height: 180,
+        height: 275,
         borderRadius: "8px",
         overflow: "hidden",
         backgroundColor: "rgba(255,255,255,0.03)",
@@ -1093,9 +1219,10 @@ function VehicleImageSlider({ images }: { images: VehicleImage[] }) {
         src={images[activeIndex].image_url}
         alt={`Vehicle view ${activeIndex}`}
         sx={{
+          maxWidth: 479,
           width: "100%",
-          height: "100%",
-          objectFit: "cover",
+          height: 275,
+          objectFit: "contain",
         }}
       />
 
