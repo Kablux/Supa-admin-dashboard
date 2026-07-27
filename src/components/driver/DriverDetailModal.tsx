@@ -125,6 +125,7 @@ export default function DriverDetailsModal({
   };
 
   const isActive = driverData?.kyc_status === "APPROVED";
+  const isSuspended = driverData?.status === "suspended";
   const isInReview = driverData?.kyc_status === "IN_REVIEW";
   const isPending = driverData?.kyc_status === "PENDING";
   const isRejected = driverData?.kyc_status === "REJECTED";
@@ -1035,7 +1036,7 @@ export default function DriverDetailsModal({
               {isInReview && (
                 <>
                   <Button
-                    disabled={!!actionLoading}
+                    disabled
                     variant="outlined"
                     fullWidth
                     sx={{
@@ -1045,6 +1046,7 @@ export default function DriverDetailsModal({
                       fontWeight: 600,
                       borderRadius: "8px",
                       color: "#E57373",
+                      cursor: "not-allowed",
                       borderColor: "rgba(229, 115, 115, 0.3)",
                       "&:hover": {
                         borderColor: "#E57373",
@@ -1054,7 +1056,7 @@ export default function DriverDetailsModal({
                     onClick={() => executeAction("reject")}
                   >
                     {actionLoading === "reject" ? (
-                      <CircularProgress color="inherit" />
+                      <CircularProgress size={18} color="inherit" />
                     ) : (
                       "Decline Request"
                     )}
@@ -1080,7 +1082,7 @@ export default function DriverDetailsModal({
                     onClick={() => executeAction("approve")}
                   >
                     {actionLoading === "approve" ? (
-                      <CircularProgress sx={{ color: "#fff" }} />
+                      <CircularProgress size={18} sx={{ color: "#fff" }} />
                     ) : (
                       "Accept Request"
                     )}
@@ -1098,7 +1100,7 @@ export default function DriverDetailsModal({
                     alignItems: "center",
                   }}
                 >
-                  {/* Left Side: Professional Financial Metric */}
+                  {/* Left Side: Earnings */}
                   <Box
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                   >
@@ -1113,6 +1115,7 @@ export default function DriverDetailsModal({
                     >
                       Total Earnings
                     </Typography>
+
                     <Typography
                       sx={{
                         fontSize: 18,
@@ -1121,15 +1124,14 @@ export default function DriverDetailsModal({
                         lineHeight: 1,
                       }}
                     >
-                      {/* Dynamically reads earnings property, gracefully falls back to formatted zero */}
                       {driverData.total_amount}
                     </Typography>
                   </Box>
 
-                  {/* Right Side: Clean Operational Action */}
+                  {/* Right Side: Suspend Action */}
                   <Button
                     variant="contained"
-                    disabled={!!actionLoading}
+                    disabled={!!actionLoading || isSuspended}
                     sx={{
                       py: 1.2,
                       px: 4,
@@ -1137,20 +1139,33 @@ export default function DriverDetailsModal({
                       textTransform: "none",
                       fontWeight: 600,
                       borderRadius: "8px",
-                      backgroundColor: "var(--accent-gold, #FFD700)",
-                      color: "#000",
+                      minWidth: 180,
                       boxShadow: "none",
-                      minWidth: 160,
+                      backgroundColor: isSuspended
+                        ? "rgba(255,255,255,0.12)"
+                        : "var(--accent-gold, #FFD700)",
+                      color: isSuspended ? "rgba(255,255,255,0.6)" : "#000",
                       "&:hover": {
-                        boxShadow: "0 4px 12px rgba(237, 108, 2, 0.2)",
+                        backgroundColor: isSuspended
+                          ? "rgba(255,255,255,0.12)"
+                          : "var(--accent-gold, #FFD700)",
+                        boxShadow: isSuspended
+                          ? "none"
+                          : "0 4px 12px rgba(237,108,2,0.2)",
                       },
                     }}
-                    onClick={() => executeAction("suspend")}
+                    onClick={() => {
+                      if (!isSuspended) {
+                        executeAction("suspend");
+                      }
+                    }}
                   >
-                    {actionLoading === "reject" ? (
-                      <CircularProgress sx={{ color: "#000" }} />
+                    {actionLoading === "suspend" ? (
+                      <CircularProgress size={18} sx={{ color: "#000" }} />
+                    ) : isSuspended ? (
+                      "Driver Suspended"
                     ) : (
-                      " Suspend Account"
+                      "Suspend Account"
                     )}
                   </Button>
                 </Box>
@@ -1161,23 +1176,20 @@ export default function DriverDetailsModal({
                   <Button
                     variant="contained"
                     fullWidth
+                    disabled
                     sx={{
                       py: 1.2,
                       fontSize: 14,
                       textTransform: "none",
                       fontWeight: 600,
                       borderRadius: "8px",
-                      backgroundColor: "#2E7D32", // Green to signal reactivation
+                      // backgroundColor: "#2E7D32",
                       color: "#fff",
                       boxShadow: "none",
-                      "&:hover": {
-                        backgroundColor: "#1B5E20",
-                        boxShadow: "0 4px 12px rgba(46, 125, 50, 0.3)",
-                      },
                     }}
                     onClick={() => onDriverAction?.(driverData.id, "activate")}
                   >
-                    Activate Account
+                    Driver Rejected
                   </Button>
                 </>
               )}
@@ -1186,128 +1198,5 @@ export default function DriverDetailsModal({
         </Box>
       )}
     </Dialog>
-  );
-}
-
-function VehicleImageSlider({ images }: { images: VehicleImage[] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const handlePrev = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
-  const handleNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  };
-
-  return (
-    <Box
-      sx={{
-        position: "relative",
-        width: "100%",
-        height: 275,
-        borderRadius: "8px",
-        overflow: "hidden",
-        backgroundColor: "rgba(255,255,255,0.03)",
-        border: "1px solid var(--border)",
-      }}
-    >
-      <Box
-        component="img"
-        src={images[activeIndex].image_url}
-        alt={`Vehicle view ${activeIndex}`}
-        sx={{
-          maxWidth: 479,
-          width: "100%",
-          height: 275,
-          objectFit: "contain",
-        }}
-      />
-
-      {/* Angle Identifier Tag */}
-      <Chip
-        label={images[activeIndex].image_type.toUpperCase()}
-        size="small"
-        sx={{
-          position: "absolute",
-          top: 10,
-          left: 10,
-          backgroundColor: "rgba(0, 0, 0, 0.75)",
-          color: "#fff",
-          fontSize: 10,
-          fontWeight: 700,
-          backdropFilter: "blur(4px)",
-          border: "1px solid rgba(255,255,255,0.1)",
-        }}
-      />
-
-      {/* Control overlays if multiple views exist */}
-      {images.length > 1 && (
-        <>
-          <IconButton
-            onClick={handlePrev}
-            sx={{
-              position: "absolute",
-              left: 8,
-              top: "50%",
-              transform: "translateY(-50%)",
-              backgroundColor: "rgba(0,0,0,0.5)",
-              color: "#fff",
-              "&:hover": { backgroundColor: "rgba(0,0,0,0.75)" },
-            }}
-            size="small"
-          >
-            <MdChevronLeft size={20} />
-          </IconButton>
-
-          <IconButton
-            onClick={handleNext}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: "50%",
-              transform: "translateY(-50%)",
-              backgroundColor: "rgba(0,0,0,0.5)",
-              color: "#fff",
-              "&:hover": { backgroundColor: "rgba(0,0,0,0.75)" },
-            }}
-            size="small"
-          >
-            <MdChevronRight size={20} />
-          </IconButton>
-
-          {/* Navigation Dots */}
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 10,
-              left: "50%",
-              transform: "translateX(-50%)",
-              display: "flex",
-              gap: 0.75,
-              p: "4px 8px",
-              borderRadius: "10px",
-              backgroundColor: "rgba(0,0,0,0.4)",
-            }}
-          >
-            {images.map((_, idx) => (
-              <Box
-                key={idx}
-                sx={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  backgroundColor:
-                    idx === activeIndex ? "#FFB300" : "rgba(255,255,255,0.4)",
-                  transition: "background-color 0.2s ease",
-                }}
-              />
-            ))}
-          </Box>
-        </>
-      )}
-    </Box>
   );
 }

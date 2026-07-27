@@ -17,13 +17,13 @@ import {
 } from "../types/auth";
 import { cleanQueryParams } from "../utils/hook";
 import {
+  ActionDriverPayload,
   AdminRole,
   CorporateInfo,
   CorporateOwner,
   CorporateStat,
   DriverSummaryData,
   TransactionAnalytics,
-  UpdateDriverPayload,
 } from "../types/common.types";
 
 export interface SummaryResponse {
@@ -110,10 +110,10 @@ export async function getDriverSummary() {
 
 export const approveDriverKyc = async (
   driverId: string,
-  payload: UpdateDriverPayload,
+  payload: ActionDriverPayload,
 ) => {
   const response = await api.post(
-    `/api/v1/business-admin/drivers/${driverId}/approve_kyc/`,
+    `/business-admin/drivers/${driverId}/approve_kyc/`,
     payload,
   );
   return response.data;
@@ -121,10 +121,10 @@ export const approveDriverKyc = async (
 
 export const suspendDriver = async (
   driverId: string,
-  payload: UpdateDriverPayload,
+  payload: ActionDriverPayload,
 ) => {
   const response = await api.post(
-    `/api/v1/business-admin/drivers/${driverId}/suspend/`,
+    `/business-admin/drivers/${driverId}/suspend/`,
     payload,
   );
   return response.data;
@@ -544,7 +544,6 @@ export async function getFleetData() {
     ],
   };
 }
-
 
 export const getDriverLocations = async () => {
   const response = await api.get("/dashboard/driver-locations");
