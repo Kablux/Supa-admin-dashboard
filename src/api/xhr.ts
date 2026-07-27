@@ -544,3 +544,13 @@ export async function getFleetData() {
     ],
   };
 }
+
+
+export const getDriverLocations = async () => {
+  const response = await api.get("/dashboard/driver-locations");
+  return response.data.map((item: any) => ({
+    lat: item.latitude ?? item.lat,
+    lng: item.longitude ?? item.lng ?? item.long,
+    weight: item.weight,
+  }));
+};
