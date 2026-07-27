@@ -15,6 +15,7 @@ import DriverDetailsModal from "../components/driver/DriverDetailModal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { FaListCheck } from "react-icons/fa6";
 import { approveDriverKyc, suspendDriver } from "../api/xhr";
+import { toast } from "react-toastify";
 
 type UITabType = keyof typeof DRIVER_TAB_MAPPING;
 
@@ -56,20 +57,19 @@ export default function DriversPage() {
       const targetDriver = driversList.find((d: any) => d.id === driverId);
 
       if (!targetDriver) {
-        console.error("Driver not found in state!");
+        toast.error("Driver not found in state!");
         return;
       }
 
       if (actionType === "approve") {
         const payload = {
-          email: targetDriver.email,
-          status: targetDriver.status,
-          phone_number: targetDriver.phone_number || "N/A",
-          address: targetDriver.address || "N/A",
+          kyc_status: targetDriver.kyc_status,
+          is_online: targetDriver.is_online,
           rating: targetDriver.rating || "N/A",
-          role: targetDriver.role || "business_admin",
+          ready_for_dispatch: targetDriver.ready_for_dispatch,
         };
         await approveDriverKyc(driverId, payload);
+        toast.success(`${targetDriver.full_name} is Approved Successfully`);
         setSelectedDriverId(null);
         dispatch(getDashboardStats());
         dispatch(
@@ -82,15 +82,13 @@ export default function DriversPage() {
         );
       } else if (actionType === "suspend") {
         const payload = {
-          email: targetDriver.email,
-          status: targetDriver.status,
-          phone_number: targetDriver.phone_number || "N/A",
-          address: targetDriver.address || "N/A",
+          kyc_status: targetDriver.kyc_status,
+          is_online: targetDriver.is_online,
           rating: targetDriver.rating || "N/A",
-          role: targetDriver.role || "business_admin",
+          ready_for_dispatch: targetDriver.ready_for_dispatch,
         };
         await suspendDriver(driverId, payload);
-
+        toast.success(`${targetDriver.full_name} is suspended!`);
         setSelectedDriverId(null);
         dispatch(getDashboardStats());
         dispatch(
@@ -179,7 +177,6 @@ export default function DriversPage() {
       {/* Overview Cards Block */}
       <OverviewCards items={driverStats} loading={isLoading} />
 
-    
       <Box
         sx={{
           display: "flex",
@@ -243,6 +240,7 @@ export default function DriversPage() {
         driverId={selectedDriverId}
         isOpen={!!selectedDriverId}
         onClose={() => setSelectedDriverId(null)}
+        onDriverAction={handleDriverAction}
       />
     </Box>
   );

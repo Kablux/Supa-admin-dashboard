@@ -48,25 +48,25 @@ export default function DriversTable({
   const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
 
-  const handleOpenActionModal = (e: React.MouseEvent, driver: Driver) => {
-    e.stopPropagation();
-    setSelectedDriver(driver);
-    setIsActionModalOpen(true);
-  };
+  // const handleOpenActionModal = (e: React.MouseEvent, driver: Driver) => {
+  //   e.stopPropagation();
+  //   setSelectedDriver(driver);
+  //   setIsActionModalOpen(true);
+  // };
 
-  const handleCloseActionModal = () => {
-    setSelectedDriver(null);
-    setIsActionModalOpen(false);
-  };
+  // const handleCloseActionModal = () => {
+  //   setSelectedDriver(null);
+  //   setIsActionModalOpen(false);
+  // };
 
-  const handleExecuteAction = (
-    actionType: "approve" | "reject" | "suspend" | "delete",
-  ) => {
-    if (selectedDriver) {
-      onDriverAction(selectedDriver.id, actionType);
-    }
-    handleCloseActionModal();
-  };
+  // const handleExecuteAction = (
+  //   actionType: "approve" | "reject" | "suspend" | "delete",
+  // ) => {
+  //   if (selectedDriver) {
+  //     onDriverAction(selectedDriver.id, actionType);
+  //   }
+  //   handleCloseActionModal();
+  // };
   return (
     <Box>
       {isLoading ? (

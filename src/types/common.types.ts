@@ -50,12 +50,12 @@ export interface RideSummaryData {
 }
 
 export interface DriverSummaryData {
-   total: number,
-    online: number,
-    suspended: number,
-    pending_kyc: number,
-    not_started_kyc: number,
-    approved_kyc: number
+  total: number;
+  online: number;
+  suspended: number;
+  pending_kyc: number;
+  not_started_kyc: number;
+  approved_kyc: number;
 }
 
 export interface LiveTripsSummary {
@@ -330,19 +330,19 @@ export type InspectionStatus = "approved" | "pending" | "failed";
 export type CarCategory = "Premium" | "Business" | "Standard" | "Economy";
 export interface InspectedCar {
   id: string;
-  make: string; 
-  model: string; 
+  make: string;
+  model: string;
   category: CarCategory;
   imageUrl: string | null;
-  engineSize: string; 
-  transmission: string; 
+  engineSize: string;
+  transmission: string;
   seats: number;
   pricePerDay: number;
   originalPricePerDay?: number;
   status: InspectionStatus;
   isFavourite: boolean;
   submittedAt: string;
-  inspectedAt?: string; 
+  inspectedAt?: string;
   ownerName: string;
   ownerAvatar: string | null;
   notes?: string;
@@ -367,13 +367,11 @@ export interface InspectionState {
   totalInspectedValue: number;
 }
 
-
-///PAYLOAD
-export interface UpdateDriverPayload {
-  email: string;
-  status: string;
-  phone_number?: string;
-  address?: string;
-  rating?: string;
-  role?: string;
+///ActioPAYLOAD
+export interface ActionDriverPayload {
+  rating: string;
+  kyc_status: string;
+  is_online: boolean;
+  ready_for_dispatch: boolean;
 }
+
