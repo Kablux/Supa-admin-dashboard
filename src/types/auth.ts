@@ -161,6 +161,11 @@ export interface Driver {
   is_online: boolean;
   ready_for_dispatch: boolean;
   documents: DriverDocument[];
+  current_location?: {
+    lat: number;
+    lng: number;
+    last_updated?: string;
+  };
 }
 
 export interface PaginatedRides {
