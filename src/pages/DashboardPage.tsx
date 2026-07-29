@@ -8,7 +8,6 @@ import MessagesPanel from "../components/dashboard/MessagesPanel";
 import { getDashboardStats } from "../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { Stat } from "../types/common.types";
-// import MapWidget from "../components/dashboard/MapWidget";
 import MapWidget from "../components/dashboard/map/MapWidget";
 
 export default function DashboardPage() {

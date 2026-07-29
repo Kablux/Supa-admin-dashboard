@@ -1,7 +1,6 @@
 import React from "react";
-import { Box, Button, InputAdornment } from "@mui/material";
+import { Box,  InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import AdminTextField from "./common/TextInput";
 
 interface SearchFilterRowProps {

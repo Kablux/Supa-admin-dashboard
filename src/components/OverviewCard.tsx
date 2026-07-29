@@ -19,7 +19,7 @@ export default function OverviewCards({
   loading = false,
 }: OverviewCardsProps) {
   const totalItems = items.length;
-  const columns = Math.min(totalItems, 5);
+  const columns = Math.min(totalItems, 6);
   return (
     <Box
       sx={{

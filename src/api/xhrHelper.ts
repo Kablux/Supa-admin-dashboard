@@ -22,6 +22,9 @@ import {
   getDriverSummary,
   getFleetData,
   getLiveTripsSummary,
+  getRideRequestDetails,
+  getRideRequests,
+  getRideRequestsSummary,
   getRiders,
   getRiderSummary,
   getTransactionAnalytics,
@@ -32,7 +35,7 @@ import {
   logoutRequest,
   updateAdminRole,
 } from "./xhr";
-import { AdminRole } from "../types/common.types";
+import { AdminRole, RideRequestQueryParams } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
@@ -91,6 +94,7 @@ export const getDashboardStats = createAsyncThunk(
         userSummary,
         driverSummary,
         riderSummary,
+        requestSummary
       ] = await Promise.all([
         getUserList(),
         getDriverList(),
@@ -98,6 +102,7 @@ export const getDashboardStats = createAsyncThunk(
         getUserSummary(),
         getDriverSummary(),
         getRiderSummary(),
+        getRideRequestsSummary(),
       ]);
 
       return {
@@ -108,6 +113,7 @@ export const getDashboardStats = createAsyncThunk(
         riderSummary,
         // liveTrips: liveTripsSummary.total,
         liveTripsSummary,
+        requestSummary,
       };
     } catch (error: any) {
       const message =
@@ -155,6 +161,58 @@ export const fetchTrips = createAsyncThunk(
     }
   },
 );
+
+///Fetch Ride Request
+export const fetchRideRequests = createAsyncThunk(
+  "rideRequests/fetchRideRequests",
+
+  async (
+    params: RideRequestQueryParams,
+    { rejectWithValue },
+  ) => {
+    try {
+      return await getRideRequests(params);
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ??
+          "Failed to fetch ride requests",
+      );
+    }
+  },
+);
+
+export const fetchRideRequestDetails =
+  createAsyncThunk(
+    "rideRequests/fetchDetails",
+
+    async (
+      id: string,
+      { rejectWithValue },
+    ) => {
+      try {
+        return await getRideRequestDetails(id);
+      } catch (error: any) {
+        return rejectWithValue(
+          error.response?.data?.message ??
+            "Failed to fetch ride request",
+        );
+      }
+    },
+  );
+
+// export const fetchRideRequestsSummary = createAsyncThunk(
+//   "rideRequests/fetchSummary",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const data = await getRideRequestsSummary();
+//       return data.data; // Return just the inner "data" object for easier state management
+//     } catch (error: any) {
+//       return rejectWithValue(
+//         error.response?.data?.message || "Failed to fetch ride requests summary"
+//       );
+//     }
+//   }
+// );
 
 export const fetchTransactionAnalytics = createAsyncThunk(
   "dashboard/fetchTransactionAnalytics",

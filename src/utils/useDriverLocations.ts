@@ -11,11 +11,6 @@ interface UseDriverLocationsResult {
   refetch: () => void;
 }
 
-/**
- * Polls the backend for live driver coordinates.
- * Isolated from MapWidget so the map's rendering concerns stay separate
- * from data-fetching/error/retry concerns.
- */
 export function useDriverLocations(
   pollIntervalMs: number = POLL_INTERVAL_MS,
 ): UseDriverLocationsResult {

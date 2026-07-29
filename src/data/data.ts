@@ -13,6 +13,7 @@ import { MdNotificationsNone } from "react-icons/md";
 import { MdOutlineSettings } from "react-icons/md";
 import { MdOutlineFeedback } from "react-icons/md";
 import { HiUsers } from "react-icons/hi";
+import { PiClockUserBold } from "react-icons/pi";
 import { MdOutlineHelpOutline } from "react-icons/md";
 import type {
   MessagesData,
@@ -54,6 +55,12 @@ export const navSections: NavSection[] = [
         label: "Trip",
         icon: BiTrip,
         path: "/trips",
+      },
+      {
+        id: "request",
+        label: "Ride Request",
+        icon: PiClockUserBold,
+        path: "/ride-request",
       },
       {
         id: "corporate",

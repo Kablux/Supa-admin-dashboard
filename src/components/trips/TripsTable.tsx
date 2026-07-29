@@ -76,7 +76,7 @@ export default function TripsTable({
             }}
           >
             <RouteOutlinedIcon
-              sx={{ fontSize: 40, color: "var(--accent-gold, #FFC107)" }}
+              sx={{ fontSize: 32, color: "var(--accent-gold, #FFC107)" }}
             />
           </Box>
 
