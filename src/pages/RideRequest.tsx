@@ -18,6 +18,7 @@ import RideRequestFilters, {
   initialFilterState,
 } from "../components/ride-request/RideRequestFilter";
 import { setCurrentPage } from "../redux/slices/RideRequests";
+import RequestDetailModal from "../components/ride-request/RequestDetailModal";
 
 type UITabType = keyof typeof RIDE_REQUEST_TAB;
 
@@ -51,7 +52,6 @@ export default function RideRequestPage() {
 
   // Handle the API fetching
   useEffect(() => {
-    // Helper to format string 'true'/'false' to boolean for API requests
     const getBool = (val: string) =>
       val === "true" ? true : val === "false" ? false : undefined;
 
@@ -282,6 +282,13 @@ export default function RideRequestPage() {
         onPageChange={handleChangePage}
         onPageSizeChange={handlePageSizeChange}
         onViewRequest={(rideId) => setSelectedRideRequestId(rideId)}
+      />
+
+      {/*Render the details modal here */}
+      <RequestDetailModal
+        rideRequestId={selectedRideRequestId}
+        isOpen={!!selectedRideRequestId}
+        onClose={() => setSelectedRideRequestId(null)}
       />
     </Box>
   );
