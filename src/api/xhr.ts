@@ -4,7 +4,6 @@ import {
   LoginResponse,
   AdminUser,
   PaginatedUsers,
-  PaginatedDrivers,
   PaginatedRides,
   RiderQueryParams,
   PaginatedResponse,
@@ -23,6 +22,10 @@ import {
   CorporateOwner,
   CorporateStat,
   DriverSummaryData,
+  PaginatedRideRequests,
+  RideRequestDetail,
+  RideRequestQueryParams,
+  RideRequestSummaryResponse,
   TransactionAnalytics,
 } from "../types/common.types";
 
@@ -166,11 +169,6 @@ export async function getLiveTripsSummary() {
 
   return data.data;
 }
-// export async function getLiveTripsSummary() {
-//   const { data } = await api.get("/business-admin/rides/live/");
-
-//   return data.data;
-// }
 
 export const fetchRiderDetails = async (id: string): Promise<Rider> => {
   const { data } = await api.get<Rider>(`/business-admin/riders/${id}/`);
@@ -188,6 +186,39 @@ export async function fetchAdminProfile(
   const { data } = await api.get<AdminUser>(`/business-admin/users/${id}/`);
   return data;
 }
+
+///RIDE REQUEST
+export async function getRideRequestsSummary() {
+  const { data } = await api.get<RideRequestSummaryResponse>(
+    "/business-admin/ride-requests/summary/",
+  );
+  return data.data;
+}
+
+export async function getRideRequests(
+  params: RideRequestQueryParams,
+): Promise<PaginatedRideRequests> {
+  const { data } = await api.get(
+    "/business-admin/ride-requests/",
+    {
+      params: cleanQueryParams(params),
+    },
+  );
+
+  return data;
+  }
+  
+  
+  export async function getRideRequestDetails(
+  id: string,
+): Promise<RideRequestDetail> {
+  const { data } = await api.get(
+    `/business-admin/ride-requests/${id}/`,
+  );
+
+  return data;
+}
+  
 
 ////ADMIN ROLES
 

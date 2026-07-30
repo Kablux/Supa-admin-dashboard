@@ -2,9 +2,6 @@ import {
   Box,
   Typography,
   CircularProgress,
-  Avatar,
-  Rating,
-  IconButton,
   TablePagination,
   Table,
   TableBody,
@@ -13,31 +10,30 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Rider } from "../../types/auth";
-import { FaPersonBiking } from "react-icons/fa6";
+import { TbMapPinQuestion } from "react-icons/tb";
+import { RideRequestList } from "../../types/common.types";
 
-interface RidersTableProps {
+interface RideRequestTableProps {
   isLoading: boolean;
-  ridersList: Rider[];
+  rideRequestList: RideRequestList[];
   totalCount: number;
   currentPage: number;
   pageSize: number;
   onPageChange: (event: unknown, newPage: number) => void;
   onPageSizeChange: (newPageSize: number) => void;
-  onViewRider: (riderId: string) => void;
+  onViewRequest: (rideId: string) => void;
 }
 
-export default function RidersTable({
+export default function RideRequestTable({
   isLoading,
-  ridersList,
+  rideRequestList,
   totalCount,
   currentPage,
   pageSize,
   onPageChange,
   onPageSizeChange,
-  onViewRider,
-}: RidersTableProps) {
+  onViewRequest,
+}: RideRequestTableProps) {
   return (
     <Box>
       {isLoading ? (
@@ -50,7 +46,7 @@ export default function RidersTable({
         >
           <CircularProgress size={28} sx={{ color: "var(--accent-gold)" }} />
         </Box>
-      ) : ridersList.length === 0 ? (
+      ) : rideRequestList.length === 0 ? (
         <Box
           sx={{
             display: "flex",
@@ -78,13 +74,13 @@ export default function RidersTable({
               mb: 2,
             }}
           >
-            <FaPersonBiking size={32} />
+            <TbMapPinQuestion size={32} />
           </Box>
 
           <Typography
             sx={{ fontSize: 18, fontWeight: 600, color: "#fff", mb: 1 }}
           >
-            No Rider Found
+            No Request Found
           </Typography>
 
           <Typography
@@ -95,7 +91,7 @@ export default function RidersTable({
               lineHeight: 1.5,
             }}
           >
-            No rider match this Profile by filter.
+            No request match this Profile by filter.
           </Typography>
         </Box>
       ) : (
@@ -104,12 +100,12 @@ export default function RidersTable({
             <TableHead>
               <TableRow>
                 {[
-                  "Name",
-                  "Phone Number",
-                  "Address",
-                  "Completed Rides",
-                  "Ratings",
-                  "Actions",
+                  "Id",
+                  "Rider",
+                  "Status",
+                  "Type",
+                  "Payment Method",
+                  "Created At",
                 ].map((header) => (
                   <TableCell
                     key={header}
@@ -130,10 +126,10 @@ export default function RidersTable({
             </TableHead>
 
             <TableBody>
-              {ridersList.map((rider) => (
+              {rideRequestList.map((ride) => (
                 <TableRow
-                  key={rider.id}
-                  onClick={() => onViewRider(rider.id)}
+                  key={ride.id}
+                  onClick={() => onViewRequest(ride.id)}
                   sx={{
                     cursor: "pointer",
                     "&:hover": {
@@ -142,7 +138,6 @@ export default function RidersTable({
                     transition: "background 0.12s",
                   }}
                 >
-                  {/* Profile */}
                   <TableCell
                     sx={{
                       py: 1.25,
@@ -151,51 +146,18 @@ export default function RidersTable({
                       maxWidth: 220,
                     }}
                   >
-                    <Box
+                    <Typography
                       sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1.25,
+                        fontSize: 12,
+                        color: "var(--text-primary)",
+                        fontWeight: 500,
                       }}
                     >
-                      <Avatar
-                        src={rider.profile_image_url}
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          fontSize: 12,
-                          bgcolor: "var(--border)",
-                        }}
-                      >
-                        {rider.full_name?.charAt(0)?.toUpperCase() || "?"}
-                      </Avatar>
-
-                      <Box sx={{ minWidth: 0 }}>
-                        <Typography
-                          sx={{
-                            fontSize: 12.5,
-                            fontWeight: 500,
-                            color: "var(--text-primary)",
-                          }}
-                          noWrap
-                        >
-                          {rider.full_name}
-                        </Typography>
-
-                        <Typography
-                          sx={{
-                            fontSize: 11,
-                            color: "var(--text-secondary)",
-                          }}
-                          noWrap
-                        >
-                          {rider.email}
-                        </Typography>
-                      </Box>
-                    </Box>
+                      {ride.id}
+                    </Typography>
                   </TableCell>
 
-                  {/* Phone */}
+                  {/*Rider*/}
                   <TableCell
                     sx={{
                       py: 1.25,
@@ -210,11 +172,11 @@ export default function RidersTable({
                         color: "var(--text-primary)",
                       }}
                     >
-                      {rider.phone_number || "—"}
+                      {ride.rider}
                     </Typography>
                   </TableCell>
 
-                  {/* Address */}
+                  {/* Status */}
                   <TableCell
                     sx={{
                       py: 1.25,
@@ -231,11 +193,11 @@ export default function RidersTable({
                         lineHeight: 1.4,
                       }}
                     >
-                      {rider.address || "No Address Added"}
+                      {ride.status}
                     </Typography>
                   </TableCell>
 
-                  {/* Completed Rides */}
+                  {/* Type */}
                   <TableCell
                     sx={{
                       py: 1.25,
@@ -250,11 +212,11 @@ export default function RidersTable({
                         color: "var(--text-primary)",
                       }}
                     >
-                      {rider.completed_rides || 0}
+                      {ride.type}
                     </Typography>
                   </TableCell>
 
-                  {/* Rating */}
+                  {/* Payment */}
                   <TableCell
                     sx={{
                       py: 1.25,
@@ -262,19 +224,17 @@ export default function RidersTable({
                       borderBottom: "1px solid var(--border-subtle)",
                     }}
                   >
-                    <Rating
-                      readOnly
-                      value={parseFloat(rider.rating || "0")}
-                      precision={0.5}
-                      size="small"
+                    <Typography
                       sx={{
-                        color: "var(--accent-gold)",
-                        fontSize: 14,
+                        fontSize: 12,
+                        color: "var(--text-primary)",
                       }}
-                    />
+                    >
+                      {ride.payment_method}
+                    </Typography>
                   </TableCell>
 
-                  {/* Actions */}
+                  {/* Created */}
                   <TableCell
                     sx={{
                       py: 1.25,
@@ -283,9 +243,21 @@ export default function RidersTable({
                       width: 50,
                     }}
                   >
-                    <IconButton size="small" sx={{ color: "secondary.main" }}>
-                      <MoreVertIcon sx={{ fontSize: 16 }} />
-                    </IconButton>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: "var(--text-primary)",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {ride.created_at
+                        ? new Date(ride.created_at).toLocaleString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })
+                        : "N/A"}
+                    </Typography>
                   </TableCell>
                 </TableRow>
               ))}
@@ -295,11 +267,11 @@ export default function RidersTable({
       )}
 
       {/* Server-Side Pagination Controller */}
-      {!isLoading && ridersList.length > 0 && (
+      {!isLoading && rideRequestList.length > 0 && (
         <TablePagination
           component="div"
           count={totalCount}
-          page={currentPage - 1} // Sync back down to base 0 for MUI view layer
+          page={currentPage - 1}
           onPageChange={onPageChange}
           rowsPerPage={pageSize}
           onRowsPerPageChange={(e) => {

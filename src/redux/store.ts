@@ -11,6 +11,7 @@ import corporateReducer from "./slices/corporate";
 import premiumReducer from "./slices/Premium";
 import fleetReducer from "./slices/Fleet";
 import inspectionReducer from "./slices/Inspection";
+import requestReducer from "./slices/RideRequests";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     riders: ridersReducer,
     drivers: driversReducer,
+    rideRequest: requestReducer,
     trips: tripsReducer,
     transaction: transactionReducer,
     notification: notificationReducer,

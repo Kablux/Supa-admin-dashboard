@@ -2,6 +2,8 @@
 import {
   DriverSummaryData,
   LiveTripsSummary,
+  RideRequestSummaryData,
+  RideRequestSummaryResponse,
   RideSummaryData,
   TransactionAnalytics,
 } from "./common.types";
@@ -28,6 +30,7 @@ export interface DashboardState {
   usersummary: RideSummaryData;
   driversummary: DriverSummaryData;
   ridersummary: RideSummaryData;
+  requestsummary: RideRequestSummaryData;
   isLoading: boolean;
   error: string | null;
   analytics: TransactionAnalytics | null;

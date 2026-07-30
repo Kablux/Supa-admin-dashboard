@@ -7,6 +7,7 @@ import { DashboardState } from "../../types/auth";
 import {
   DriverSummaryData,
   LiveTripsSummary,
+  RideRequestSummaryData,
   RideSummaryData,
 } from "../../types/common.types";
 
@@ -30,6 +31,14 @@ const emptyLiveTripsSummary: LiveTripsSummary = {
   completed: 0,
   cancelled: 0,
 };
+const emptyRideRequestSummary: RideRequestSummaryData = {
+  total: 0,
+  pending: 0,
+  searching: 0,
+  matched: 0,
+  cancelled: 0,
+  expired: 0,
+};
 
 const initialState: DashboardState = {
   totalDrivers: 0,
@@ -41,6 +50,7 @@ const initialState: DashboardState = {
   usersummary: emptySummary,
   driversummary: emptyDriverSummary,
   ridersummary: emptySummary,
+  requestsummary: emptyRideRequestSummary,
   analytics: null,
   analyticsLoading: false,
 };
@@ -64,6 +74,7 @@ const dashboardSlice = createSlice({
         state.usersummary = action.payload.userSummary;
         state.driversummary = action.payload.driverSummary;
         state.ridersummary = action.payload.riderSummary;
+        state.requestsummary = action.payload.requestSummary;
       })
       .addCase(getDashboardStats.rejected, (state, action) => {
         state.isLoading = false;

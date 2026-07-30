@@ -24,6 +24,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import CreateAdminRolePage from "./pages/admin-role/CreateAdminPage";
 import CorporatePage from "./pages/CorporatePage";
+import RideRequestPage from "./pages/RideRequest";
 
 function ThemedApp() {
   const { mode } = useThemeMode();
@@ -47,6 +48,7 @@ function ThemedApp() {
             <Route path="riders" element={<RidersPage />} />
             <Route path="drivers" element={<DriversPage />} />
             <Route path="trips" element={<TripsPage />} />
+            <Route path="ride-request" element={<RideRequestPage />} />
             <Route path="corporate" element={<CorporatePage />} />
             <Route path="fleet" element={<FleetPage />} />
             <Route path="premium" element={<PremiumPage />} />

@@ -87,6 +87,15 @@ export const TRIP_TAB_MAPPING = {
   cancelled: "cancelled",
 } as const;
 
+export const RIDE_REQUEST_TAB = {
+  all: "",
+  pending: "pending",
+  searching: "searching",
+  matched: "matched",
+  cancelled: "cancelled",
+  expired: "expired",
+} as const;
+
 export interface AnalyticsPoint {
   x: string;
   y: number;
@@ -367,7 +376,7 @@ export interface InspectionState {
   totalInspectedValue: number;
 }
 
-///ActioPAYLOAD
+///Driver ActionPAYLOAD
 export interface ActionDriverPayload {
   rating: string;
   kyc_status: string;
@@ -375,3 +384,88 @@ export interface ActionDriverPayload {
   ready_for_dispatch: boolean;
 }
 
+/////RideRequest
+export interface RideDispatch {
+  id: string;
+  driver_id: string;
+  driver: string;
+  status: "sent" | "accepted" | "rejected" | "expired" | "timeout" | string;
+  dispatched_at: string;
+  responded_at: string | null;
+  price_updated: boolean;
+  distance_to_pickup: string;
+}
+
+export interface RideRequestList {
+  id: string;
+  rider: string;
+  status: string;
+  type: string;
+  pickup_address: string;
+  dropoff_address: string;
+  estimated_fare: string;
+  rider_offer: string;
+  payment_method: string;
+  is_scheduled: boolean;
+  is_expired: boolean;
+  created_at: string;
+  expires_at: string;
+  dispatches: RideDispatch[];
+}
+
+export interface RideRequestDetail extends RideRequestList {
+  rider_id: string;
+  pickup_lat: string;
+  pickup_lng: string;
+  dropoff_lat: string;
+  dropoff_lng: string;
+  calculated_base_fare: string;
+  estimated_distance: string;
+  estimated_duration: number;
+  schedule_date: string | null;
+  schedule_time: string | null;
+  cancelled_at: string | null;
+  cancellation_reason: string | null;
+  cancelled_by: string | null;
+  is_eligible_for_promotion: boolean;
+  promotional_discount_amount: string;
+  has_stops: boolean;
+  stops: string;
+  ride_id: string | null;
+  updated_at: string;
+}
+
+export interface RideRequestQueryParams {
+  dispatch_status?: string;
+  driver?: string;
+  is_expired?: boolean;
+  is_scheduled?: boolean;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+  payment_method?: string;
+  rider?: string;
+  search?: string;
+  status?: string;
+  type?: string;
+}
+
+export interface PaginatedRideRequests {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: RideRequestList[];
+}
+
+export interface RideRequestSummaryData {
+  total: number;
+  pending: number;
+  searching: number;
+  matched: number;
+  cancelled: number;
+  expired: number;
+}
+
+export interface RideRequestSummaryResponse {
+  data: RideRequestSummaryData;
+}
