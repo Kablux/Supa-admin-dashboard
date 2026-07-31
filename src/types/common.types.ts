@@ -469,3 +469,24 @@ export interface RideRequestSummaryData {
 export interface RideRequestSummaryResponse {
   data: RideRequestSummaryData;
 }
+
+///settings
+export interface RideTypePricing {
+  per_km: string;
+  base_fare: string;
+  per_minute: string;
+  max_surge: string;
+}
+ 
+export interface GlobalConfig {
+  base_fare: string;
+  commission_rate: string;
+  max_surge: string;
+  driver_earning_percent: string;
+  ride_request_ttl: number;
+  driver_offer_ttl: number;
+  // keyed by ride-type name, e.g. "standard" | "premium" | "luxury"
+  ride_type_pricing: Record<string, RideTypePricing>;
+  // free-form key/value settings, e.g. admin_base_url, kyc_reviewer_email
+  extra: Record<string, string>;
+}
