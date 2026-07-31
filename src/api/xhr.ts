@@ -22,6 +22,7 @@ import {
   CorporateOwner,
   CorporateStat,
   DriverSummaryData,
+  GlobalConfig,
   PaginatedRideRequests,
   RideRequestDetail,
   RideRequestQueryParams,
@@ -576,6 +577,8 @@ export async function getFleetData() {
   };
 }
 
+
+////drivers cordinates
 export const getDriverLocations = async () => {
   const response = await api.get("/dashboard/driver-locations");
   return response.data.map((item: any) => ({
@@ -584,3 +587,19 @@ export const getDriverLocations = async () => {
     weight: item.weight,
   }));
 };
+
+///settings
+export async function getGlobalConfig(): Promise<GlobalConfig> {
+  const { data } = await api.get<GlobalConfig>("/business-admin/config/");
+  return data;
+}
+ 
+export async function updateGlobalConfig(
+  payload: GlobalConfig,
+): Promise<GlobalConfig> {
+  const { data } = await api.put<GlobalConfig>(
+    "/business-admin/config/",
+    payload,
+  );
+  return data;
+}
