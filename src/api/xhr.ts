@@ -27,6 +27,7 @@ import {
   RideRequestDetail,
   RideRequestQueryParams,
   RideRequestSummaryResponse,
+  RideTypePricing,
   TransactionAnalytics,
 } from "../types/common.types";
 
@@ -589,17 +590,85 @@ export const getDriverLocations = async () => {
 };
 
 ///settings
-export async function getGlobalConfig(): Promise<GlobalConfig> {
-  const { data } = await api.get<GlobalConfig>("/business-admin/config/");
-  return data;
+// export async function getGlobalConfig(): Promise<GlobalConfig> {
+//   const { data } = await api.get<GlobalConfig>("/business-admin/config/");
+//   return data;
+// }
+ 
+// export async function updateGlobalConfig(
+//   payload: GlobalConfig,
+// ): Promise<GlobalConfig> {
+//   const { data } = await api.put<GlobalConfig>(
+//     "/business-admin/config/",
+//     payload,
+//   );
+//   return data;
+// }
+interface RawGlobalConfig {
+  base_fare: string;
+  commission_rate: string;
+  max_surge: string;
+  driver_earning_percent: string;
+  ride_request_ttl: number;
+  driver_offer_ttl: number;
+  ride_type_pricing: string | Record<string, RideTypePricing>;
+  extra: string | Record<string, string>;
 }
  
+// Accepts a JSON string OR an already-parsed object; never throws.
+function parseMaybeJSON<T>(value: unknown, fallback: T): T {
+  if (value == null || value === "") return fallback;
+  if (typeof value === "object") return value as T;
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      return fallback;
+    }
+  }
+  return fallback;
+}
+ 
+// Normalize an API response into the app-facing GlobalConfig (objects).
+function fromRaw(data: RawGlobalConfig): GlobalConfig {
+  return {
+    base_fare: data.base_fare ?? "",
+    commission_rate: data.commission_rate ?? "",
+    max_surge: data.max_surge ?? "",
+    driver_earning_percent: data.driver_earning_percent ?? "",
+    ride_request_ttl: data.ride_request_ttl ?? 0,
+    driver_offer_ttl: data.driver_offer_ttl ?? 0,
+    ride_type_pricing: parseMaybeJSON<Record<string, RideTypePricing>>(
+      data.ride_type_pricing,
+      {},
+    ),
+    extra: parseMaybeJSON<Record<string, string>>(data.extra, {}),
+  };
+}
+ 
+export async function getGlobalConfig(): Promise<GlobalConfig> {
+  const { data } = await api.get<RawGlobalConfig>("/business-admin/config/");
+  return fromRaw(data);
+}
+ 
+// Full replace (PUT). Send ride_type_pricing / extra as OBJECTS (dicts).
 export async function updateGlobalConfig(
   payload: GlobalConfig,
 ): Promise<GlobalConfig> {
-  const { data } = await api.put<GlobalConfig>(
+  const { data } = await api.put<RawGlobalConfig>(
     "/business-admin/config/",
     payload,
   );
-  return data;
+  return fromRaw(data);
+}
+ 
+// Partial update (PATCH). Also sends objects (dicts), not strings.
+export async function patchGlobalConfig(
+  patch: Partial<GlobalConfig>,
+): Promise<GlobalConfig> {
+  const { data } = await api.patch<RawGlobalConfig>(
+    "/business-admin/config/",
+    patch,
+  );
+  return fromRaw(data);
 }
