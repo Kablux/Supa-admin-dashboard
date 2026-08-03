@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-// import AddIcon from "@mui/icons-material/Add";
 import { fetchRiders, getDashboardStats } from "../api/xhrHelper";
-// import AppButton from "../components/common/AppButton";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setCurrentPage } from "../redux/slices/Riders";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
@@ -101,7 +99,7 @@ export default function RidersPage() {
       />
 
       {/* Overview Cards Block */}
-      <OverviewCards items={riderStats} maxWidth={684} loading={isLoading} />
+      <OverviewCards items={riderStats} loading={isLoading} />
 
       {/* Tabs and Add New Button */}
       <Box

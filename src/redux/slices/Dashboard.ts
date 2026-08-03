@@ -7,6 +7,7 @@ import { DashboardState } from "../../types/auth";
 import {
   DriverSummaryData,
   LiveTripsSummary,
+  ReferralSummaryData,
   RideRequestSummaryData,
   RideSummaryData,
 } from "../../types/common.types";
@@ -39,12 +40,19 @@ const emptyRideRequestSummary: RideRequestSummaryData = {
   cancelled: 0,
   expired: 0,
 };
+const emptyReferralsSummary: ReferralSummaryData = {
+  total: 0,
+  rider: 0,
+  driver: 0,
+};
+
 
 const initialState: DashboardState = {
   totalDrivers: 0,
   totalUsers: 0,
   // liveTrips: 0,
   liveTripsSummary: emptyLiveTripsSummary,
+  referralsSummary: emptyReferralsSummary,
   isLoading: false,
   error: null,
   usersummary: emptySummary,
@@ -69,8 +77,8 @@ const dashboardSlice = createSlice({
         state.isLoading = false;
         state.totalDrivers = action.payload.totalDrivers;
         state.totalUsers = action.payload.totalUsers;
-        // state.liveTrips = action.payload.liveTrips;
         state.liveTripsSummary = action.payload.liveTripsSummary;
+        state.referralsSummary = action.payload.referralsSummary;
         state.usersummary = action.payload.userSummary;
         state.driversummary = action.payload.driverSummary;
         state.ridersummary = action.payload.riderSummary;

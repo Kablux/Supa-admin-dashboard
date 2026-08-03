@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice,  PayloadAction } from "@reduxjs/toolkit";
 import { Driver } from "../../types/auth";
-import { fetchDrivers, fetchRiders } from "../../api/xhrHelper";
+import { fetchDrivers, } from "../../api/xhrHelper";
 
 
 interface DriversState {

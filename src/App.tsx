@@ -25,6 +25,7 @@ import { ToastContainer } from "react-toastify";
 import CreateAdminRolePage from "./pages/admin-role/CreateAdminPage";
 import CorporatePage from "./pages/CorporatePage";
 import RideRequestPage from "./pages/RideRequest";
+import ReferralsPage from "./pages/ReferralsPage";
 
 function ThemedApp() {
   const { mode } = useThemeMode();
@@ -49,6 +50,7 @@ function ThemedApp() {
             <Route path="drivers" element={<DriversPage />} />
             <Route path="trips" element={<TripsPage />} />
             <Route path="ride-request" element={<RideRequestPage />} />
+            <Route path="referrals" element={<ReferralsPage />} />
             <Route path="corporate" element={<CorporatePage />} />
             <Route path="fleet" element={<FleetPage />} />
             <Route path="premium" element={<PremiumPage />} />

@@ -23,7 +23,10 @@ import {
   CorporateStat,
   DriverSummaryData,
   GlobalConfig,
+  PaginatedReferralResponse,
   PaginatedRideRequests,
+  Referral,
+  ReferralQueryParams,
   RideRequestDetail,
   RideRequestQueryParams,
   RideRequestSummaryResponse,
@@ -200,27 +203,20 @@ export async function getRideRequestsSummary() {
 export async function getRideRequests(
   params: RideRequestQueryParams,
 ): Promise<PaginatedRideRequests> {
-  const { data } = await api.get(
-    "/business-admin/ride-requests/",
-    {
-      params: cleanQueryParams(params),
-    },
-  );
-
-  return data;
-  }
-  
-  
-  export async function getRideRequestDetails(
-  id: string,
-): Promise<RideRequestDetail> {
-  const { data } = await api.get(
-    `/business-admin/ride-requests/${id}/`,
-  );
+  const { data } = await api.get("/business-admin/ride-requests/", {
+    params: cleanQueryParams(params),
+  });
 
   return data;
 }
-  
+
+export async function getRideRequestDetails(
+  id: string,
+): Promise<RideRequestDetail> {
+  const { data } = await api.get(`/business-admin/ride-requests/${id}/`);
+
+  return data;
+}
 
 ////ADMIN ROLES
 
@@ -578,7 +574,6 @@ export async function getFleetData() {
   };
 }
 
-
 ////drivers cordinates
 export const getDriverLocations = async () => {
   const response = await api.get("/dashboard/driver-locations");
@@ -590,20 +585,6 @@ export const getDriverLocations = async () => {
 };
 
 ///settings
-// export async function getGlobalConfig(): Promise<GlobalConfig> {
-//   const { data } = await api.get<GlobalConfig>("/business-admin/config/");
-//   return data;
-// }
- 
-// export async function updateGlobalConfig(
-//   payload: GlobalConfig,
-// ): Promise<GlobalConfig> {
-//   const { data } = await api.put<GlobalConfig>(
-//     "/business-admin/config/",
-//     payload,
-//   );
-//   return data;
-// }
 interface RawGlobalConfig {
   base_fare: string;
   commission_rate: string;
@@ -614,7 +595,7 @@ interface RawGlobalConfig {
   ride_type_pricing: string | Record<string, RideTypePricing>;
   extra: string | Record<string, string>;
 }
- 
+
 // Accepts a JSON string OR an already-parsed object; never throws.
 function parseMaybeJSON<T>(value: unknown, fallback: T): T {
   if (value == null || value === "") return fallback;
@@ -628,7 +609,7 @@ function parseMaybeJSON<T>(value: unknown, fallback: T): T {
   }
   return fallback;
 }
- 
+
 // Normalize an API response into the app-facing GlobalConfig (objects).
 function fromRaw(data: RawGlobalConfig): GlobalConfig {
   return {
@@ -645,12 +626,12 @@ function fromRaw(data: RawGlobalConfig): GlobalConfig {
     extra: parseMaybeJSON<Record<string, string>>(data.extra, {}),
   };
 }
- 
+
 export async function getGlobalConfig(): Promise<GlobalConfig> {
   const { data } = await api.get<RawGlobalConfig>("/business-admin/config/");
   return fromRaw(data);
 }
- 
+
 // Full replace (PUT). Send ride_type_pricing / extra as OBJECTS (dicts).
 export async function updateGlobalConfig(
   payload: GlobalConfig,
@@ -661,7 +642,7 @@ export async function updateGlobalConfig(
   );
   return fromRaw(data);
 }
- 
+
 // Partial update (PATCH). Also sends objects (dicts), not strings.
 export async function patchGlobalConfig(
   patch: Partial<GlobalConfig>,
@@ -672,3 +653,20 @@ export async function patchGlobalConfig(
   );
   return fromRaw(data);
 }
+
+///Referrals
+export async function getReferralsSummary() {
+  const { data } = await api.get("/business-admin/referrals/summary/");
+
+  return data.data;
+}
+
+export const getReferrals = (params?: ReferralQueryParams) => {
+  return api.get<PaginatedReferralResponse>("/business-admin/referrals/", {
+    params,
+  });
+};
+
+export const getReferralDetails = (id: string) => {
+  return api.get<Referral>(`/api/v1/business-admin/referrals/${id}/`);
+};

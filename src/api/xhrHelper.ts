@@ -22,6 +22,9 @@ import {
   getDriverSummary,
   getFleetData,
   getLiveTripsSummary,
+  getReferralDetails,
+  getReferrals,
+  getReferralsSummary,
   getRideRequestDetails,
   getRideRequests,
   getRideRequestsSummary,
@@ -35,7 +38,7 @@ import {
   logoutRequest,
   updateAdminRole,
 } from "./xhr";
-import { AdminRole, RideRequestQueryParams } from "../types/common.types";
+import { AdminRole, PaginatedReferralResponse, Referral, ReferralQueryParams, RideRequestQueryParams } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
@@ -94,6 +97,7 @@ export const getDashboardStats = createAsyncThunk(
         userSummary,
         driverSummary,
         riderSummary,
+        referralsSummary,
         requestSummary
       ] = await Promise.all([
         getUserList(),
@@ -102,6 +106,7 @@ export const getDashboardStats = createAsyncThunk(
         getUserSummary(),
         getDriverSummary(),
         getRiderSummary(),
+        getReferralsSummary(),
         getRideRequestsSummary(),
       ]);
 
@@ -111,6 +116,7 @@ export const getDashboardStats = createAsyncThunk(
         userSummary,
         driverSummary,
         riderSummary,
+        referralsSummary,
         // liveTrips: liveTripsSummary.total,
         liveTripsSummary,
         requestSummary,
@@ -313,4 +319,40 @@ export const fetchFleetData = () => async (dispatch: AppDispatch) => {
   }
 };
 
+////Referrals
+export const fetchReferrals = createAsyncThunk<
+  PaginatedReferralResponse,
+  ReferralQueryParams | undefined,
+  { rejectValue: string }
+>(
+  "referrals/fetchReferrals",
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await getReferrals(params);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch referrals list."
+      );
+    }
+  }
+);
 
+
+export const fetchReferralDetails = createAsyncThunk<
+  Referral,
+  string, // Referral ID
+  { rejectValue: string }
+>(
+  "referrals/fetchReferralDetails",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await getReferralDetails(id);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch referral details."
+      );
+    }
+  }
+);

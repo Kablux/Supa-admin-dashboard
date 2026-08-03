@@ -12,6 +12,7 @@ import premiumReducer from "./slices/Premium";
 import fleetReducer from "./slices/Fleet";
 import inspectionReducer from "./slices/Inspection";
 import requestReducer from "./slices/RideRequests";
+import referralsReducer from "./slices/Referrals";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     riders: ridersReducer,
     drivers: driversReducer,
     rideRequest: requestReducer,
+    referrals: referralsReducer,
     trips: tripsReducer,
     transaction: transactionReducer,
     notification: notificationReducer,

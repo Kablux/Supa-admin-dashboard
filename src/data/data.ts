@@ -15,6 +15,7 @@ import { MdOutlineFeedback } from "react-icons/md";
 import { HiUsers } from "react-icons/hi";
 import { PiClockUserBold } from "react-icons/pi";
 import { MdOutlineHelpOutline } from "react-icons/md";
+import { VscReferences } from "react-icons/vsc";
 import type {
   MessagesData,
   NavSection,
@@ -61,6 +62,12 @@ export const navSections: NavSection[] = [
         label: "Ride Request",
         icon: PiClockUserBold,
         path: "/ride-request",
+      },
+      {
+        id: "referrals",
+        label: "Referrals",
+        icon: VscReferences,
+        path: "/referrals",
       },
       {
         id: "corporate",
