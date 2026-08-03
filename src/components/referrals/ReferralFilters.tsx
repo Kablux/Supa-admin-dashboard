@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 export interface ReferralFilterState {
   period?: "today" | "yesterday" | "this_week" | "this_month" | "";
@@ -71,8 +72,6 @@ const MicroLabel = ({ children }: { children: React.ReactNode }) => (
     {children}
   </Typography>
 );
-
-/* ------------------------------------------------------------------ */
 
 interface ReferralFiltersProps {
   filters: ReferralFilterState;
@@ -149,30 +148,18 @@ export default function ReferralFilters({
       {/* Trigger */}
       <Button
         onClick={handleOpen}
-        startIcon={<TuneRoundedIcon sx={{ fontSize: 18 }} />}
+        startIcon={<FilterListIcon />}
         sx={{
-          height: 40,
           px: 2,
           textTransform: "none",
-          fontSize: 13.5,
-          fontWeight: 600,
-          borderRadius: "10px",
-          color: activeCount ? "#000" : "var(--text-primary)",
+          fontWeight: 500,
+          borderColor: "divider",
+          color: "text.secondary",
+          border: "1px solid var(--text-secondary)",
           backgroundColor: activeCount
             ? "var(--accent-gold, #FFD700)"
             : "rgba(255,255,255,0.03)",
-          border: "1px solid",
-          borderColor: activeCount
-            ? "var(--accent-gold, #FFD700)"
-            : "var(--border, rgba(255,255,255,0.12))",
-          "&:hover": {
-            backgroundColor: activeCount
-              ? "var(--accent-gold, #FFD700)"
-              : "rgba(255,255,255,0.06)",
-            borderColor: activeCount
-              ? "var(--accent-gold, #FFD700)"
-              : "rgba(255,255,255,0.25)",
-          },
+          "&:hover": { borderColor: "primary.main", color: "primary.main" },
         }}
       >
         Filter

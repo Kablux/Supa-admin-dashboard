@@ -13,6 +13,7 @@ import ReferralFilters, {
   ReferralFilterState,
 } from "../components/referrals/ReferralFilters";
 import ReferralsTable from "../components/referrals/ReferralsTable";
+import ReferralDetailModal from "../components/referrals/ReferralDetailModal";
 
 type UITabType = keyof typeof REFERRALS_TAB;
 
@@ -24,6 +25,9 @@ export default function ReferralPage() {
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [filters, setFilters] = useState<ReferralFilterState>({});
+  const [selectedReferralId, setSelectedReferralId] = useState<string | null>(
+    null,
+  );
 
   const referralsummary = useAppSelector(
     (state) => state.dashboard.referralsSummary,
@@ -82,7 +86,7 @@ export default function ReferralPage() {
   };
 
   const handleViewReferral = (referralId: string) => {
-    console.log("View referral clicked:", referralId);
+    setSelectedReferralId(referralId);
   };
   // Overview Stats
   const referralStats: OverviewItem[] = [
@@ -106,13 +110,7 @@ export default function ReferralPage() {
   return (
     <Box
       className="fade-in"
-      sx={{
-        p: { xs: 2, md: 4 },
-        display: "flex",
-        flexDirection: "column",
-        gap: 3.5,
-        color: "text.primary",
-      }}
+      sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}
     >
       {/* Search */}
       <SearchFilterRow
@@ -186,11 +184,11 @@ export default function ReferralPage() {
       />
 
       {/*Render the details modal here */}
-      {/* <RequestDetailModal
-        rideRequestId={selectedRideRequestId}
-        isOpen={!!selectedRideRequestId}
-        onClose={() => setSelectedRideRequestId(null)}
-      /> */}
+      <ReferralDetailModal
+        referralId={selectedReferralId}
+        isOpen={!!selectedReferralId}
+        onClose={() => setSelectedReferralId(null)}
+      />
     </Box>
   );
 }
