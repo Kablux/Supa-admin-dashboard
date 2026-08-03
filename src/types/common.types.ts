@@ -96,6 +96,7 @@ export const RIDE_REQUEST_TAB = {
   expired: "expired",
 } as const;
 
+
 export interface AnalyticsPoint {
   x: string;
   y: number;
@@ -489,4 +490,70 @@ export interface GlobalConfig {
   ride_type_pricing: Record<string, RideTypePricing>;
   // free-form key/value settings, e.g. admin_base_url, kyc_reviewer_email
   extra: Record<string, string>;
+}
+
+/////Referrals
+export interface ReferralSummaryData {
+  total: number;
+  rider: number;
+  driver: number;
+}
+
+export interface ReferralSummaryResponse {
+  data: ReferralSummaryData;
+}
+
+export const REFERRALS_TAB = {
+  all: "",
+  rider: "rider",
+  driver: "driver",
+} as const;
+
+export interface ReferralUser {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  role: string;
+  referral_code: string;
+  status: string;
+}
+
+// Update your main Referral interface
+export interface Referral {
+  id: string;
+  user: ReferralUser;          
+  referred_user: ReferralUser; 
+  role: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaginatedReferralResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Referral[];
+}
+
+export interface ReferralQueryParams {
+  created_at_after?: string;
+  created_at_before?: string;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+  period?: "today" | "yesterday" | "this_week" | "this_month";
+  referred_user?: string;
+  role?: string;
+  search?: string;
+  user?: string;
+}
+
+export interface ReferralState {
+  referrals: Referral[];
+  selectedReferral: Referral | null;
+  totalCount: number;
+  loading: boolean;
+  error: string | null;
 }

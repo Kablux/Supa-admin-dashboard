@@ -105,7 +105,7 @@ export default function TripsPage() {
       />
 
       {/* Overview Cards Block */}
-      <OverviewCards items={liveStats} maxWidth={900} loading={isLoading} />
+      <OverviewCards items={liveStats} loading={isLoading} />
 
       {/* Tabs and Add New Button */}
       <Box

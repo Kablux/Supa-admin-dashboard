@@ -83,46 +83,6 @@ export default function Header() {
         </Typography>
       </Box>
 
-      {/* Search */}
-      {/* <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-          backgroundColor: "var(--bg-card)",
-          border: "1px solid var(--border)",
-          borderRadius: "10px",
-          px: 1.5,
-          py: 0.6,
-          width: 300,
-          flexShrink: 0,
-          transition: "border-color 0.2s, background-color 0.25s",
-          "&:focus-within": { borderColor: "var(--accent-gold)" },
-        }}
-      >
-        <SearchIcon sx={{ fontSize: 14, color: "var(--text-muted)" }} />
-        <InputBase
-          placeholder="Search..."
-          sx={{
-            flex: 1,
-            fontSize: 12.5,
-            color: "var(--text-secondary)",
-            "& input::placeholder": { color: "var(--text-muted)", opacity: 1 },
-          }}
-        />
-        <Chip
-          label="Kablux"
-          size="small"
-          sx={{
-            height: 18,
-            fontSize: 10,
-            backgroundColor: "var(--border)",
-            color: "var(--text-muted)",
-            "& .MuiChip-label": { px: 0.75 },
-          }}
-        />
-      </Box> */}
-
       <Box sx={{ flex: 1 }} />
 
       {/* Action icons */}

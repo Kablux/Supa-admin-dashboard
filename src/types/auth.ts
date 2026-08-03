@@ -2,6 +2,7 @@
 import {
   DriverSummaryData,
   LiveTripsSummary,
+  ReferralSummaryData,
   RideRequestSummaryData,
   RideRequestSummaryResponse,
   RideSummaryData,
@@ -27,6 +28,7 @@ export interface DashboardState {
   totalUsers: number;
   // liveTrips: number;
   liveTripsSummary: LiveTripsSummary;
+  referralsSummary: ReferralSummaryData;
   usersummary: RideSummaryData;
   driversummary: DriverSummaryData;
   ridersummary: RideSummaryData;
