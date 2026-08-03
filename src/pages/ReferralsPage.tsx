@@ -25,9 +25,9 @@ export default function ReferralPage() {
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [filters, setFilters] = useState<ReferralFilterState>({});
-  const [selectedReferralId, setSelectedReferralId] = useState<
-      string | null
-    >(null);
+  const [selectedReferralId, setSelectedReferralId] = useState<string | null>(
+    null,
+  );
 
   const referralsummary = useAppSelector(
     (state) => state.dashboard.referralsSummary,
@@ -85,9 +85,9 @@ export default function ReferralPage() {
     setCurrentPage(1);
   };
 
- const handleViewReferral = (referralId: string) => {
-  setSelectedReferralId(referralId);
-};
+  const handleViewReferral = (referralId: string) => {
+    setSelectedReferralId(referralId);
+  };
   // Overview Stats
   const referralStats: OverviewItem[] = [
     {
@@ -110,13 +110,7 @@ export default function ReferralPage() {
   return (
     <Box
       className="fade-in"
-      sx={{
-        p: { xs: 2, md: 4 },
-        display: "flex",
-        flexDirection: "column",
-        gap: 3.5,
-        color: "text.primary",
-      }}
+      sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}
     >
       {/* Search */}
       <SearchFilterRow
