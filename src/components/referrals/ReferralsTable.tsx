@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import { Referral } from "../../types/common.types"; // Adjust path if needed
+import { VscReferences } from "react-icons/vsc";
 
 interface ReferralsTableProps {
   isLoading: boolean;
@@ -77,15 +78,14 @@ export default function ReferralsTable({
               alignItems: "center",
               justifyContent: "center",
               mb: 2,
+              fontSize: 32,
             }}
           >
-            <RouteOutlinedIcon
-              sx={{ fontSize: 32, color: "var(--accent-gold, #FFC107)" }}
-            />
+            <VscReferences />
           </Box>
 
           <Typography
-            sx={{ fontSize: 18, fontWeight: 600, color: "#fff", mb: 1 }}
+            sx={{ fontSize: 18, fontWeight: 600, mb: 1 }}
           >
             No Referrals Found
           </Typography>
@@ -93,7 +93,7 @@ export default function ReferralsTable({
           <Typography
             sx={{
               fontSize: 14,
-              color: "rgba(255,255,255,0.5)",
+              color: "secondary.main",
               maxWidth: 300,
               lineHeight: 1.5,
             }}

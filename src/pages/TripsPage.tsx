@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { fetchTrips, getDashboardStats } from "../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { setCurrentPage } from "../redux/slices/Drivers";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
@@ -12,7 +11,8 @@ import { TRIP_TAB_MAPPING } from "../types/common.types";
 import SearchFilterRow from "../components/SearchFilterRow";
 import TripsTable from "../components/trips/TripsTable";
 import TripDetailsModal from "../components/trips/TripDetailModal";
-
+import TripFilters, { TripFilterState } from "../components/trips/TripFilterDrawer";
+import { setCurrentPage } from "../redux/slices/Drivers";
 type UITabType = keyof typeof TRIP_TAB_MAPPING;
 
 export default function TripsPage() {
@@ -21,6 +21,7 @@ export default function TripsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [pageSize, setPageSize] = useState(10);
+  const [filters, setFilters] = useState<TripFilterState>({});
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
   const {
     items: tripList,
@@ -29,6 +30,9 @@ export default function TripsPage() {
     isLoading,
   } = useAppSelector((state) => state.trips);
   const { liveTripsSummary } = useAppSelector((state) => state.dashboard);
+
+  // Stable dependency for the filters object.
+  const filterKey = useMemo(() => JSON.stringify(filters), [filters]);
 
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -40,10 +44,11 @@ export default function TripsPage() {
         page: currentPage,
         page_size: pageSize,
         search: searchQuery,
-        status: TRIP_TAB_MAPPING[activeTab],
+        status: TRIP_TAB_MAPPING[activeTab], // status comes from the tabs
+        ...filters, // payment_method, driver, rider, date ranges
       }),
     );
-  }, [dispatch, currentPage, pageSize, activeTab, searchQuery]);
+  }, [dispatch, currentPage, pageSize, activeTab, searchQuery, filterKey]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -55,17 +60,18 @@ export default function TripsPage() {
     dispatch(setCurrentPage(1));
   };
 
-  const handleChangePage = (_: any, newPage: number) => {
+  const handleFiltersChange = (next: TripFilterState) => {
+    setFilters(next);
+    dispatch(setCurrentPage(1));
+  };
+
+  const handleChangePage = (_: unknown, newPage: number) => {
     dispatch(setCurrentPage(newPage + 1));
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
     dispatch(setCurrentPage(1));
-  };
-
-  const handleFilterToggle = () => {
-    console.log("Filter toggled");
   };
 
   const liveStats: OverviewItem[] = [
@@ -96,27 +102,27 @@ export default function TripsPage() {
       className="fade-in"
       sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}
     >
-      {/* Search Input and Filter Row */}
+      {/* Search Input */}
       <SearchFilterRow
         value={searchQuery}
         onChange={handleSearchChange}
         placeholder="Search for live rides by name or email"
-        onFilterClick={handleFilterToggle}
       />
 
       {/* Overview Cards Block */}
       <OverviewCards items={liveStats} loading={isLoading} />
 
-      {/* Tabs and Add New Button */}
+      {/* Status tabs (left) + Filters trigger (right) */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          gap: 2,
           mt: 1,
         }}
       >
-        <Box sx={{ display: "flex", gap: 3 }}>
+        <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
           {(["all", "active", "completed", "cancelled"] as const).map((tab) => (
             <Typography
               key={tab}
@@ -149,6 +155,8 @@ export default function TripsPage() {
             </Typography>
           ))}
         </Box>
+
+        <TripFilters value={filters} onChange={handleFiltersChange} />
       </Box>
 
       {/* Trips Table  */}

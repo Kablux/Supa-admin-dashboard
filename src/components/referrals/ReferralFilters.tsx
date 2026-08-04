@@ -8,7 +8,6 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
@@ -94,7 +93,7 @@ export default function ReferralFilters({
   const open = Boolean(anchorEl);
 
   const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
-    setDraft(filters); // sync draft with committed state on open
+    setDraft(filters); 
     setAnchorEl(e.currentTarget);
   };
   const handleClose = () => setAnchorEl(null);

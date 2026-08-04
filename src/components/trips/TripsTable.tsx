@@ -81,7 +81,7 @@ export default function TripsTable({
           </Box>
 
           <Typography
-            sx={{ fontSize: 18, fontWeight: 600, color: "#fff", mb: 1 }}
+            sx={{ fontSize: 18, fontWeight: 600, mb: 1 }}
           >
             No Trips Found
           </Typography>
@@ -89,7 +89,7 @@ export default function TripsTable({
           <Typography
             sx={{
               fontSize: 14,
-              color: "rgba(255,255,255,0.5)",
+              color: "secondary.main",
               maxWidth: 300,
               lineHeight: 1.5,
             }}
