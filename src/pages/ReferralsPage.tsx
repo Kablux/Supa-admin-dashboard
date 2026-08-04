@@ -116,7 +116,7 @@ export default function ReferralPage() {
       <SearchFilterRow
         value={searchQuery}
         onChange={handleSearchChange}
-        placeholder="Search by user ID or name..."
+        placeholder="Search by user or name..."
       />
 
       {/* Overview Cards */}
@@ -130,7 +130,8 @@ export default function ReferralPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mt: 1,
+          flexWrap: "wrap",
+          gap: 2, mt: 1,
         }}
       >
         <Box sx={{ display: "flex", gap: 3 }}>

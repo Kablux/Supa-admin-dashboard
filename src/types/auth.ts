@@ -1,4 +1,3 @@
-
 import {
   DriverSummaryData,
   LiveTripsSummary,
@@ -8,7 +7,6 @@ import {
   RideSummaryData,
   TransactionAnalytics,
 } from "./common.types";
-
 
 export interface LoginCredentials {
   email: string;
@@ -238,12 +236,7 @@ export interface Trip {
   dropoff_address: string;
   agreed_fare: string;
   fare: string;
-  status:
-    | "driver_on_way"
-    | "arrived"
-    | "started"
-    | "completed"
-    | "cancelled";
+  status: "driver_on_way" | "arrived" | "started" | "completed" | "cancelled";
   start_time: string;
   end_time: string;
   arrived_at: string;
@@ -251,11 +244,23 @@ export interface Trip {
   cancelled_by: string;
 }
 
+export type TripFiltersState = Omit<
+  TripQueryParams,
+  "page" | "page_size" | "search" | "status"
+>;
+
 export interface TripQueryParams {
   page?: number;
   page_size?: number;
   search?: string;
   status?: string;
+  payment_method?: string;
+  driver?: string;
+  rider?: string;
+  created_at_after?: string;
+  created_at_before?: string;
+  start_time_after?: string;
+  start_time_before?: string;
 }
 
 export interface PaginatedTripsResponse {

@@ -168,6 +168,8 @@ export default function RideRequestPage() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            flexWrap: "wrap",
+            gap: 2,
             mt: 1,
           }}
         >

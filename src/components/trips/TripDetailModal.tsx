@@ -112,11 +112,11 @@ export default function TripDetailsModal({
                   fontSize: 18,
                 }}
               >
-                {tripData.rider?.charAt(0)?.toUpperCase() || "R"}
+                {tripData.driver?.charAt(0)?.toUpperCase() || "R"}
               </Avatar>
               <Box>
                 <Typography sx={{ fontWeight: 500 }}>
-                  {tripData.rider || "Unknown Rider"}
+                  {tripData.driver || "Unknown Rider"}
                 </Typography>
               </Box>
             </Box>

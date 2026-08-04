@@ -81,16 +81,14 @@ export default function RidersTable({
             <FaPersonBiking size={32} />
           </Box>
 
-          <Typography
-            sx={{ fontSize: 18, fontWeight: 600, color: "#fff", mb: 1 }}
-          >
+          <Typography sx={{ fontSize: 18, fontWeight: 600, mb: 1 }}>
             No Rider Found
           </Typography>
 
           <Typography
             sx={{
               fontSize: 14,
-              color: "rgba(255,255,255,0.5)",
+              color: "secondary.main",
               maxWidth: 300,
               lineHeight: 1.5,
             }}
