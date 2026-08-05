@@ -74,11 +74,12 @@ const DetailMetric = ({
           display: "block",
           textTransform: "uppercase",
           letterSpacing: 0.5,
+          fontSize: 10,
         }}
       >
         {label}
       </Typography>
-      <Typography variant="body2" sx={{ fontWeight: 500 }} color="text.primary">
+      <Typography sx={{fontSize:12, fontWeight: 500 }} color="text.primary">
         {value || "N/A"}
       </Typography>
     </Box>
@@ -183,11 +184,11 @@ export default function RequestDetailModal({
                   {data.rider.charAt(0).toUpperCase()}
                 </Avatar>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  <Typography  sx={{ fontWeight: 600 }}>
                     {data.rider}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {data.type} RIDE •{" "}
+                  <Typography variant="caption" color="text.secondary" sx={{textTransform:"capitalize"}}>
+                    {`${data.type}`} Ride •{" "}
                     {formatDate(data.created_at)}
                   </Typography>
                 </Box>
@@ -201,7 +202,7 @@ export default function RequestDetailModal({
             </Box>
           </Box>
 
-          <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
+          <Divider sx={{ borderColor: "var(--border)" }} />
 
           {/* ROUTE: Pickup & Dropoff */}
           <Box sx={{ p: 3 }}>
@@ -219,20 +220,21 @@ export default function RequestDetailModal({
                   }}
                 />
                 <MyLocationIcon
-                  sx={{ color: "info.main", fontSize: 24, zIndex: 1 }}
+                  sx={{ color: "info.main", fontSize: 20, zIndex: 1 }}
                 />
                 <Box>
                   <Typography
-                    variant="caption"
+                    // variant="caption"
                     sx={{
                       display: "block",
                       color: "secondary.main",
                       fontSize: 12,
+                      fontWeight: 600,
                     }}
                   >
                     PICKUP
                   </Typography>
-                  <Typography sx={{ fontSize: 14 }}>
+                  <Typography sx={{ fontSize: 12, }} color="text.primary">
                     {data.pickup_address || "Address not provided"}
                   </Typography>
                 </Box>
@@ -240,20 +242,20 @@ export default function RequestDetailModal({
 
               <Box sx={{ display: "flex", gap: 2 }}>
                 <LocationOnIcon
-                  sx={{ color: "error.main", fontSize: 24, zIndex: 1 }}
+                  sx={{ color: "error.main", fontSize: 20, zIndex: 1 }}
                 />
                 <Box>
                   <Typography
-                    variant="caption"
                     sx={{
-                      display: "block",
+                     display: "block",
                       color: "secondary.main",
                       fontSize: 12,
+                      fontWeight: 600,
                     }}
                   >
                     DROPOFF
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  <Typography sx={{ fontSize: 12, }} color="text.primary">
                     {data.dropoff_address || "Address not provided"}
                   </Typography>
                 </Box>
@@ -262,7 +264,7 @@ export default function RequestDetailModal({
           </Box>
           {/* METRICS GRID */}
 
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ p: 3, borderTop: "1px solid var(--border)" }}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <DetailMetric
                 icon={<PaymentsIcon fontSize="small" />}
@@ -298,7 +300,7 @@ export default function RequestDetailModal({
                     value={
                       <Typography
                         component="span"
-                        sx={{ color: "success.main", fontWeight: 600 }}
+                        sx={{ color: "success.main",fontSize:12, fontWeight: 600 }}
                       >
                         -₦
                         {Number(
@@ -324,7 +326,7 @@ export default function RequestDetailModal({
                 label="Est. Duration"
                 value={
                   data.estimated_duration
-                    ? `${Math.round(data.estimated_duration / 60)} mins`
+                    ? `${data.estimated_duration } mins`
                     : "N/A"
                 }
               />
@@ -348,14 +350,14 @@ export default function RequestDetailModal({
             </div>
           </Box>
 
-          <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
+          <Divider sx={{ border: "var(--border)" }} />
 
           {/* DISPATCH HISTORY (Only show if there are dispatches) */}
           {data.dispatches && data.dispatches.length > 0 && (
             <>
-              <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />
+              <Divider sx={{ borderColor: "var(--border)" }} />
 
-              <Box sx={{ px: 3, py: 2 }}>
+              <Box sx={{ px: 3, py: 1.5 }}>
                 {/* Header */}
                 <Box
                   sx={{
@@ -384,7 +386,7 @@ export default function RequestDetailModal({
 
                   {data.dispatches.length > 1 && (
                     <MdExpandMore
-                      size={22}
+                      size={20}
                       style={{
                         transform: showDispatchHistory
                           ? "rotate(180deg)"
@@ -503,15 +505,14 @@ export default function RequestDetailModal({
 
           {/* CANCELLATION INFO (If applicable) */}
           {data.status === "cancelled" && (
-            <Box sx={{ p: 3, pt: 0 }}>
+            <Box sx={{ p: 3, pt: 1 , borderTop: "1px solid var(--border)"}}>
               <Typography
-                variant="caption"
-                sx={{ display: "block", mb: 0.5, opacity: 0.8 }}
+                sx={{ display: "block", mb: 0.5, opacity: 0.8, fontSize: 12, textTransform: "capitalize" }}
               >
-                CANCELLED by the {data.cancelled_by || "UNKNOWN"}
+                Cancelled by the {data.cancelled_by || "Unknown"} at {formatDate(data.cancelled_at)}
               </Typography>
-              <Typography variant="caption">
-                <b>REASON:</b> {data.cancellation_reason || "UNKNOWN"}"
+              <Typography sx={{ display: "block", mb: 0.5, fontSize: 12, textTransform: "capitalize" }}>
+                <b>Cancellation Reason:</b> "{data.cancellation_reason || "Unknown reason"}"
               </Typography>
             </Box>
           )}

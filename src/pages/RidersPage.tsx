@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Typography } from "@mui/material";
+import PeopleIcon from "@mui/icons-material/People";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import BlockIcon from "@mui/icons-material/Block";
 import { fetchRiders, getDashboardStats } from "../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setCurrentPage } from "../redux/slices/Riders";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
-import PeopleIcon from "@mui/icons-material/People";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import BlockIcon from "@mui/icons-material/Block";
 import RidersTable from "../components/rider/RidersTable";
 import { TAB_MAPPING } from "../types/common.types";
 import RiderDetailsModal from "../components/rider/RideDetailsModal";
+
 import SearchFilterRow from "../components/SearchFilterRow";
+import RiderFilters, { RiderFilterState } from "../components/rider/RiderFilter";
 
 type UITabType = keyof typeof TAB_MAPPING;
 
@@ -20,6 +23,7 @@ export default function RidersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [pageSize, setPageSize] = useState(10);
+  const [filters, setFilters] = useState<RiderFilterState>({});
   const [selectedRiderId, setSelectedRiderId] = useState<string | null>(null);
   const { ridersummary } = useAppSelector((state) => state.dashboard);
   const {
@@ -28,6 +32,9 @@ export default function RidersPage() {
     currentPage,
     isLoading,
   } = useAppSelector((state) => state.riders);
+
+  // Stable dependency for the filters object.
+  const filterKey = useMemo(() => JSON.stringify(filters), [filters]);
 
   useEffect(() => {
     dispatch(getDashboardStats());
@@ -39,10 +46,11 @@ export default function RidersPage() {
         page: currentPage,
         page_size: pageSize,
         search: searchQuery,
-        status: TAB_MAPPING[activeTab],
+        status: TAB_MAPPING[activeTab], // status comes from the tabs
+        ...filters, // period, created_at_after, created_at_before
       }),
     );
-  }, [dispatch, currentPage, pageSize, activeTab, searchQuery]);
+  }, [dispatch, currentPage, pageSize, activeTab, searchQuery, filterKey]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -54,17 +62,18 @@ export default function RidersPage() {
     dispatch(setCurrentPage(1));
   };
 
-  const handleChangePage = (_: any, newPage: number) => {
+  const handleFiltersChange = (next: RiderFilterState) => {
+    setFilters(next);
+    dispatch(setCurrentPage(1));
+  };
+
+  const handleChangePage = (_: unknown, newPage: number) => {
     dispatch(setCurrentPage(newPage + 1));
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
     dispatch(setCurrentPage(1));
-  };
-
-  const handleFilterToggle = () => {
-    console.log("Filter toggled");
   };
 
   const riderStats: OverviewItem[] = [
@@ -79,6 +88,11 @@ export default function RidersPage() {
       icon: <CheckCircleIcon color="success" />,
     },
     {
+      title: "Pending Verification",
+      value: "N/A",
+      icon: <VisibilityIcon color="secondary" />,
+    },
+    {
       title: "Suspended Rider",
       value: ridersummary?.suspended,
       icon: <BlockIcon color="error" />,
@@ -90,28 +104,28 @@ export default function RidersPage() {
       className="fade-in"
       sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}
     >
-      {/* Search Input and Filter Row */}
+      {/* Search Input */}
       <SearchFilterRow
         value={searchQuery}
         onChange={handleSearchChange}
         placeholder="Search for a rider by name or email"
-        onFilterClick={handleFilterToggle}
       />
 
       {/* Overview Cards Block */}
       <OverviewCards items={riderStats} loading={isLoading} />
 
-      {/* Tabs and Add New Button */}
+      {/* Status tabs (left) + Filters trigger (right) */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          gap: 2,
           mt: 1,
         }}
       >
-        <Box sx={{ display: "flex", gap: 3 }}>
-          {(["all", "active", "suspended"] as const).map((tab) => (
+        <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+          {(["all", "active", "pending", "suspended"] as const).map((tab) => (
             <Typography
               key={tab}
               onClick={() => handleTabChange(tab)}
@@ -143,6 +157,8 @@ export default function RidersPage() {
             </Typography>
           ))}
         </Box>
+
+        <RiderFilters value={filters} onChange={handleFiltersChange} />
       </Box>
 
       {/* Riders Table  */}
@@ -157,7 +173,7 @@ export default function RidersPage() {
         onViewRider={(id) => setSelectedRiderId(id)}
       />
 
-      {/*Render the details modal here */}
+      {/* Details modal */}
       <RiderDetailsModal
         riderId={selectedRiderId}
         isOpen={!!selectedRiderId}

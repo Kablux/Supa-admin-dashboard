@@ -3,7 +3,6 @@ import {
   LiveTripsSummary,
   ReferralSummaryData,
   RideRequestSummaryData,
-  RideRequestSummaryResponse,
   RideSummaryData,
   TransactionAnalytics,
 } from "./common.types";
@@ -204,6 +203,10 @@ export interface RiderQueryParams {
   page_size?: number;
   search?: string;
   status?: "active" | "pending_verification" | "suspended" | "deleted" | "";
+    tier?: string; 
+  period?: "today" | "yesterday" | "this_week" | "this_month" | "";
+  created_at_after?: string;
+  created_at_before?: string;
 }
 
 export interface DriverQueryParams {

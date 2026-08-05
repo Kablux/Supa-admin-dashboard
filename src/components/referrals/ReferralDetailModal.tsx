@@ -30,11 +30,11 @@ const DetailRow = ({
   label: string;
   value: React.ReactNode;
 }) => (
-  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}>
-    <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
+  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.2 }}>
+    <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
       {label}
     </Typography>
-    <Typography sx={{ fontSize: 14, fontWeight: 500, color: "text.primary" }}>
+    <Typography sx={{ fontSize: 12, fontWeight: 500, color: "text.primary" }}>
       {value || "N/A"}
     </Typography>
   </Box>
@@ -56,10 +56,9 @@ const UserDetailsCard = ({
     <Box
       sx={{
         bgcolor: "rgba(255,255,255,0.02)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        border: "1px solid var(--border)",
         borderRadius: 2,
-        py: 2.5,
-        px:1,
+        p: 2,
         height: "100%",
       }}
     >
@@ -97,13 +96,13 @@ const UserDetailsCard = ({
       />
 
       <Box sx={{ my: 2 }}>
-        <Divider sx={{ borderColor: "rgba(255,255,255,0.05)" }} />
+        <Divider sx={{ borderColor: " var(--border)" }} />
       </Box>
 
       <DetailRow
         label="Role"
         value={
-          <Typography sx={{ textTransform: "capitalize", fontSize: 14 }}>
+          <Typography sx={{ textTransform: "capitalize", fontSize: 12 }}>
             {user.role}
           </Typography>
         }
@@ -137,7 +136,6 @@ export default function ReferralDetailModal({
   isOpen,
   onClose,
 }: ReferralDetailModalProps) {
-  // Grab the specific referral directly from the Redux store
   const referral = useAppSelector((state) =>
     state.referrals.referrals.find((r) => r.id === referralId),
   );
@@ -197,7 +195,7 @@ export default function ReferralDetailModal({
             <Typography>Referral details not found.</Typography>
           </Box>
         ) : (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {/* Meta Information */}
             <Box
               sx={{
@@ -206,7 +204,8 @@ export default function ReferralDetailModal({
                 justifyContent: "space-between",
                 gap: { xs: 2, md: 4 },
                 p: 2,
-                bgcolor: "rgba(0,0,0,0.2)",
+                my:1,
+                bgcolor: "rgba(0,0,0,0.1)",
                 borderRadius: 1,
               }}
             >
@@ -214,9 +213,9 @@ export default function ReferralDetailModal({
                 <Typography
                   sx={{ fontSize: 12, color: "text.secondary", mb: 0.5 }}
                 >
-                  Referral Context
+                  Referral Role
                 </Typography>
-                <Typography sx={{ fontWeight: 500 }}>
+                <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
                   {referral.role}
                 </Typography>
               </Box>
@@ -226,7 +225,7 @@ export default function ReferralDetailModal({
                 >
                   Created At
                 </Typography>
-                <Typography sx={{ fontWeight: 500 }}>
+                <Typography sx={{fontSize: 12, fontWeight: 500 }}>
                   {formatDate(referral.created_at)}
                 </Typography>
               </Box>
@@ -236,7 +235,7 @@ export default function ReferralDetailModal({
                 >
                   Last Updated
                 </Typography>
-                <Typography sx={{ fontWeight: 500 }}>
+                <Typography sx={{ fontSize: 12,fontWeight: 500 }}>
                   {formatDate(referral.updated_at)}
                 </Typography>
               </Box>

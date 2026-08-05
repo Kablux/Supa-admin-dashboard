@@ -96,7 +96,7 @@ export default function RideRequestFilters({
           textTransform: "none",
           fontWeight: 500,
           borderColor: "divider",
-          color: "text.secondary",
+          color: "text.primary",
           "&:hover": { borderColor: "primary.main", color: "primary.main" },
         }}
       >
