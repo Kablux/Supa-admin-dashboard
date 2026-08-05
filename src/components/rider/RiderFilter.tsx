@@ -8,16 +8,16 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
+import FilterListIcon  from "@mui/icons-material/FilterList";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import FilterListIcon from "@mui/icons-material/FilterList";
 
-export interface ReferralFilterState {
+export interface RiderFilterState {
   period?: "today" | "yesterday" | "this_week" | "this_month" | "";
   created_at_after?: string;
   created_at_before?: string;
 }
 
-type Period = NonNullable<ReferralFilterState["period"]>;
+type Period = NonNullable<RiderFilterState["period"]>;
 
 const PERIOD_OPTIONS: { value: Period; label: string }[] = [
   { value: "", label: "All time" },
@@ -48,10 +48,7 @@ const dateFieldSx = {
       cursor: "pointer",
     },
   },
-  "& .MuiInputLabel-root": {
-    color: "var(--text-secondary)",
-    fontSize: 13,
-  },
+  "& .MuiInputLabel-root": { color: "var(--text-secondary)", fontSize: 13 },
   "& .MuiInputLabel-root.Mui-focused": {
     color: "var(--accent-gold, #FFD700)",
   },
@@ -72,38 +69,37 @@ const MicroLabel = ({ children }: { children: React.ReactNode }) => (
   </Typography>
 );
 
-interface ReferralFiltersProps {
-  filters: ReferralFilterState;
-  onChange: (newFilters: ReferralFilterState) => void;
+/* ------------------------------------------------------------------ */
+
+interface RiderFiltersProps {
+  value: RiderFilterState;
+  onChange: (newFilters: RiderFilterState) => void;
 }
 
-const EMPTY: ReferralFilterState = {
+const EMPTY: RiderFilterState = {
   period: "",
   created_at_after: "",
   created_at_before: "",
 };
 
-export default function ReferralFilters({
-  filters,
-  onChange,
-}: ReferralFiltersProps) {
+export default function RiderFilters({ value, onChange }: RiderFiltersProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [draft, setDraft] = useState<ReferralFilterState>(filters);
+  const [draft, setDraft] = useState<RiderFilterState>(value);
 
   const open = Boolean(anchorEl);
 
   const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
-    setDraft(filters); 
+    setDraft(value);
     setAnchorEl(e.currentTarget);
   };
   const handleClose = () => setAnchorEl(null);
 
-  const countOf = (f: ReferralFilterState) =>
+  const countOf = (f: RiderFilterState) =>
     (f.period ? 1 : 0) +
     (f.created_at_after ? 1 : 0) +
     (f.created_at_before ? 1 : 0);
 
-  const activeCount = useMemo(() => countOf(filters), [filters]);
+  const activeCount = useMemo(() => countOf(value), [value]);
 
   // Preset and custom range are mutually exclusive.
   const selectPeriod = (value: Period) =>
@@ -121,26 +117,16 @@ export default function ReferralFilters({
 
   const resetDraft = () => setDraft(EMPTY);
 
-  const removeChip = (key: keyof ReferralFilterState) => {
+  const removeChip = (key: keyof RiderFilterState) =>
     setDraft((d) => ({ ...d, [key]: "" }));
-  };
 
-  const chips: { key: keyof ReferralFilterState; label: string }[] = [];
+  const chips: { key: keyof RiderFilterState; label: string }[] = [];
   if (draft.period)
-    chips.push({
-      key: "period",
-      label: `Period: ${periodLabel(draft.period)}`,
-    });
+    chips.push({ key: "period", label: `Period: ${periodLabel(draft.period)}` });
   if (draft.created_at_after)
-    chips.push({
-      key: "created_at_after",
-      label: `From: ${draft.created_at_after}`,
-    });
+    chips.push({ key: "created_at_after", label: `From: ${draft.created_at_after}` });
   if (draft.created_at_before)
-    chips.push({
-      key: "created_at_before",
-      label: `To: ${draft.created_at_before}`,
-    });
+    chips.push({ key: "created_at_before", label: `To: ${draft.created_at_before}` });
 
   return (
     <>
@@ -218,7 +204,7 @@ export default function ReferralFilters({
           }}
         >
           <Typography sx={{ fontSize: 14, fontWeight: 700 }}>
-            Filter referrals
+            Filter riders
           </Typography>
           <Button
             onClick={resetDraft}
@@ -244,13 +230,7 @@ export default function ReferralFilters({
         {/* Active chips */}
         {chips.length > 0 && (
           <Box
-            sx={{
-              px: 2.5,
-              pb: 1.5,
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 1,
-            }}
+            sx={{ px: 2.5, pb: 1.5, display: "flex", flexWrap: "wrap", gap: 1 }}
           >
             {chips.map((chip) => (
               <Chip
@@ -277,10 +257,11 @@ export default function ReferralFilters({
           </Box>
         )}
 
-        <Divider sx={{ borderColor: "var(--border)" }} />
+        <Divider sx={{borderColor: "var(--border)" }} />
 
         {/* Body */}
         <Box sx={{ px: 2.5, py: 2.5 }}>
+          {/* Period presets */}
           <MicroLabel>Date preset</MicroLabel>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {PERIOD_OPTIONS.map((opt) => {
@@ -321,20 +302,20 @@ export default function ReferralFilters({
           </Box>
 
           {/* Divider with "or" */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1.5,
-              my: 2.5,
-            }}
-          >
-            <Divider sx={{ flex: 1, borderColor: "var(--border)" }} />
-            <Typography sx={{ fontSize: 12, color: "secondary.main" }}>
-              or custom range
-            </Typography>
-            <Divider sx={{ flex: 1, borderColor: "var(--border)" }} />
-          </Box>
+        <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      my: 2.5,
+                    }}
+                  >
+                    <Divider sx={{ flex: 1, borderColor: "var(--border)" }} />
+                    <Typography sx={{ fontSize: 12, color: "secondary.main" }}>
+                      or custom range
+                    </Typography>
+                    <Divider sx={{ flex: 1, borderColor: "var(--border)" }} />
+                  </Box>
 
           {/* Custom date range */}
           <Box sx={{ display: "flex", gap: 1.5 }}>
@@ -359,48 +340,48 @@ export default function ReferralFilters({
           </Box>
         </Box>
 
-        <Divider sx={{ borderColor: "rgba(255,255,255,0.06)" }} />
+        <Divider sx={{ borderColor: "var(--border)" }} />
 
         {/* Footer */}
         <Box sx={{ display: "flex", gap: 1.5, px: 2.5, py: 2 }}>
-          <Button
-            onClick={handleClose}
-            fullWidth
-            sx={{
-              textTransform: "capitalize",
-              fontSize: 14,
-              fontWeight: 600,
-              borderRadius: "10px",
-              color: "var(--text-primary)",
-              border: "1px solid var(--border, rgba(255,255,255,0.15))",
-              "&:hover": {
-                borderColor: "rgba(255,255,255,0.3)",
-                backgroundColor: "rgba(255,255,255,0.03)",
-              },
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={apply}
-            fullWidth
-            sx={{
-              textTransform: "capitalize",
-              fontSize: 14,
-              fontWeight: 700,
-              borderRadius: "10px",
-              backgroundColor: "var(--accent-gold, #FFD700)",
-              color: "#000",
-              boxShadow: "none",
-              "&:hover": {
-                backgroundColor: "var(--accent-gold, #FFD700)",
-                boxShadow: "0 4px 12px rgba(255,215,0,0.25)",
-              },
-            }}
-          >
-            Apply filter
-          </Button>
-        </Box>
+                  <Button
+                    onClick={handleClose}
+                    fullWidth
+                    sx={{
+                      textTransform: "capitalize",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      borderRadius: "10px",
+                      color: "var(--text-primary)",
+                      border: "1px solid var(--border, rgba(255,255,255,0.15))",
+                      "&:hover": {
+                        borderColor: "rgba(255,255,255,0.3)",
+                        backgroundColor: "rgba(255,255,255,0.03)",
+                      },
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={apply}
+                    fullWidth
+                    sx={{
+                      textTransform: "capitalize",
+                      fontSize: 14,
+                      fontWeight: 700,
+                      borderRadius: "10px",
+                      backgroundColor: "var(--accent-gold, #FFD700)",
+                      color: "#000",
+                      boxShadow: "none",
+                      "&:hover": {
+                        backgroundColor: "var(--accent-gold, #FFD700)",
+                        boxShadow: "0 4px 12px rgba(255,215,0,0.25)",
+                      },
+                    }}
+                  >
+                    Apply filter
+                  </Button>
+                </Box>
       </Popover>
     </>
   );

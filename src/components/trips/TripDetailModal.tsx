@@ -52,9 +52,6 @@ export default function TripDetailsModal({
     }
   }, [isOpen, tripId]);
 
-  const isPending = tripData?.status === "driver_on_way";
-  const isCancelled = tripData?.status === "cancelled";
-  const isCompleted = tripData?.status === "completed";
 
   return (
     <Dialog

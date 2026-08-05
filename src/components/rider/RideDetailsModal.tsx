@@ -36,6 +36,7 @@ export default function RiderDetailsModal({
   isOpen,
   onClose,
 }: RiderDetailsModalProps) {
+
   const [loading, setLoading] = useState(false);
   const [riderData, setRiderData] = useState<Rider | null>(null);
   const [copied, setCopied] = useState(false);
@@ -70,7 +71,7 @@ export default function RiderDetailsModal({
           background: "var(--bg-card)",
           color: "primary",
           borderRadius: "18px",
-          maxWidth: 425,
+          maxWidth: 579,
           width: "100%",
           p: 4,
           border: "1px solid var(--border)",
@@ -110,6 +111,7 @@ export default function RiderDetailsModal({
                 sx={{ width: 64, height: 64 }}
               />
               <Box>
+
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <StarIcon sx={{ color: "#ffb400", fontSize: 18 }} />
                   <Typography sx={{ fontSize: 18, fontWeight: 700, mr: 0.5 }}>
@@ -129,7 +131,6 @@ export default function RiderDetailsModal({
               <IconButton onClick={handleCopyEmail} sx={{ color: "#4d8eff" }}>
                 <ContentCopyIcon sx={{ fontSize: 18 }} />
               </IconButton>
-
               {copied && (
                 <Typography
                   sx={{
@@ -178,36 +179,39 @@ export default function RiderDetailsModal({
                 label="Bonus"
                 labelColor="#7a92f0"
               />
-              {/* Not available yet */}
-              {/* <MetricBox value="0" label="Millage" labelColor="#50c878" />{" "} */}
             </Box>
-          </Box>
 
+          </Box>
           {/* Ride Overview Section */}
           <Box>
             <Typography sx={{ fontSize: 14, mb: 1.5, color: "secondary.main" }}>
               Ride overview
             </Typography>
+
             <Box sx={{ display: "flex", gap: 2 }}>
               <MetricBox
                 value={riderData.total_rides || "0"}
                 label="Total Ride"
                 labelColor="#7a92f0"
               />
+
               <MetricBox
                 value={riderData.completed_rides || "0"}
                 label="Completed"
                 labelColor="#50c878"
               />
+
               <MetricBox
                 value={riderData.cancelled_rides || "0"}
                 label="Canceled"
                 labelColor="#ff6b6b"
               />
             </Box>
+
           </Box>
         </Box>
       )}
     </Dialog>
   );
+
 }

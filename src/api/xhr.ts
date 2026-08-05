@@ -100,7 +100,6 @@ export async function getRiders(
   );
   return data;
 }
-// getDriverList();
 
 export async function getUserSummary() {
   const { data } = await api.get<SummaryResponse>(
