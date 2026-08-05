@@ -60,11 +60,11 @@ const dateFieldSx = {
 const MicroLabel = ({ children }: { children: React.ReactNode }) => (
   <Typography
     sx={{
-      fontSize: 11,
-      fontWeight: 700,
+      fontSize: 12,
+      fontWeight: 500,
       letterSpacing: "0.05em",
-      textTransform: "uppercase",
-      color: "rgba(255,255,255,0.4)",
+      textTransform: "capitalize",
+      color: "secondary.main",
       mb: 1.25,
     }}
   >
@@ -153,7 +153,7 @@ export default function ReferralFilters({
           textTransform: "none",
           fontWeight: 500,
           borderColor: "divider",
-          color: "text.secondary",
+          color: "text.primary",
           border: "1px solid var(--text-secondary)",
           backgroundColor: activeCount
             ? "var(--accent-gold, #FFD700)"
@@ -161,7 +161,7 @@ export default function ReferralFilters({
           "&:hover": { borderColor: "primary.main", color: "primary.main" },
         }}
       >
-        Filter
+        Filters
         {activeCount > 0 && (
           <Box
             component="span"
@@ -329,11 +329,11 @@ export default function ReferralFilters({
               my: 2.5,
             }}
           >
-            <Divider sx={{ flex: 1, borderColor: "rgba(255,255,255,0.06)" }} />
-            <Typography sx={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
+            <Divider sx={{ flex: 1, borderColor: "var(--border)" }} />
+            <Typography sx={{ fontSize: 12, color: "secondary.main" }}>
               or custom range
             </Typography>
-            <Divider sx={{ flex: 1, borderColor: "rgba(255,255,255,0.06)" }} />
+            <Divider sx={{ flex: 1, borderColor: "var(--border)" }} />
           </Box>
 
           {/* Custom date range */}
@@ -367,9 +367,8 @@ export default function ReferralFilters({
             onClick={handleClose}
             fullWidth
             sx={{
-              height: 42,
-              textTransform: "none",
-              fontSize: 13.5,
+              textTransform: "capitalize",
+              fontSize: 14,
               fontWeight: 600,
               borderRadius: "10px",
               color: "var(--text-primary)",
@@ -386,9 +385,8 @@ export default function ReferralFilters({
             onClick={apply}
             fullWidth
             sx={{
-              height: 42,
-              textTransform: "none",
-              fontSize: 13.5,
+              textTransform: "capitalize",
+              fontSize: 14,
               fontWeight: 700,
               borderRadius: "10px",
               backgroundColor: "var(--accent-gold, #FFD700)",
@@ -400,7 +398,7 @@ export default function ReferralFilters({
               },
             }}
           >
-            Apply filters
+            Apply filter
           </Button>
         </Box>
       </Popover>

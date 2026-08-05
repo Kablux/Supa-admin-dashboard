@@ -315,18 +315,20 @@ export default function TripDetailsModal({
             <Box
               sx={{
                 p: 2,
-                borderRadius: "8px",
-                backgroundColor: "rgba(255, 215, 0, 0.05)",
+                borderRadius: "4px",
+                backgroundColor: "rgba(255, 193, 7, 0.05)",
+                // backgroundColor: "rgba(255, 215, 0, 0.05)",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
               }}
             >
-              <Typography sx={{ fontSize: 14 }}>Trip Fare</Typography>
+              <Typography sx={{ fontSize: 12 }}>Trip Fare</Typography>
               <Typography
                 sx={{
                   fontWeight: 700,
                   color: "var(--text-secondary)",
+                  fontSize: 14
                 }}
               >
                 {tripData.fare ? `₦${tripData.fare}` : "N/A"}
@@ -335,21 +337,22 @@ export default function TripDetailsModal({
             <Box
               sx={{
                 p: 2,
-                borderRadius: "8px",
-                backgroundColor: "rgba(255, 215, 0, 0.05)",
+                borderRadius: "4px",
+                backgroundColor: "rgba(76, 175, 80, 0.05)",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
               }}
             >
-              <Typography sx={{ fontSize: 14 }}>Agreed Fare</Typography>
+              <Typography sx={{ fontSize: 12 }}>Agreed Fare</Typography>
               <Typography
                 sx={{
                   fontWeight: 700,
                   color: "#4CAF50",
+                  fontSize: 14
                 }}
               >
-                {tripData.agreed_fare ? `₦${tripData.fare}` : "N/A"}
+                {tripData.agreed_fare ? `₦${tripData.agreed_fare}` : "N/A"}
               </Typography>
             </Box>
           </Box>

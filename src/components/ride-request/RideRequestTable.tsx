@@ -212,7 +212,7 @@ export default function RideRequestTable({
                         color: "var(--text-primary)",
                       }}
                     >
-                      {ride.type}
+                      {`${ride.type}`}
                     </Typography>
                   </TableCell>
 

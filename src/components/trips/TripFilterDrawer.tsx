@@ -12,7 +12,7 @@ import {
   Divider,
   FormControl,
 } from "@mui/material";
-import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 export interface TripFilterState {
@@ -215,12 +215,12 @@ export default function TripFilters({ value, onChange }: TripFiltersProps) {
       {/* Trigger */}
       <Button
         onClick={handleOpen}
-        startIcon={<TuneRoundedIcon sx={{ fontSize: 18 }} />}
+        startIcon={<FilterListIcon sx={{ fontSize: 18 }} />}
         sx={{
           height: 40,
           px: 2,
           textTransform: "none",
-          fontSize: 13.5,
+          fontSize: 14,
           fontWeight: 600,
           borderRadius: "10px",
           color: activeCount ? "#000" : "var(--text-primary)",
@@ -241,7 +241,7 @@ export default function TripFilters({ value, onChange }: TripFiltersProps) {
           },
         }}
       >
-        Filter
+        Filters
         {activeCount > 0 && (
           <Box
             component="span"
