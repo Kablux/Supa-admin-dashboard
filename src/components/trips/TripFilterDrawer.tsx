@@ -396,7 +396,7 @@ export default function TripFilters({ value, onChange }: TripFiltersProps) {
                   value={draft.rider ?? ""}
                   onChange={(e) => update("rider", e.target.value || undefined)}
                   onKeyDown={(e) => e.key === "Enter" && apply()}
-                  placeholder="Name or ID"
+                  placeholder="Rider ID"
                   size="small"
                   fullWidth
                   sx={textFieldSx}
@@ -408,7 +408,7 @@ export default function TripFilters({ value, onChange }: TripFiltersProps) {
                   value={draft.driver ?? ""}
                   onChange={(e) => update("driver", e.target.value || undefined)}
                   onKeyDown={(e) => e.key === "Enter" && apply()}
-                  placeholder="Name or ID"
+                  placeholder="Driver ID"
                   size="small"
                   fullWidth
                   sx={textFieldSx}

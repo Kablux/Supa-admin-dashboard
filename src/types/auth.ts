@@ -94,6 +94,7 @@ export interface Rider {
   number_of_completed_rides: string;
   cancelled_rides: string;
   number_of_cancelled_rides: string;
+  status: string;
 }
 
 export interface VehicleImage {
@@ -215,6 +216,13 @@ export interface DriverQueryParams {
   search?: string;
   status?: "active" | "pending_verification" | "suspended" | "deleted" | "";
   kyc_status?: "APPROVED" | "PENDING" | "IN_REVIEW" | "REJECTED" | "";
+   type?: string; // standard / premium
+  is_online?: boolean | string;
+  tier?: string; // mileage tier
+  created_at_after?: string;
+  created_at_before?: string;
+  kyc_approval_date_after?: string;
+  kyc_approval_date_before?: string;
 }
 // ─────────────────────────────────────────────
 // Redux slice state

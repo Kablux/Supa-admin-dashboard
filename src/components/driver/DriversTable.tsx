@@ -238,7 +238,7 @@ export default function DriversTable({
                         color: "var(--text-primary)",
                       }}
                     >
-                      {driver.phone_number || "—"}
+                      {driver.phone_number || "N/A"}
                     </Typography>
                   </TableCell>
 

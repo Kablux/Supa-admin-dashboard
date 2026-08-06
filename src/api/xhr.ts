@@ -101,6 +101,14 @@ export async function getRiders(
   return data;
 }
 
+export async function verifyRiderEmail(riderId: string): Promise<Rider> {
+  const { data } = await api.post<Rider>(
+    `/business-admin/riders/${riderId}/verify-email/`,
+    {}
+  );
+  return data;
+}
+
 export async function getUserSummary() {
   const { data } = await api.get<SummaryResponse>(
     "/business-admin/users/summary/",
