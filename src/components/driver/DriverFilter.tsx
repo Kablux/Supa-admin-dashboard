@@ -23,6 +23,7 @@ export interface DriverFilterState {
   type?: string;
   is_online?: string; 
   tier?: string;
+  period?: "today" | "yesterday" | "this_week" | "this_month" | "";
   created_at_after?: string;
   created_at_before?: string;
   kyc_approval_date_after?: string;
@@ -68,11 +69,25 @@ export default function DriverFilters({ value, onChange }: DriverFiltersProps) {
     (e: { target: { value: string } }) =>
       setTempFilters((prev) => ({ ...prev, [key]: e.target.value }));
 
+
+   const handlePeriodChange = (e: { target: { value: string } }) =>
+    setTempFilters((prev) => ({
+      ...prev,
+      period: e.target.value as DriverFilterState["period"],
+      created_at_after: "",
+      created_at_before: "",
+    }));
+ 
+  const handleCreatedChange =
+    (key: "created_at_after" | "created_at_before") =>
+    (e: { target: { value: string } }) =>
+      setTempFilters((prev) => ({ ...prev, [key]: e.target.value, period: "" }));
+ 
   const handleApply = () => {
     onChange(tempFilters);
     handleClose();
   };
-
+ 
   const handleReset = () => {
     const cleared: DriverFilterState = {};
     setTempFilters(cleared);
@@ -151,6 +166,26 @@ export default function DriverFilters({ value, onChange }: DriverFiltersProps) {
           {/* Drawer Body (Scrollable) */}
           <Box sx={{ p: 3, flexGrow: 1, overflowY: "auto" }}>
             <Stack spacing={3}>
+            
+             <FormControl fullWidth size="small">
+                <InputLabel>Date</InputLabel>
+                <Select
+                  value={tempFilters.period ?? ""}
+                  label="Period"
+                  onChange={handlePeriodChange}
+                  MenuProps={menuProps}
+                >
+                  <MenuItem value="">
+                    <em>All time</em>
+                  </MenuItem>
+                  <MenuItem value="today">Today</MenuItem>
+                  <MenuItem value="yesterday">Yesterday</MenuItem>
+                  <MenuItem value="this_week">This week</MenuItem>
+                  <MenuItem value="this_month">This month</MenuItem>
+                </Select>
+              </FormControl>
+              
+              
               <FormControl fullWidth size="small">
                 <InputLabel>Ride Type</InputLabel>
                 <Select
@@ -193,12 +228,12 @@ export default function DriverFilters({ value, onChange }: DriverFiltersProps) {
               />
 
               {/* Created date range */}
-              <Box>
+               <Box>
                 <Typography
                   variant="caption"
                   sx={{ color: "text.secondary", mb: 1, display: "block" }}
                 >
-                  Created date
+                  Created date (overrides Period)
                 </Typography>
                 <Stack direction="row" spacing={2}>
                   <TextField
@@ -207,7 +242,7 @@ export default function DriverFilters({ value, onChange }: DriverFiltersProps) {
                     label="From"
                     slotProps={{ inputLabel: { shrink: true } }}
                     value={tempFilters.created_at_after ?? ""}
-                    onChange={handleChange("created_at_after")}
+                    onChange={handleCreatedChange("created_at_after")}
                     sx={dateFieldSx}
                   />
                   <TextField
@@ -216,14 +251,14 @@ export default function DriverFilters({ value, onChange }: DriverFiltersProps) {
                     label="To"
                     slotProps={{ inputLabel: { shrink: true } }}
                     value={tempFilters.created_at_before ?? ""}
-                    onChange={handleChange("created_at_before")}
+                    onChange={handleCreatedChange("created_at_before")}
                     sx={dateFieldSx}
                   />
                 </Stack>
               </Box>
 
               {/* KYC approval date range */}
-              <Box>
+                <Box>
                 <Typography
                   variant="caption"
                   sx={{ color: "text.secondary", mb: 1, display: "block" }}

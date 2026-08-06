@@ -332,7 +332,7 @@ export default function DriversTable({
         <TablePagination
           component="div"
           count={totalCount}
-          page={currentPage - 1} // Sync back down to base 0 for MUI view layer
+          page={currentPage - 1} 
           onPageChange={onPageChange}
           rowsPerPage={pageSize}
           onRowsPerPageChange={(e) => {

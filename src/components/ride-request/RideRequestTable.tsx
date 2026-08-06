@@ -172,7 +172,7 @@ export default function RideRequestTable({
                         color: "var(--text-primary)",
                       }}
                     >
-                      {ride.rider}
+                      {ride.rider ||  "N/A"}
                     </Typography>
                   </TableCell>
 
@@ -193,7 +193,7 @@ export default function RideRequestTable({
                         lineHeight: 1.4,
                       }}
                     >
-                      {ride.status}
+                      {ride.status }
                     </Typography>
                   </TableCell>
 
@@ -212,7 +212,7 @@ export default function RideRequestTable({
                         color: "var(--text-primary)",
                       }}
                     >
-                      {`${ride.type}`}
+                     {ride.type || "N/A"}
                     </Typography>
                   </TableCell>
 
@@ -230,7 +230,7 @@ export default function RideRequestTable({
                         color: "var(--text-primary)",
                       }}
                     >
-                      {ride.payment_method}
+                      {ride.payment_method || "N/A"}
                     </Typography>
                   </TableCell>
 

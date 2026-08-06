@@ -89,7 +89,7 @@ export default function RidersPage() {
     },
     {
       title: "Pending Verification",
-      value: "N/A",
+      value: ridersummary?.pending_verification,
       icon: <VisibilityIcon color="secondary" />,
     },
     {

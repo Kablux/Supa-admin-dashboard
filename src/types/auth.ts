@@ -215,6 +215,7 @@ export interface DriverQueryParams {
   page_size?: number;
   search?: string;
   status?: "active" | "pending_verification" | "suspended" | "deleted" | "";
+   period?: "today" | "yesterday" | "this_week" | "this_month" | "";
   kyc_status?: "APPROVED" | "PENDING" | "IN_REVIEW" | "REJECTED" | "";
    type?: string; // standard / premium
   is_online?: boolean | string;

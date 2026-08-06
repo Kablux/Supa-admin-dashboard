@@ -123,6 +123,7 @@ export default function DashboardPage() {
       description: "Registered riders on the platform.",
       details: [
         { label: "Active", value: ridersummary.active },
+        { label: "Pending", value: ridersummary.pending_verification},
         { label: "Suspended", value: ridersummary.suspended },
         { label: "Total", value: ridersummary.total },
       ],
