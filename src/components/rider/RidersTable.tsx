@@ -208,7 +208,7 @@ export default function RidersTable({
                         color: "var(--text-primary)",
                       }}
                     >
-                      {rider.phone_number || "—"}
+                      {rider.phone_number || "N/A"}
                     </Typography>
                   </TableCell>
 

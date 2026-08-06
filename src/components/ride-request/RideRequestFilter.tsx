@@ -19,10 +19,13 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 
-// Types for our advanced filters (excluding status, which is handled by tabs)
+
 export interface RideRequestFilterState {
   type: string;
   payment_method: string;
+  period?: "today" | "yesterday" | "this_week" | "this_month" | "";
+   created_at_after?: string;
+  created_at_before?: string;
   is_scheduled: string;
   is_expired: string;
   dispatch_status: string;
@@ -33,6 +36,9 @@ export interface RideRequestFilterState {
 export const initialFilterState: RideRequestFilterState = {
   type: "",
   payment_method: "",
+  period: "",
+  created_at_after:"",
+  created_at_before:"",
   is_scheduled: "",
   is_expired: "",
   dispatch_status: "",
@@ -44,6 +50,25 @@ interface RideRequestFiltersProps {
   filters: RideRequestFilterState;
   onChange: (filters: RideRequestFilterState) => void;
 }
+
+const menuProps = {
+  slotProps: {
+    paper: {
+    sx: {
+      backgroundColor: "var(--bg-card, #1E1E1E)",
+      backgroundImage: "none",
+      border: "1px solid var(--border, rgba(255,255,255,0.1))",
+    },
+  },
+}}
+
+const dateFieldSx = {
+  flex: 1,
+  "& input::-webkit-calendar-picker-indicator": {
+    filter: "invert(0.75)",
+    cursor: "pointer",
+  },
+};
 
 export default function RideRequestFilters({
   filters,
@@ -69,6 +94,19 @@ export default function RideRequestFilters({
       setTempFilters((prev) => ({ ...prev, [field]: e.target.value as string }));
     };
 
+ const handlePeriodChange = (e: { target: { value: string } }) =>
+    setTempFilters((prev) => ({
+      ...prev,
+      period: e.target.value as RideRequestFilterState["period"],
+      created_at_after: "",
+      created_at_before: "",
+    }));
+    
+    const handleCreatedChange =
+    (key: "created_at_after" | "created_at_before") =>
+    (e: { target: { value: string } }) =>
+      setTempFilters((prev) => ({ ...prev, [key]: e.target.value, period: "" }));
+    
   const handleApply = () => {
     onChange(tempFilters);
     handleClose();
@@ -203,6 +241,7 @@ export default function RideRequestFilters({
                     <MenuItem value="false">No</MenuItem>
                   </Select>
                 </FormControl>
+                
               </Stack>
 
               <TextField
@@ -222,6 +261,54 @@ export default function RideRequestFilters({
                 placeholder="Search by Driver ID"
                 fullWidth
               />
+              
+              <FormControl fullWidth size="small">
+                              <InputLabel>Date</InputLabel>
+                              <Select
+                                value={tempFilters.period ?? ""}
+                                label="Period"
+                                onChange={handlePeriodChange}
+                                MenuProps={menuProps}
+                              >
+                                <MenuItem value="">
+                                  <em>All time</em>
+                                </MenuItem>
+                                <MenuItem value="today">Today</MenuItem>
+                                <MenuItem value="yesterday">Yesterday</MenuItem>
+                                <MenuItem value="this_week">This week</MenuItem>
+                                <MenuItem value="this_month">This month</MenuItem>
+                              </Select>
+                            </FormControl>
+                            
+                             {/* Created date range */}
+                                           <Box>
+                                            <Typography
+                                              variant="caption"
+                                              sx={{ color: "text.secondary", mb: 1, display: "block" }}
+                                            >
+                                              Created date
+                                            </Typography>
+                                            <Stack direction="row" spacing={2}>
+                                              <TextField
+                                                type="date"
+                                                size="small"
+                                                label="From"
+                                                slotProps={{ inputLabel: { shrink: true } }}
+                                                value={tempFilters.created_at_after ?? ""}
+                                                onChange={handleCreatedChange("created_at_after")}
+                                                sx={dateFieldSx}
+                                              />
+                                              <TextField
+                                                type="date"
+                                                size="small"
+                                                label="To"
+                                                slotProps={{ inputLabel: { shrink: true } }}
+                                                value={tempFilters.created_at_before ?? ""}
+                                                onChange={handleCreatedChange("created_at_before")}
+                                                sx={dateFieldSx}
+                                              />
+                                            </Stack>
+                                          </Box>
             </Stack>
           </Box>
 

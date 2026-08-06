@@ -46,6 +46,7 @@ export interface MessagesData {
 export interface RideSummaryData {
   total: number;
   active: number;
+  pending_verification: number;
   suspended: number;
 }
 
@@ -439,6 +440,9 @@ export interface RideRequestDetail extends RideRequestList {
 export interface RideRequestQueryParams {
   dispatch_status?: string;
   driver?: string;
+  period?: "today" | "yesterday" | "this_week" | "this_month";
+  created_at_after?: string;
+  created_at_before?: string;
   is_expired?: boolean;
   is_scheduled?: boolean;
   ordering?: string;

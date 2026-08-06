@@ -64,11 +64,15 @@ export default function RideRequestPage() {
         // Map drawer filters
         type: filters.type || undefined,
         payment_method: filters.payment_method || undefined,
+        period: filters.period || undefined,
+        created_at_after: filters.created_at_after || undefined,
+        created_at_before: filters.created_at_before || undefined,
         dispatch_status: filters.dispatch_status || undefined,
         rider: filters.rider || undefined,
         driver: filters.driver || undefined,
         is_scheduled: getBool(filters.is_scheduled),
         is_expired: getBool(filters.is_expired),
+       
       }),
     );
   }, [dispatch, currentPage, pageSize, searchQuery, activeTab, filters]);
@@ -92,7 +96,6 @@ export default function RideRequestPage() {
     dispatch(setCurrentPage(1));
   };
 
-  // --- Filter Handlers ---
   const handleFiltersChange = (newFilters: RideRequestFilterState) => {
     setFilters(newFilters);
     dispatch(setCurrentPage(1));
