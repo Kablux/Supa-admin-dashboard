@@ -215,7 +215,7 @@ export interface DriverQueryParams {
   page_size?: number;
   search?: string;
   status?: "active" | "pending_verification" | "suspended" | "deleted" | "";
-   period?: "today" | "yesterday" | "this_week" | "this_month" | "";
+  period?: "today" | "yesterday" | "this_week" | "this_month" | "";
   kyc_status?: "APPROVED" | "PENDING" | "IN_REVIEW" | "REJECTED" | "";
    type?: string; // standard / premium
   is_online?: boolean | string;
@@ -267,6 +267,7 @@ export interface TripQueryParams {
   search?: string;
   status?: string;
   payment_method?: string;
+  period?: "today" | "yesterday" | "this_week" | "this_month" | "";
   driver?: string;
   rider?: string;
   created_at_after?: string;

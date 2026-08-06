@@ -16,8 +16,6 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Driver } from "../../types/auth";
 import DriveEtaIcon from "@mui/icons-material/DriveEta";
-import { useState } from "react";
-import ActionModal from "./ActionModal";
 
 interface DriversTableProps {
   isLoading: boolean;
@@ -28,10 +26,10 @@ interface DriversTableProps {
   onPageChange: (event: unknown, newPage: number) => void;
   onPageSizeChange: (newPageSize: number) => void;
   onViewDriver: (driverId: string) => void;
-  onDriverAction: (
-    driverId: string,
-    actionType: "approve" | "reject" | "suspend" | "delete",
-  ) => void;
+  // onDriverAction: (
+  //   driverId: string,
+  //   actionType: "approve" | "reject" | "suspend" | "delete",
+  // ) => void;
 }
 
 export default function DriversTable({
@@ -43,23 +41,8 @@ export default function DriversTable({
   onPageChange,
   onPageSizeChange,
   onViewDriver,
-  onDriverAction,
 }: DriversTableProps) {
-  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
-  const [isActionModalOpen, setIsActionModalOpen] = useState(false);
-
-  // const handleOpenActionModal = (e: React.MouseEvent, driver: Driver) => {
-  //   e.stopPropagation();
-  //   setSelectedDriver(driver);
-  //   setIsActionModalOpen(true);
-  // };
-
-  // const handleCloseActionModal = () => {
-  //   setSelectedDriver(null);
-  //   setIsActionModalOpen(false);
-  // };
-
-  // const handleExecuteAction = (
+ 
   //   actionType: "approve" | "reject" | "suspend" | "delete",
   // ) => {
   //   if (selectedDriver) {

@@ -19,6 +19,7 @@ export interface TripFilterState {
   payment_method?: string;
   driver?: string;
   rider?: string;
+  period?: "today" | "yesterday" | "this_week" | "this_month" | "";
   created_at_after?: string;
   created_at_before?: string;
   start_time_after?: string;
@@ -32,6 +33,13 @@ export const PAYMENT_METHOD_OPTIONS: Option[] = [
   { value: "cash", label: "Cash" },
   { value: "card", label: "Card" },
   { value: "wallet", label: "Wallet" },
+];
+
+const PERIOD_OPTIONS = [
+  { value: "today", label: "Today" },
+  { value: "yesterday", label: "Yesterday" },
+  { value: "this_week", label: "This Week" },
+  { value: "this_month", label: "This Month" },
 ];
 
 const labelFor = (options: Option[], value?: string) =>
@@ -156,17 +164,22 @@ export default function TripFilters({ value, onChange }: TripFiltersProps) {
   };
   const handleClose = () => setOpen(false);
 
-  const update = (
-    key: keyof TripFilterState,
-    val: string | undefined,
-  ) => {
-    setDraft((prev) => {
-      const next = { ...prev };
-      if (!val) delete next[key];
-      else next[key] = val;
-      return next;
-    });
-  };
+ const update = <K extends keyof TripFilterState>(
+  key: K,
+  value: TripFilterState[K]
+) => {
+  setDraft((prev) => {
+    const next = { ...prev };
+
+    if (value === "" || value === undefined) {
+      delete next[key];
+    } else {
+      next[key] = value;
+    }
+
+    return next;
+  });
+};
 
   const apply = () => {
     onChange(draft);
@@ -190,6 +203,11 @@ export default function TripFilters({ value, onChange }: TripFiltersProps) {
       });
     if (f.rider) list.push({ key: "rider", label: `Rider: ${f.rider}` });
     if (f.driver) list.push({ key: "driver", label: `Driver: ${f.driver}` });
+    if (f.period)
+  list.push({
+    key: "period",
+    label: `Period: ${labelFor(PERIOD_OPTIONS, f.period)}`,
+  });
     if (f.created_at_after)
       list.push({ key: "created_at_after", label: `Created ≥ ${f.created_at_after}` });
     if (f.created_at_before)
@@ -417,6 +435,41 @@ export default function TripFilters({ value, onChange }: TripFiltersProps) {
             </Box>
           </Box>
 
+<Box>
+  <FieldLabel>Period</FieldLabel>
+
+  <FormControl fullWidth size="small">
+    <Select
+      displayEmpty
+      value={draft.period ?? ""}
+      onChange={(e) =>
+        update(
+          "period",
+          (e.target.value || undefined) as TripFilterState["period"]
+        )
+      }
+      MenuProps={menuProps}
+      sx={selectSx}
+      renderValue={(selected) =>
+        selected ? (
+          labelFor(PERIOD_OPTIONS, selected as string)
+        ) : (
+          <span style={{ color: "var(--text-secondary)" }}>
+            Any Period
+          </span>
+        )
+      }
+    >
+      <MenuItem value="">Any Period</MenuItem>
+
+      {PERIOD_OPTIONS.map((option) => (
+        <MenuItem key={option.value} value={option.value}>
+          {option.label}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+</Box>
           {/* Created range */}
           <Box>
             <SectionLabel>Created date</SectionLabel>

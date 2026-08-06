@@ -45,7 +45,7 @@ export default function TripsPage() {
         page_size: pageSize,
         search: searchQuery,
         status: TRIP_TAB_MAPPING[activeTab], // status comes from the tabs
-        ...filters, // payment_method, driver, rider, date ranges
+        ...filters, 
       }),
     );
   }, [dispatch, currentPage, pageSize, activeTab, searchQuery, filterKey]);
