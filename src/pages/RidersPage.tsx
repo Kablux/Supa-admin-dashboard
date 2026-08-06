@@ -178,6 +178,18 @@ export default function RidersPage() {
         riderId={selectedRiderId}
         isOpen={!!selectedRiderId}
         onClose={() => setSelectedRiderId(null)}
+            onVerified={() => {
+          dispatch(getDashboardStats());
+          dispatch(
+            fetchRiders({
+              page: currentPage,
+              page_size: pageSize,
+              search: searchQuery,
+              status: TAB_MAPPING[activeTab],
+              ...filters,
+            }),
+          );
+        }}
       />
     </Box>
   );

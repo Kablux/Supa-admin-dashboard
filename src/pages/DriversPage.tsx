@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
 import { fetchDrivers, getDashboardStats } from "../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -15,6 +15,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { FaListCheck } from "react-icons/fa6";
 import { approveDriverKyc, suspendDriver } from "../api/xhr";
 import { toast } from "react-toastify";
+import DriverFilters, { DriverFilterState } from "../components/driver/DriverFilter";
 
 type UITabType = keyof typeof DRIVER_TAB_MAPPING;
 
@@ -26,6 +27,7 @@ export default function DriversPage() {
   const [pageSize, setPageSize] = useState(10);
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
   const { driversummary } = useAppSelector((state) => state.dashboard);
+  const [filters, setFilters] = useState<DriverFilterState>({});
   const {
     items: driversList,
     totalCount,
@@ -33,10 +35,12 @@ export default function DriversPage() {
     isLoading,
   } = useAppSelector((state) => state.drivers);
 
+   const filterKey = useMemo(() => JSON.stringify(filters), [filters]);
+ 
   useEffect(() => {
     dispatch(getDashboardStats());
   }, [dispatch]);
-
+ 
   useEffect(() => {
     dispatch(
       fetchDrivers({
@@ -44,22 +48,34 @@ export default function DriversPage() {
         page_size: pageSize,
         search: searchQuery,
         kyc_status: DRIVER_TAB_MAPPING[activeTab],
+        ...filters, 
       }),
     );
-  }, [dispatch, currentPage, pageSize, activeTab, searchQuery]);
-
+  }, [dispatch, currentPage, pageSize, activeTab, searchQuery, filterKey]);
+ 
+  const refetchDrivers = () =>
+    dispatch(
+      fetchDrivers({
+        page: currentPage,
+        page_size: pageSize,
+        search: searchQuery,
+        kyc_status: DRIVER_TAB_MAPPING[activeTab],
+        ...filters,
+      }),
+    );
+ 
   const handleDriverAction = async (
     driverId: string,
     actionType: "approve" | "activate" | "reject" | "suspend" | "delete",
   ) => {
     try {
       const targetDriver = driversList.find((d: any) => d.id === driverId);
-
+ 
       if (!targetDriver) {
         toast.error("Driver not found in state!");
         return;
       }
-
+ 
       if (actionType === "approve") {
         const payload = {
           kyc_status: targetDriver.kyc_status,
@@ -71,14 +87,7 @@ export default function DriversPage() {
         toast.success(`${targetDriver.full_name} is Approved Successfully`);
         setSelectedDriverId(null);
         dispatch(getDashboardStats());
-        dispatch(
-          fetchDrivers({
-            page: currentPage,
-            page_size: pageSize,
-            search: searchQuery,
-            kyc_status: DRIVER_TAB_MAPPING[activeTab],
-          }),
-        );
+        refetchDrivers();
       } else if (actionType === "suspend") {
         const payload = {
           kyc_status: targetDriver.kyc_status,
@@ -90,16 +99,7 @@ export default function DriversPage() {
         toast.success(`${targetDriver.full_name} is suspended!`);
         setSelectedDriverId(null);
         dispatch(getDashboardStats());
-        dispatch(
-          fetchDrivers({
-            page: currentPage,
-            page_size: pageSize,
-            search: searchQuery,
-            kyc_status: DRIVER_TAB_MAPPING[activeTab],
-          }),
-        );
-
-        console.log(`Driver ${driverId} has been successfully suspended.`);
+        refetchDrivers();
       }
     } catch (error) {
       console.error(
@@ -108,28 +108,29 @@ export default function DriversPage() {
       );
     }
   };
-
+ 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     dispatch(setCurrentPage(1));
   };
-
+ 
   const handleTabChange = (tab: UITabType) => {
     setActiveTab(tab);
     dispatch(setCurrentPage(1));
   };
-
-  const handleChangePage = (_: any, newPage: number) => {
+ 
+  const handleFiltersChange = (next: DriverFilterState) => {
+    setFilters(next);
+    dispatch(setCurrentPage(1));
+  };
+ 
+  const handleChangePage = (_: unknown, newPage: number) => {
     dispatch(setCurrentPage(newPage + 1));
   };
-
+ 
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
     dispatch(setCurrentPage(1));
-  };
-
-  const handleFilterToggle = () => {
-    console.log("Filter toggled");
   };
 
   const driverStats: OverviewItem[] = [
@@ -160,28 +161,29 @@ export default function DriversPage() {
     },
   ];
 
-  return (
+   return (
     <Box
       className="fade-in"
       sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}
     >
-      {/* Search Input and Filter Row */}
+      {/* Search Input */}
       <SearchFilterRow
         value={searchQuery}
         onChange={handleSearchChange}
         placeholder="Search for a driver by name or email"
-        onFilterClick={handleFilterToggle}
       />
-
+ 
       {/* Overview Cards Block */}
       <OverviewCards items={driverStats} loading={isLoading} />
-
+ 
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           mt: 1,
+          gap: 2,
+          flexWrap: "wrap",
         }}
       >
         <Box sx={{ display: "flex", gap: 3 }}>
@@ -219,8 +221,10 @@ export default function DriversPage() {
             ),
           )}
         </Box>
+ 
+        <DriverFilters value={filters} onChange={handleFiltersChange} />
       </Box>
-
+ 
       {/* Drivers Table  */}
       <DriversTable
         isLoading={isLoading}
@@ -233,8 +237,8 @@ export default function DriversPage() {
         onViewDriver={(id) => setSelectedDriverId(id)}
         onDriverAction={handleDriverAction}
       />
-
-      {/*Render the details modal here */}
+ 
+      {/* Details modal */}
       <DriverDetailsModal
         driverId={selectedDriverId}
         isOpen={!!selectedDriverId}

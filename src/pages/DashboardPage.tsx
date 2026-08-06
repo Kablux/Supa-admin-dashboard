@@ -16,9 +16,11 @@ export default function DashboardPage() {
   const {
     totalUsers,
     totalDrivers,
-    // liveTrips,
     liveTripsSummary,
+    referralsSummary,
     usersummary,
+    ridersummary,
+    requestsummary,
     driversummary,
     isLoading,
   } = useAppSelector((state) => state.dashboard);
@@ -111,6 +113,56 @@ export default function DashboardPage() {
       ],
     },
     {
+      id: "rider_summary",
+      label: "Riders",
+      value: ridersummary.total.toLocaleString(),
+      icon: "Person",
+      color: "#FF9800",
+      bg: "#3A2300",
+      trendUp: true,
+      description: "Registered riders on the platform.",
+      details: [
+        { label: "Active", value: ridersummary.active },
+        { label: "Suspended", value: ridersummary.suspended },
+        { label: "Total", value: ridersummary.total },
+      ],
+    },
+
+    {
+      id: "ride_requests",
+      label: "Ride Requests",
+      value: requestsummary.total.toLocaleString(),
+      icon: "Search",
+      color: "#00C2A8",
+      bg: "#073B37",
+      trendUp: true,
+      description: "Incoming ride requests across the platform.",
+      details: [
+        { label: "Searching", value: requestsummary.searching },
+        { label: "Pending", value: requestsummary.pending },
+        { label: "Matched", value: requestsummary.matched },
+        { label: "Cancelled", value: requestsummary.cancelled },
+        { label: "Expired", value: requestsummary.expired },
+        { label: "Total", value: requestsummary.total },
+      ],
+    },
+
+    {
+      id: "referrals",
+      label: "Referrals",
+      value: referralsSummary.total.toLocaleString(),
+      icon: "GroupAdd",
+      color: "#7C4DFF",
+      bg: "#24154B",
+      trendUp: true,
+      description: "Successful referrals across riders and drivers.",
+      details: [
+        { label: "Drivers", value: referralsSummary.driver },
+        { label: "Riders", value: referralsSummary.rider },
+        { label: "Total", value: referralsSummary.total },
+      ],
+    },
+    {
       id: "revenue",
       label: "Revenue",
       value: "₦0",
@@ -146,26 +198,36 @@ export default function DashboardPage() {
       <FilterBar />
 
       {/* Row 1 — 4 stat cards + quick actions panel */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr 1fr",
-            md: "1fr 1fr 1fr 1fr",
-            xl: "1fr 1fr 1fr 1fr 1.35fr",
-          },
-          gap: 2,
-        }}
-      >
-        {statsData.map((stat, i) => (
-          <StatCard
-            key={stat.id}
-            stat={stat}
-            delay={i * 70}
-            loading={isLoading}
-          />
-        ))}
-        <Box sx={{ display: { xs: "none", xl: "block" } }}>
+      <Box className="flex justify-between gap-4">
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr 1fr",
+              md: "1fr 1fr 1fr 1fr",
+              lg: "1fr 1fr 1fr 1fr 1fr",
+              xl: "1fr 1fr 1fr 1fr",
+            },
+            gap: 2,
+            width: { xs: "100%", xl: "75%" },
+          }}
+        >
+          {statsData.map((stat, i) => (
+            <StatCard
+              key={stat.id}
+              stat={stat}
+              delay={i * 70}
+              loading={isLoading}
+            />
+          ))}
+        </Box>
+        <Box
+          sx={{
+            display: { xs: "none", xl: "block" },
+            height: "max-content",
+            width: { xs: "100%", xl: "25%" },
+          }}
+        >
           <QuickActions />
         </Box>
       </Box>
