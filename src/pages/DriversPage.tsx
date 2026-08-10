@@ -1,21 +1,24 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Box, Typography } from "@mui/material";
-import { fetchDrivers, getDashboardStats } from "../api/xhrHelper";
+import React, { useEffect, useMemo, useState } from "react";
+import { Box, Typography, Button } from "@mui/material";
+import { toast } from "react-toastify";
+import PeopleIcon from "@mui/icons-material/People";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import BlockIcon from "@mui/icons-material/Block";
+import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
+import { FaListCheck } from "react-icons/fa6";
+import { getDashboardStats, fetchDrivers } from "../api/xhrHelper";
+import { approveDriverKyc, suspendDriver } from "../api/xhr";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setCurrentPage } from "../redux/slices/Drivers";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
-import PeopleIcon from "@mui/icons-material/People";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import BlockIcon from "@mui/icons-material/Block";
-import { DRIVER_TAB_MAPPING } from "../types/common.types";
-import DriversTable from "../components/driver/DriversTable";
 import SearchFilterRow from "../components/SearchFilterRow";
+import DriversTable from "../components/driver/DriversTable";
 import DriverDetailsModal from "../components/driver/DriverDetailModal";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { FaListCheck } from "react-icons/fa6";
-import { approveDriverKyc, suspendDriver } from "../api/xhr";
-import { toast } from "react-toastify";
 import DriverFilters, { DriverFilterState } from "../components/driver/DriverFilter";
+import ExportDriversModal from "../components/driver/ExportDriversDataModal";
+import { DRIVER_TAB_MAPPING } from "../types/common.types";
+
 
 type UITabType = keyof typeof DRIVER_TAB_MAPPING;
 
@@ -25,9 +28,10 @@ export default function DriversPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [pageSize, setPageSize] = useState(10);
+  const [filters, setFilters] = useState<DriverFilterState>({});
+  const [exportOpen, setExportOpen] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
   const { driversummary } = useAppSelector((state) => state.dashboard);
-  const [filters, setFilters] = useState<DriverFilterState>({});
   const {
     items: driversList,
     totalCount,
@@ -35,24 +39,25 @@ export default function DriversPage() {
     isLoading,
   } = useAppSelector((state) => state.drivers);
 
-   const filterKey = useMemo(() => JSON.stringify(filters), [filters]);
- 
+  // Stable dependency for the filters object.
+  const filterKey = useMemo(() => JSON.stringify(filters), [filters]);
+
   useEffect(() => {
     dispatch(getDashboardStats());
   }, [dispatch]);
- 
+
   useEffect(() => {
     dispatch(
       fetchDrivers({
         page: currentPage,
         page_size: pageSize,
         search: searchQuery,
-        kyc_status: DRIVER_TAB_MAPPING[activeTab],
-        ...filters, 
+        kyc_status: DRIVER_TAB_MAPPING[activeTab], // kyc_status comes from the tabs
+        ...filters, // type, is_online, tier, date ranges
       }),
     );
   }, [dispatch, currentPage, pageSize, activeTab, searchQuery, filterKey]);
- 
+
   const refetchDrivers = () =>
     dispatch(
       fetchDrivers({
@@ -63,19 +68,19 @@ export default function DriversPage() {
         ...filters,
       }),
     );
- 
+
   const handleDriverAction = async (
     driverId: string,
     actionType: "approve" | "activate" | "reject" | "suspend" | "delete",
   ) => {
     try {
       const targetDriver = driversList.find((d: any) => d.id === driverId);
- 
+
       if (!targetDriver) {
         toast.error("Driver not found in state!");
         return;
       }
- 
+
       if (actionType === "approve") {
         const payload = {
           kyc_status: targetDriver.kyc_status,
@@ -108,26 +113,26 @@ export default function DriversPage() {
       );
     }
   };
- 
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     dispatch(setCurrentPage(1));
   };
- 
+
   const handleTabChange = (tab: UITabType) => {
     setActiveTab(tab);
     dispatch(setCurrentPage(1));
   };
- 
+
   const handleFiltersChange = (next: DriverFilterState) => {
     setFilters(next);
     dispatch(setCurrentPage(1));
   };
- 
+
   const handleChangePage = (_: unknown, newPage: number) => {
     dispatch(setCurrentPage(newPage + 1));
   };
- 
+
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
     dispatch(setCurrentPage(1));
@@ -146,22 +151,22 @@ export default function DriversPage() {
     },
     {
       title: "Pending Drivers",
-      value: driversummary.not_started_kyc,
+      value: driversummary?.not_started_kyc,
       icon: <VisibilityIcon color="secondary" />,
     },
     {
       title: "Drivers In Review",
-      value: driversummary.pending_kyc,
+      value: driversummary?.pending_kyc,
       icon: <FaListCheck color="#4A90E2" />,
     },
     {
       title: "Suspended Drivers",
-      value: driversummary.suspended,
+      value: driversummary?.suspended,
       icon: <BlockIcon color="error" />,
     },
   ];
 
-   return (
+  return (
     <Box
       className="fade-in"
       sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}
@@ -172,10 +177,11 @@ export default function DriversPage() {
         onChange={handleSearchChange}
         placeholder="Search for a driver by name or email"
       />
- 
+
       {/* Overview Cards Block */}
       <OverviewCards items={driverStats} loading={isLoading} />
- 
+
+      {/* Status tabs (left) + Filters trigger (right) */}
       <Box
         sx={{
           display: "flex",
@@ -221,10 +227,33 @@ export default function DriversPage() {
             ),
           )}
         </Box>
- 
-        <DriverFilters value={filters} onChange={handleFiltersChange} />
+
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Button
+            onClick={() => setExportOpen(true)}
+            startIcon={<FileDownloadRoundedIcon sx={{ fontSize: 18 }} />}
+            sx={{
+              height: 40,
+              px: 2,
+              textTransform: "none",
+              fontSize: 13.5,
+              fontWeight: 600,
+              borderRadius: "10px",
+              color: "var(--text-primary)",
+              backgroundColor: "rgba(255,255,255,0.03)",
+              border: "1px solid var(--border, rgba(255,255,255,0.12))",
+              "&:hover": {
+                borderColor: "rgba(255,255,255,0.25)",
+                backgroundColor: "rgba(255,255,255,0.06)",
+              },
+            }}
+          >
+            Export
+          </Button>
+          <DriverFilters value={filters} onChange={handleFiltersChange} />
+        </Box>
       </Box>
- 
+
       {/* Drivers Table  */}
       <DriversTable
         isLoading={isLoading}
@@ -235,15 +264,25 @@ export default function DriversPage() {
         onPageChange={handleChangePage}
         onPageSizeChange={handlePageSizeChange}
         onViewDriver={(id) => setSelectedDriverId(id)}
-        onDriverAction={handleDriverAction}
+        // onDriverAction={handleDriverAction}
       />
- 
+
       {/* Details modal */}
       <DriverDetailsModal
         driverId={selectedDriverId}
         isOpen={!!selectedDriverId}
         onClose={() => setSelectedDriverId(null)}
         onDriverAction={handleDriverAction}
+      />
+
+      <ExportDriversModal
+        isOpen={exportOpen}
+        onClose={() => setExportOpen(false)}
+        params={{
+          search: searchQuery || undefined,
+          kyc_status: DRIVER_TAB_MAPPING[activeTab] || undefined,
+          ...filters,
+        }}
       />
     </Box>
   );

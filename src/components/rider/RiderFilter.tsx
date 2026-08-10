@@ -144,7 +144,7 @@ export default function RiderFilters({ value, onChange }: RiderFiltersProps) {
           backgroundColor: activeCount
             ? "var(--accent-gold, #FFD700)"
             : "rgba(255,255,255,0.03)",
-          "&:hover": { borderColor: "primary.main", color: "primary.main" },
+          "&:hover": { color: "var(--text-primary)", backgroundColor: "rgba(255,255,255,0.06)" },
         }}
       >
         Filters
