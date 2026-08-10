@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import BlockIcon from "@mui/icons-material/Block";
 import { fetchRiders, getDashboardStats } from "../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -14,6 +15,7 @@ import RiderDetailsModal from "../components/rider/RideDetailsModal";
 
 import SearchFilterRow from "../components/SearchFilterRow";
 import RiderFilters, { RiderFilterState } from "../components/rider/RiderFilter";
+import ExportRidersModal from "../components/rider/ExportRiderDataModal";
 
 type UITabType = keyof typeof TAB_MAPPING;
 
@@ -25,6 +27,7 @@ export default function RidersPage() {
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState<RiderFilterState>({});
   const [selectedRiderId, setSelectedRiderId] = useState<string | null>(null);
+   const [exportOpen, setExportOpen] = useState(false);
   const { ridersummary } = useAppSelector((state) => state.dashboard);
   const {
     items: ridersList,
@@ -158,9 +161,31 @@ export default function RidersPage() {
           ))}
         </Box>
 
-        <RiderFilters value={filters} onChange={handleFiltersChange} />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Button
+            onClick={() => setExportOpen(true)}
+            startIcon={<FileDownloadRoundedIcon sx={{ fontSize: 18 }} />}
+            sx={{
+              height: 40,
+              px: 2,
+              textTransform: "none",
+              fontSize: 13.5,
+              fontWeight: 600,
+              borderRadius: "10px",
+              color: "var(--text-primary)",
+              backgroundColor: "rgba(255,255,255,0.03)",
+              border: "1px solid var(--border, rgba(255,255,255,0.12))",
+              "&:hover": {
+                borderColor: "rgba(255,255,255,0.25)",
+                backgroundColor: "rgba(255,255,255,0.06)",
+              },
+            }}
+          >
+            Export
+          </Button>
+          <RiderFilters value={filters} onChange={handleFiltersChange} />
+        </Box>
       </Box>
-
       {/* Riders Table  */}
       <RidersTable
         isLoading={isLoading}
@@ -189,6 +214,17 @@ export default function RidersPage() {
               ...filters,
             }),
           );
+        }}
+      />
+      
+      {/* Export modal — exports the currently filtered view */}
+      <ExportRidersModal
+        isOpen={exportOpen}
+        onClose={() => setExportOpen(false)}
+        params={{
+          search: searchQuery || undefined,
+          status: TAB_MAPPING[activeTab] || undefined,
+          ...filters,
         }}
       />
     </Box>
