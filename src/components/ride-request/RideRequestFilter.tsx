@@ -83,7 +83,7 @@ export default function RideRequestFilters({
     setTempFilters(filters); 
     setIsOpen(true);
   };
-git 
+
   const handleClose = () => setIsOpen(false);
 
   const handleChange =
