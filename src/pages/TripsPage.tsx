@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { fetchTrips, getDashboardStats } from "../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
@@ -7,12 +7,14 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import { TRIP_TAB_MAPPING } from "../types/common.types";
 import SearchFilterRow from "../components/SearchFilterRow";
 import TripsTable from "../components/trips/TripsTable";
 import TripDetailsModal from "../components/trips/TripDetailModal";
 import TripFilters, { TripFilterState } from "../components/trips/TripFilterDrawer";
 import { setCurrentPage } from "../redux/slices/Drivers";
+import ExportTripsModal from "../components/trips/ExportTripsData";
 type UITabType = keyof typeof TRIP_TAB_MAPPING;
 
 export default function TripsPage() {
@@ -22,6 +24,7 @@ export default function TripsPage() {
   const [activeTab, setActiveTab] = useState<UITabType>("all");
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState<TripFilterState>({});
+  const [exportOpen, setExportOpen] = useState(false);
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
   const {
     items: tripList,
@@ -156,7 +159,30 @@ export default function TripsPage() {
           ))}
         </Box>
 
-        <TripFilters value={filters} onChange={handleFiltersChange} />
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Button
+            onClick={() => setExportOpen(true)}
+            startIcon={<FileDownloadRoundedIcon sx={{ fontSize: 18 }} />}
+            sx={{
+              height: 40,
+              px: 2,
+              textTransform: "none",
+              fontSize: 13.5,
+              fontWeight: 600,
+              borderRadius: "10px",
+              color: "var(--text-primary)",
+              backgroundColor: "rgba(255,255,255,0.03)",
+              border: "1px solid var(--border, rgba(255,255,255,0.12))",
+              "&:hover": {
+                borderColor: "rgba(255,255,255,0.25)",
+                backgroundColor: "rgba(255,255,255,0.06)",
+              },
+            }}
+          >
+            Export
+          </Button>
+          <TripFilters value={filters} onChange={handleFiltersChange} />
+        </Box>
       </Box>
 
       {/* Trips Table  */}
@@ -175,6 +201,16 @@ export default function TripsPage() {
         tripId={selectedTripId}
         isOpen={!!selectedTripId}
         onClose={() => setSelectedTripId(null)}
+      />
+      
+        <ExportTripsModal
+        isOpen={exportOpen}
+        onClose={() => setExportOpen(false)}
+        params={{
+          search: searchQuery || undefined,
+          status: TRIP_TAB_MAPPING[activeTab] || undefined,
+          ...filters,
+        }}
       />
     </Box>
   );
