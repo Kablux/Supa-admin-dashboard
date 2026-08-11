@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Box, Chip, Typography } from "@mui/material";
+import { Box, Button, Chip, Typography } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LeakAddIcon from "@mui/icons-material/LeakAdd";
 import BlockIcon from "@mui/icons-material/Block";
 import RunningWithErrorsIcon from "@mui/icons-material/RunningWithErrors";
-
+import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import { getDashboardStats, fetchRideRequests } from "../api/xhrHelper";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import RideRequestTable from "../components/ride-request/RideRequestTable";
@@ -19,6 +19,7 @@ import RideRequestFilters, {
 } from "../components/ride-request/RideRequestFilter";
 import { setCurrentPage } from "../redux/slices/RideRequests";
 import RequestDetailModal from "../components/ride-request/RequestDetailModal";
+import ExportRideRequestsModal from "../components/ride-request/ExportRideRequestModal";
 
 type UITabType = keyof typeof RIDE_REQUEST_TAB;
 
@@ -31,8 +32,7 @@ export default function RideRequestPage() {
   const [selectedRideRequestId, setSelectedRideRequestId] = useState<
     string | null
   >(null);
-
-  // --- New Filter State ---
+const [exportOpen, setExportOpen] = useState(false);
   const [filters, setFilters] =
     useState<RideRequestFilterState>(initialFilterState);
 
@@ -220,10 +220,30 @@ export default function RideRequestPage() {
           </Box>
 
           {/* New Filter Component Trigger */}
-          <RideRequestFilters
-            filters={filters}
-            onChange={handleFiltersChange}
-          />
+             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Button
+            onClick={() => setExportOpen(true)}
+            startIcon={<FileDownloadRoundedIcon sx={{ fontSize: 18 }} />}
+            sx={{
+              height: 40,
+              px: 2,
+              textTransform: "none",
+              fontSize: 13.5,
+              fontWeight: 600,
+              borderRadius: "10px",
+              color: "var(--text-primary)",
+              backgroundColor: "rgba(255,255,255,0.03)",
+              border: "1px solid var(--border, rgba(255,255,255,0.12))",
+              "&:hover": {
+                borderColor: "rgba(255,255,255,0.25)",
+                backgroundColor: "rgba(255,255,255,0.06)",
+              },
+            }}
+          >
+            Export
+          </Button>
+          <RideRequestFilters filters={filters} onChange={handleFiltersChange} />
+        </Box>
         </Box>
 
         {/* Active Filter Chips (Renders right below tabs if any filter is active) */}
@@ -294,6 +314,19 @@ export default function RideRequestPage() {
         rideRequestId={selectedRideRequestId}
         isOpen={!!selectedRideRequestId}
         onClose={() => setSelectedRideRequestId(null)}
+      />
+      
+        <ExportRideRequestsModal
+        isOpen={exportOpen}
+        onClose={() => setExportOpen(false)}
+       params={{
+  search: searchQuery || undefined,
+  status: RIDE_REQUEST_TAB[activeTab] || undefined,
+  ...filters,
+  is_scheduled: filters.is_scheduled ? filters.is_scheduled === "true" : undefined,
+  is_expired: filters.is_expired ? filters.is_expired === "true" : undefined,
+  period: filters.period || undefined,
+}}
       />
     </Box>
   );

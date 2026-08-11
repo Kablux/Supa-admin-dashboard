@@ -440,11 +440,11 @@ export interface RideRequestDetail extends RideRequestList {
 export interface RideRequestQueryParams {
   dispatch_status?: string;
   driver?: string;
-  period?: "today" | "yesterday" | "this_week" | "this_month";
+  period?: "today" | "yesterday" | "this_week" | "this_month" | "";
   created_at_after?: string;
   created_at_before?: string;
-  is_expired?: boolean;
-  is_scheduled?: boolean;
+  is_expired?: boolean | string;
+  is_scheduled?: boolean | string;
   ordering?: string;
   page?: number;
   page_size?: number;
