@@ -198,14 +198,14 @@ export default function MapWidget() {
               >
                 <Box
                   sx={{
-                    width: 250,
+                    minWidth: 250,
                     p: 0,
                   }}
                 >
                   {/* Driver Header */}
                   <Box
                     sx={{
-                      px: 1.5,
+                      px: 0.25,
                       pt: 1.5,
                       pb: 1.25,
                       borderBottom: "1px solid #E8EDF0",
@@ -215,14 +215,13 @@ export default function MapWidget() {
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        gap: 1.2,
+                        gap: 1.5,
                       }}
                     >
                       {/* Avatar */}
                       <Box
                         sx={{
-                          width: 32,
-                          height: 32,
+                          p: 1,
                           borderRadius: "50%",
                           display: "flex",
                           alignItems: "center",
@@ -230,7 +229,7 @@ export default function MapWidget() {
                           bgcolor: "#E7F7F0",
                           color: "#087443",
                           fontWeight: 700,
-                          fontSize: "13px",
+                          fontSize: "14px",
                         }}
                       >
                         {driver.name
@@ -241,42 +240,45 @@ export default function MapWidget() {
                           .toUpperCase()}
                       </Box>
 
-                      <Typography
-                        sx={{
-                          fontSize: "14px",
-                          fontWeight: 700,
-                          color: "#031A24",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {driver.name}
-                      </Typography>
-
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.6,
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            width: 6,
-                            height: 6,
-                            borderRadius: "50%",
-                            bgcolor: "#16A36A",
-                          }}
-                        />
-
+                      <Box>
                         <Typography
+                        component={"span"}
                           sx={{
                             fontSize: "12px",
                             fontWeight: 600,
-                            color: "#087443",
+                            color: "#031A24",
                           }}
                         >
-                          Online
+                          {driver.name}
                         </Typography>
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.6,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 6,
+                              height: 6,
+                              borderRadius: "50%",
+                              bgcolor: "#16A36A",
+                            }}
+                          />
+
+                          <Typography
+                           component={"span"}
+                            sx={{
+                              fontSize: "10px",
+                              fontWeight: 600,
+                              color: "#087443",
+                            }}
+                          >
+                            Online
+                          </Typography>
+                        </Box>
                       </Box>
                     </Box>
                   </Box>
