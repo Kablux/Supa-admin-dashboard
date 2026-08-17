@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import "leaflet.heat";
+import { loadLeafletHeat } from "../../../utils/loadLeafletHeat";
 
 export interface HeatPoint {
   lat: number;
@@ -20,29 +20,56 @@ export default function HeatmapLayer({
   points,
   radius = 25,
   blur = 20,
-  maxZoom = 20,
+  maxZoom = 17,
 }: HeatmapLayerProps) {
   const map = useMap();
 
   useEffect(() => {
-    if (!points.length) return;
+    let heatLayer: L.Layer | null = null;
+    let cancelled = false;
 
-    const heatData: [number, number, number][] = points.map((p) => [
-      p.lat,
-      p.lng,
-      p.weight ?? 1,
-    ]);
+    const initializeHeatmap = async () => {
+      if (!points.length) return;
 
-    const heatLayer = L.heatLayer(heatData, {
-      radius,
-      blur,
-      maxZoom,
-    });
+      try {
+        await loadLeafletHeat();
 
-    heatLayer.addTo(map);
+        if (cancelled) return;
+
+        const heatData: [number, number, number][] = points
+          .filter(
+            (point) =>
+              Number.isFinite(point.lat) &&
+              Number.isFinite(point.lng)
+          )
+          .map((point) => [
+            point.lat,
+            point.lng,
+            point.weight ?? 1,
+          ]);
+
+        if (!heatData.length) return;
+        heatLayer = L.heatLayer(heatData, {
+          radius,
+          blur,
+          maxZoom,
+        });
+
+        heatLayer.addTo(map);
+      } catch (error) {
+        console.error("Failed to load Leaflet heatmap:", error);
+      }
+    };
+
+    initializeHeatmap();
 
     return () => {
-      map.removeLayer(heatLayer);
+      cancelled = true;
+
+      if (heatLayer) {
+        map.removeLayer(heatLayer);
+        heatLayer = null;
+      }
     };
   }, [map, points, radius, blur, maxZoom]);
 
