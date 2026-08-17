@@ -1,28 +1,35 @@
 import React, { useRef, useState } from "react";
 import { Box, Skeleton, Typography, IconButton, Tooltip } from "@mui/material";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import { MapContainer, TileLayer } from "react-leaflet";
+import PhoneIcon from "@mui/icons-material/Phone";
+import PersonIcon from "@mui/icons-material/Person";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import type { Map as LeafletMap } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useDriverLocations } from "../../../utils/useDriverLocations";
 import HeatmapLayer from "./HeatmapLayer";
 import MapController from "./MapController";
 import MapSearchBar from "./MapSearchbar";
-
+import { driverMarkerIcon } from "./driverIcon";
 const DEFAULT_CENTER: [number, number] = [7.3775, 3.9059];
 const DEFAULT_ZOOM = 11;
 
 export default function MapWidget() {
-  const { points, isLoading, error } = useDriverLocations();
-  const [targetCenter, setTargetCenter] = useState<[number, number] | null>(
-    null,
-  );
+  const { drivers, isLoading, error } = useDriverLocations();
+  const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
 
   const handleReset = () => {
     mapRef.current?.flyTo(DEFAULT_CENTER, DEFAULT_ZOOM, { duration: 1 });
     setTargetCenter(null);
   };
+
+  // Convert DriverLocation array to HeatPoint format
+  const heatPoints = drivers.map((driver) => ({
+    lat: driver.lat,
+    lng: driver.lng,
+    weight: 1,
+  }));
 
   return (
     <Box
@@ -31,11 +38,11 @@ export default function MapWidget() {
         overflow: "hidden",
         position: "relative",
         height: 479,
-        border: "1px solid rgba(255,255,255,0.08)",
-        bgcolor: "secondary.main",
+        border: "1px solid var(--border)",
+        bgcolor: "var(--bg-card)",
       }}
     >
-      {/* Top floating bar: live badge + driver count + search */}
+      {/* Top floating bar */}
       <Box
         sx={{
           position: "absolute",
@@ -52,13 +59,13 @@ export default function MapWidget() {
       >
         <Box
           sx={{
-            pointerEvents: "auto", // Restores clicking for this specific element
-            bgcolor: "rgba(15,15,15,0.75)",
+            pointerEvents: "auto",
+            bgcolor: "var(--bg-secondary)",
             px: 1.5,
             py: 0.75,
             borderRadius: 1,
             backdropFilter: "blur(6px)",
-            border: "1px solid rgba(255,255,255,0.1)",
+            border: "1px solid var(--border)",
             display: "flex",
             alignItems: "center",
             gap: 1,
@@ -69,11 +76,13 @@ export default function MapWidget() {
               width: 6,
               height: 6,
               borderRadius: "50%",
-              bgcolor: error ? "#f44336" : "#4caf50",
-              boxShadow: error ? "0 0 8px #f44336" : "0 0 8px #4caf50",
+              bgcolor: error ? "var(--danger)" : "var(--success)",
+              boxShadow: error
+                ? "0 0 8px var(--danger)"
+                : "0 0 8px var(--success)",
             }}
           />
-          <Typography sx={{ fontWeight: 500, fontSize: "11px", color: "#fff" }}>
+          <Typography sx={{ fontWeight: 500, fontSize: "11px", color: "var(--text-primary)" }}>
             Kablux Live Drivers
           </Typography>
           {!isLoading && !error && (
@@ -81,10 +90,10 @@ export default function MapWidget() {
               sx={{
                 fontWeight: 600,
                 fontSize: "11px",
-                color: "var(--accent-gold, #e0a96d)",
+                color: "var(--accent-primary)",
               }}
             >
-              · {points.length}
+              · {drivers.length}
             </Typography>
           )}
         </Box>
@@ -94,7 +103,7 @@ export default function MapWidget() {
         </Box>
       </Box>
 
-      {/* Error banner — non-blocking, sits below the top bar */}
+      {/* Error banner */}
       {error && !isLoading && (
         <Box
           sx={{
@@ -102,15 +111,15 @@ export default function MapWidget() {
             top: 56,
             left: 12,
             zIndex: 1000,
-            bgcolor: "rgba(244,67,54,0.15)",
-            border: "1px solid rgba(244,67,54,0.4)",
+            bgcolor: "rgba(239,83,80,0.15)",
+            border: "1px solid var(--danger)",
             borderRadius: 1,
             px: 1.5,
             py: 0.5,
             pointerEvents: "auto",
           }}
         >
-          <Typography sx={{ fontSize: "11px", color: "#320c08" }}>
+          <Typography sx={{ fontSize: "11px", color: "var(--text-primary)" }}>
             {error}
           </Typography>
         </Box>
@@ -127,11 +136,11 @@ export default function MapWidget() {
               bottom: 12,
               right: 12,
               zIndex: 1000,
-              bgcolor: "rgba(15,15,15,0.75)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              bgcolor: "var(--bg-secondary)",
+              border: "1px solid var(--border)",
               backdropFilter: "blur(6px)",
-              color: "#fff",
-              "&:hover": { bgcolor: "rgba(15,15,15,0.9)" },
+              color: "var(--text-primary)",
+              "&:hover": { bgcolor: "var(--bg-card-hover)" },
             }}
           >
             <MyLocationIcon sx={{ fontSize: 16 }} />
@@ -144,57 +153,293 @@ export default function MapWidget() {
           variant="rectangular"
           width="100%"
           height="100%"
-          sx={{ bgcolor: "#1a1a1a" }}
+          sx={{ bgcolor: "var(--bg-card)" }}
         />
       ) : (
-        <>
-          <MapContainer
-            ref={mapRef}
-            center={DEFAULT_CENTER}
-            zoom={DEFAULT_ZOOM}
-            style={{ height: "100%", width: "100%", zIndex: 1 }}
-            scrollWheelZoom={false}
-            zoomControl={false}
-          >
-            <MapController center={targetCenter} />
-            <TileLayer
-              attribution=' <a href="https://www.kabluxe.com" target="_blank" rel="noopener noreferrer">Kablux</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {points.length > 0 && (
-              <HeatmapLayer points={points} radius={28} blur={22} />
-            )}
-          </MapContainer>
+        <MapContainer
+          ref={mapRef}
+          center={DEFAULT_CENTER}
+          zoom={DEFAULT_ZOOM}
+          style={{ height: "100%", width: "100%", zIndex: 1 }}
+          scrollWheelZoom={false}
+          zoomControl={false}
+        >
+          <MapController center={targetCenter} />
+          <TileLayer
+            attribution='&copy; <a href="https://www.kablux.com" target="_blank" rel="noopener noreferrer">Kablux</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
 
-          {points.length === 0 && !error && (
-            <Box
-              sx={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 1000,
-                pointerEvents: "none",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontSize: "12px",
-                  color: "rgba(255,255,255,0.6)",
-                  bgcolor: "rgba(0,0,0,0.5)",
-                  px: 2,
-                  py: 1,
-                  borderRadius: 1,
-                }}
-              >
-                No drivers online right now
-              </Typography>
-            </Box>
+          {/* Render Heatmap Density */}
+          {heatPoints.length > 0 && (
+            <HeatmapLayer points={heatPoints} radius={28} blur={22} />
           )}
 
-          {/* <MapLegend /> */}
-        </>
+          {/* Render Individual Driver Pin Markers with Info Popup */}
+          {drivers.map((driver) => (
+            <Marker
+              key={driver.driver_id}
+              position={[driver.lat, driver.lng]}
+              icon={driverMarkerIcon}
+            >
+              <Popup
+  closeButton
+  className="kablux-driver-popup"
+  minWidth={250}
+  maxWidth={280}
+>
+  <Box
+    sx={{
+      width: 250,
+      p: 0,
+    }}
+  >
+    {/* Driver Header */}
+    <Box
+      sx={{
+        px: 1.5,
+        pt: 1.5,
+        pb: 1.25,
+        borderBottom: "1px solid #E8EDF0",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1.2,
+        }}
+      >
+        {/* Avatar */}
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            bgcolor: "#E7F7F0",
+            color: "#087443",
+            fontWeight: 700,
+            fontSize: "13px",
+          }}
+        >
+          {driver.name
+            ?.split(" ")
+            .slice(0, 2)
+            .map((name) => name[0])
+            .join("")
+            .toUpperCase()}
+        </Box>
+
+          <Typography
+            sx={{
+              fontSize: "14px",
+              fontWeight: 700,
+              color: "#031A24",
+              whiteSpace: "nowrap",
+            
+            }}
+          >
+            {driver.name}
+          </Typography>
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.6,
+            }}
+          >
+            <Box
+              sx={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                bgcolor: "#16A36A",
+              }}
+            />
+
+            <Typography
+              sx={{
+                fontSize: "12px",
+                fontWeight: 600,
+                color: "#087443",
+              }}
+            >
+              Online
+            </Typography>
+          </Box>
+      </Box>
+
+    
+    </Box>
+
+    {/* Driver Details */}
+    <Box
+      sx={{
+        px: 1.5,
+        py: 1.25,
+        display: "flex",
+        flexDirection: "column",
+        gap: 1.1,
+      }}
+    >
+      {/* Phone */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <Box
+            sx={{
+              width: 28,
+              height: 28,
+              borderRadius: 1,
+              bgcolor: "#F3F6F7",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <PhoneIcon
+              sx={{
+                fontSize: 14,
+                color: "#53656D",
+              }}
+            />
+          </Box>
+
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "12px",
+                color: "#8A969C",
+                lineHeight: 1.2,
+              }}
+            >
+              Phone number
+            </Typography>
+
+            <Typography
+              sx={{
+                fontSize: "11px",
+                color: "#26383F",
+                fontWeight: 600,
+                mt: 0.2,
+              }}
+            >
+              {driver.phone_number || "Not available"}
+            </Typography>
+          </Box>
+        </Box>
+
+        {driver.phone_number && (
+          <IconButton
+            component="a"
+            href={`tel:${driver.phone_number}`}
+            size="small"
+            sx={{
+              width: 28,
+              height: 28,
+              bgcolor: "#EAF8F2",
+              color: "#087443",
+              "&:hover": {
+                bgcolor: "#D9F2E7",
+              },
+            }}
+          >
+            <PhoneIcon sx={{ fontSize: 14 }} />
+          </IconButton>
+        )}
+      </Box>
+
+      {/* Location */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+        }}
+      >
+        <Box
+          sx={{
+            width: 28,
+            height: 28,
+            borderRadius: 1,
+            bgcolor: "#F3F6F7",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <MyLocationIcon
+            sx={{
+              fontSize: 14,
+              color: "#53656D",
+            }}
+          />
+        </Box>
+
+        <Box>
+          <Typography
+            sx={{
+              fontSize: "12px",
+              color: "#8A969C",
+              lineHeight: 1.2,
+            }}
+          >
+            Current location
+          </Typography>
+
+          <Typography
+            sx={{
+              fontSize: "10px",
+              color: "#26383F",
+              fontWeight: 500,
+              mt: 0.2,
+            }}
+          >
+            {driver.lat.toFixed(5)}, {driver.lng.toFixed(5)}
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
+
+    {/* Footer */}
+    <Box
+      sx={{
+        px: 1.5,
+        py: 0.9,
+        bgcolor: "#F8FAFB",
+        borderTop: "1px solid #E8EDF0",
+      }}
+    >
+      <Typography
+        sx={{
+          fontSize: "9px",
+          color: "#8A969C",
+          textAlign: "center",
+        }}
+      >
+        Live driver location
+      </Typography>
+    </Box>
+  </Box>
+</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       )}
     </Box>
   );

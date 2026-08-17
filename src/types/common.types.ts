@@ -561,3 +561,15 @@ export interface ReferralState {
   loading: boolean;
   error: string | null;
 }
+
+export interface DriverLocation {
+  driver_id: string;
+  name: string;
+  phone_number: string;
+  lat: number;
+  lng: number;
+}
+
+export interface DriverLocationsResponse {
+  data: DriverLocation[];
+}

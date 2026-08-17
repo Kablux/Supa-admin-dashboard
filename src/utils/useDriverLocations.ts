@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { HeatPoint } from "../components/dashboard/map/HeatmapLayer";
 import { getDriverLocations } from "../api/xhr";
+import { DriverLocation } from "../types/common.types";
 
 const POLL_INTERVAL_MS = 30_000;
 
 interface UseDriverLocationsResult {
-  points: HeatPoint[];
+  drivers: DriverLocation[];
   isLoading: boolean;
   error: string | null;
   refetch: () => void;
 }
 
 export function useDriverLocations(
-  pollIntervalMs: number = POLL_INTERVAL_MS,
+  pollIntervalMs: number = POLL_INTERVAL_MS
 ): UseDriverLocationsResult {
-  const [points, setPoints] = useState<HeatPoint[]>([]);
+  const [drivers, setDrivers] = useState<DriverLocation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const isMountedRef = useRef(true);
@@ -23,7 +23,7 @@ export function useDriverLocations(
     try {
       const data = await getDriverLocations();
       if (!isMountedRef.current) return;
-      setPoints(data);
+      setDrivers(data);
       setError(null);
     } catch (err) {
       console.error("Failed to load driver locations:", err);
@@ -47,5 +47,5 @@ export function useDriverLocations(
     };
   }, [fetchLocations, pollIntervalMs]);
 
-  return { points, isLoading, error, refetch: fetchLocations };
+  return { drivers, isLoading, error, refetch: fetchLocations };
 }
