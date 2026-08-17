@@ -16,7 +16,9 @@ const DEFAULT_ZOOM = 11;
 
 export default function MapWidget() {
   const { drivers, isLoading, error } = useDriverLocations();
-  const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
+  const [targetCenter, setTargetCenter] = useState<[number, number] | null>(
+    null,
+  );
   const mapRef = useRef<LeafletMap | null>(null);
 
   const handleReset = () => {
@@ -82,7 +84,13 @@ export default function MapWidget() {
                 : "0 0 8px var(--success)",
             }}
           />
-          <Typography sx={{ fontWeight: 500, fontSize: "11px", color: "var(--text-primary)" }}>
+          <Typography
+            sx={{
+              fontWeight: 500,
+              fontSize: "11px",
+              color: "var(--text-primary)",
+            }}
+          >
             Kablux Live Drivers
           </Typography>
           {!isLoading && !error && (
@@ -183,260 +191,257 @@ export default function MapWidget() {
               icon={driverMarkerIcon}
             >
               <Popup
-  closeButton
-  className="kablux-driver-popup"
-  minWidth={250}
-  maxWidth={280}
->
-  <Box
-    sx={{
-      width: 250,
-      p: 0,
-    }}
-  >
-    {/* Driver Header */}
-    <Box
-      sx={{
-        px: 1.5,
-        pt: 1.5,
-        pb: 1.25,
-        borderBottom: "1px solid #E8EDF0",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1.2,
-        }}
-      >
-        {/* Avatar */}
-        <Box
-          sx={{
-            width: 32,
-            height: 32,
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: "#E7F7F0",
-            color: "#087443",
-            fontWeight: 700,
-            fontSize: "13px",
-          }}
-        >
-          {driver.name
-            ?.split(" ")
-            .slice(0, 2)
-            .map((name) => name[0])
-            .join("")
-            .toUpperCase()}
-        </Box>
+                closeButton
+                className="kablux-driver-popup"
+                minWidth={250}
+                maxWidth={280}
+              >
+                <Box
+                  sx={{
+                    width: 250,
+                    p: 0,
+                  }}
+                >
+                  {/* Driver Header */}
+                  <Box
+                    sx={{
+                      px: 1.5,
+                      pt: 1.5,
+                      pb: 1.25,
+                      borderBottom: "1px solid #E8EDF0",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1.2,
+                      }}
+                    >
+                      {/* Avatar */}
+                      <Box
+                        sx={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: "#E7F7F0",
+                          color: "#087443",
+                          fontWeight: 700,
+                          fontSize: "13px",
+                        }}
+                      >
+                        {driver.name
+                          ?.split(" ")
+                          .slice(0, 2)
+                          .map((name) => name[0])
+                          .join("")
+                          .toUpperCase()}
+                      </Box>
 
-          <Typography
-            sx={{
-              fontSize: "14px",
-              fontWeight: 700,
-              color: "#031A24",
-              whiteSpace: "nowrap",
-            
-            }}
-          >
-            {driver.name}
-          </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: "14px",
+                          fontWeight: 700,
+                          color: "#031A24",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {driver.name}
+                      </Typography>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.6,
-            }}
-          >
-            <Box
-              sx={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                bgcolor: "#16A36A",
-              }}
-            />
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.6,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: "50%",
+                            bgcolor: "#16A36A",
+                          }}
+                        />
 
-            <Typography
-              sx={{
-                fontSize: "12px",
-                fontWeight: 600,
-                color: "#087443",
-              }}
-            >
-              Online
-            </Typography>
-          </Box>
-      </Box>
+                        <Typography
+                          sx={{
+                            fontSize: "12px",
+                            fontWeight: 600,
+                            color: "#087443",
+                          }}
+                        >
+                          Online
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
 
-    
-    </Box>
+                  {/* Driver Details */}
+                  <Box
+                    sx={{
+                      px: 1.5,
+                      py: 1.25,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1.1,
+                    }}
+                  >
+                    {/* Phone */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 28,
+                            height: 28,
+                            borderRadius: 1,
+                            bgcolor: "#F3F6F7",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <PhoneIcon
+                            sx={{
+                              fontSize: 14,
+                              color: "#53656D",
+                            }}
+                          />
+                        </Box>
 
-    {/* Driver Details */}
-    <Box
-      sx={{
-        px: 1.5,
-        py: 1.25,
-        display: "flex",
-        flexDirection: "column",
-        gap: 1.1,
-      }}
-    >
-      {/* Phone */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <Box
-            sx={{
-              width: 28,
-              height: 28,
-              borderRadius: 1,
-              bgcolor: "#F3F6F7",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <PhoneIcon
-              sx={{
-                fontSize: 14,
-                color: "#53656D",
-              }}
-            />
-          </Box>
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontSize: "12px",
+                              color: "#8A969C",
+                              lineHeight: 1.2,
+                            }}
+                          >
+                            Phone number
+                          </Typography>
 
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "12px",
-                color: "#8A969C",
-                lineHeight: 1.2,
-              }}
-            >
-              Phone number
-            </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: "11px",
+                              color: "#26383F",
+                              fontWeight: 600,
+                              mt: 0.2,
+                            }}
+                          >
+                            {driver.phone_number || "Not available"}
+                          </Typography>
+                        </Box>
+                      </Box>
 
-            <Typography
-              sx={{
-                fontSize: "11px",
-                color: "#26383F",
-                fontWeight: 600,
-                mt: 0.2,
-              }}
-            >
-              {driver.phone_number || "Not available"}
-            </Typography>
-          </Box>
-        </Box>
+                      {driver.phone_number && (
+                        <IconButton
+                          component="a"
+                          href={`tel:${driver.phone_number}`}
+                          size="small"
+                          sx={{
+                            width: 28,
+                            height: 28,
+                            bgcolor: "#EAF8F2",
+                            color: "#087443",
+                            "&:hover": {
+                              bgcolor: "#D9F2E7",
+                            },
+                          }}
+                        >
+                          <PhoneIcon sx={{ fontSize: 14 }} />
+                        </IconButton>
+                      )}
+                    </Box>
 
-        {driver.phone_number && (
-          <IconButton
-            component="a"
-            href={`tel:${driver.phone_number}`}
-            size="small"
-            sx={{
-              width: 28,
-              height: 28,
-              bgcolor: "#EAF8F2",
-              color: "#087443",
-              "&:hover": {
-                bgcolor: "#D9F2E7",
-              },
-            }}
-          >
-            <PhoneIcon sx={{ fontSize: 14 }} />
-          </IconButton>
-        )}
-      </Box>
+                    {/* Location */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 1,
+                          bgcolor: "#F3F6F7",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <MyLocationIcon
+                          sx={{
+                            fontSize: 14,
+                            color: "#53656D",
+                          }}
+                        />
+                      </Box>
 
-      {/* Location */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-        }}
-      >
-        <Box
-          sx={{
-            width: 28,
-            height: 28,
-            borderRadius: 1,
-            bgcolor: "#F3F6F7",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <MyLocationIcon
-            sx={{
-              fontSize: 14,
-              color: "#53656D",
-            }}
-          />
-        </Box>
+                      <Box>
+                        <Typography
+                          sx={{
+                            fontSize: "12px",
+                            color: "#8A969C",
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          Current location
+                        </Typography>
 
-        <Box>
-          <Typography
-            sx={{
-              fontSize: "12px",
-              color: "#8A969C",
-              lineHeight: 1.2,
-            }}
-          >
-            Current location
-          </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "10px",
+                            color: "#26383F",
+                            fontWeight: 500,
+                            mt: 0.2,
+                          }}
+                        >
+                          {driver.lat.toFixed(5)}, {driver.lng.toFixed(5)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
 
-          <Typography
-            sx={{
-              fontSize: "10px",
-              color: "#26383F",
-              fontWeight: 500,
-              mt: 0.2,
-            }}
-          >
-            {driver.lat.toFixed(5)}, {driver.lng.toFixed(5)}
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
-
-    {/* Footer */}
-    <Box
-      sx={{
-        px: 1.5,
-        py: 0.9,
-        bgcolor: "#F8FAFB",
-        borderTop: "1px solid #E8EDF0",
-      }}
-    >
-      <Typography
-        sx={{
-          fontSize: "9px",
-          color: "#8A969C",
-          textAlign: "center",
-        }}
-      >
-        Live driver location
-      </Typography>
-    </Box>
-  </Box>
-</Popup>
+                  {/* Footer */}
+                  <Box
+                    sx={{
+                      px: 1.5,
+                      py: 0.9,
+                      bgcolor: "#F8FAFB",
+                      borderTop: "1px solid #E8EDF0",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: "9px",
+                        color: "#8A969C",
+                        textAlign: "center",
+                      }}
+                    >
+                      Live driver location
+                    </Typography>
+                  </Box>
+                </Box>
+              </Popup>
             </Marker>
           ))}
         </MapContainer>
