@@ -75,12 +75,12 @@ export default function OverviewCards({
               </Box>
             )}
 
-            <Typography sx={{ fontSize: 16, color: "primary", mb: 0.5 }}>
+            <Typography sx={{ fontSize: 16,textAlign:"center", color: "primary", mb: 0.5 }}>
               {item.title}
             </Typography>
 
             <Typography
-              sx={{ fontSize: 24, fontWeight: 700, color: "primary" }}
+              sx={{ fontSize: 24,textAlign:"center", fontWeight: 700, color: "primary" }}
             >
               {loading ? (
                 <Skeleton
