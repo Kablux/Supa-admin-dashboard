@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { visualizer } from "rollup-plugin-visualizer";
+
 export default defineConfig({
   plugins: [
     react(),
@@ -15,12 +16,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes("leaflet.heat")) return undefined;
+
           if (id.includes("node_modules")) {
-            // Put Material UI in its own chunk (it's usually heavy)
+            // Material UI in its own chunk (it's heavy)
             if (id.includes("@mui")) {
               return "vendor-mui";
             }
-            // Put React and standard ecosystem libraries in another
+            // React + ecosystem
             if (
               id.includes("react") ||
               id.includes("react-router") ||
@@ -28,7 +31,7 @@ export default defineConfig({
             ) {
               return "vendor-react";
             }
-            // Put all other third-party packages in a general vendor chunk
+            // Everything else third-party
             return "vendor";
           }
         },
