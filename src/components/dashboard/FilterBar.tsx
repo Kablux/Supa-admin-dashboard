@@ -35,12 +35,11 @@ export default function FilterBar() {
         justifyContent: "space-between",
         gap: 2,
         mb: 2.5,
-        flexWrap: "wrap",
-      }}
+        flexWrap: "wrap",}}
     >
       {/* Left Side: Search + Add Filter */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-        <Box>
+        <Box className="hidden">
           <Button
             onClick={handleDateMenuOpen}
             startIcon={<TuneIcon sx={{ fontSize: 14 }} />}

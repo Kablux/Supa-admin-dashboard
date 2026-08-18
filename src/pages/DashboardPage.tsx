@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
 import FilterBar from "../components/dashboard/FilterBar";
 import StatCard from "../components/dashboard/StatCard";
 import QuickActions from "../components/dashboard/QuickActions";
@@ -9,9 +9,13 @@ import { getDashboardStats } from "../api/xhrHelper";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { Stat } from "../types/common.types";
 import MapWidget from "../components/dashboard/map/MapWidget";
+import CampaignRoundedIcon from "@mui/icons-material/CampaignRounded";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import PushNotificationModal from "../components/dashboard/PushNotModal";
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
+  const [pushOpen, setPushOpen] = useState(false);
 
   const {
     totalUsers,
@@ -123,7 +127,7 @@ export default function DashboardPage() {
       description: "Registered riders on the platform.",
       details: [
         { label: "Active", value: ridersummary.active },
-        { label: "Pending", value: ridersummary.pending_verification},
+        { label: "Pending", value: ridersummary.pending_verification },
         { label: "Suspended", value: ridersummary.suspended },
         { label: "Total", value: ridersummary.total },
       ],
@@ -196,8 +200,59 @@ export default function DashboardPage() {
       sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
     >
       {/* Filter + search bar */}
-      <FilterBar />
+      <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2.5 }}>
+        {/* Filter + search bar */}
+        <FilterBar />
 
+        {/* Push notification compose bar */}
+        <Box
+          onClick={() => setPushOpen(true)}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1.5,
+            px: 2,
+            py: 1,
+            borderRadius: "14px",
+            border: "1px solid var(--border)",
+            backgroundColor: "var(--bg-card)",
+            cursor: "pointer",
+            transition: "border-color 0.15s ease",
+            "&:hover": { borderColor: "var(--accent-gold, #FFD700)" },
+          }}
+        >
+          <CampaignRoundedIcon sx={{ color: "var(--accent-gold, #FFD700)" }} />
+          <Typography
+            sx={{ flexGrow: 1, fontSize: 14, color: "var(--text-secondary)" }}
+          >
+            Send a push notification to users…
+          </Typography>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              setPushOpen(true);
+            }}
+            startIcon={<SendRoundedIcon sx={{ fontSize: 16 }} />}
+            sx={{
+              textTransform: "none",
+              fontSize: 13,
+              fontWeight: 700,
+              borderRadius: "10px",
+              px: 2,
+              height: 36,
+              backgroundColor: "var(--accent-gold, #FFD700)",
+              color: "#000",
+              boxShadow: "none",
+              "&:hover": {
+                backgroundColor: "var(--accent-gold, #FFD700)",
+                boxShadow: "0 4px 12px rgba(255,215,0,0.25)",
+              },
+            }}
+          >
+            Compose
+          </Button>
+        </Box>
+      </Box>
       {/* Row 1 — 4 stat cards + quick actions panel */}
       <Box className="flex justify-between gap-4">
         <Box
@@ -251,6 +306,12 @@ export default function DashboardPage() {
         <FinanceAnalytics />
         <MessagesPanel />
       </Box>
+
+         {/* Push notification modal */}
+      <PushNotificationModal
+        isOpen={pushOpen}
+        onClose={() => setPushOpen(false)}
+      />
     </Box>
   );
 }

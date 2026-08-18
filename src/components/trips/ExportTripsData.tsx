@@ -4,7 +4,7 @@ import { getTrips } from "../../api/xhr";
 import { TripQueryParams } from "../../types/auth";
 
 const TRIP_COLUMNS: ExportColumn[] = [
-  { key: "id", label: "ID", default: true },
+  { key: "id", label: "user_id", default: true },
   { key: "rider", label: "Rider", default: true },
   { key: "driver", label: "Driver", default: true },
   { key: "status", label: "Status", default: true },

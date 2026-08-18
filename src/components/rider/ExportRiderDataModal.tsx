@@ -4,7 +4,7 @@ import { RiderQueryParams } from "../../types/auth";
 import ExportModal, { ExportColumn } from "../ExportModal";
 
 const RIDER_COLUMNS: ExportColumn[] = [
-  { key: "id", label: "ID", default: true },
+  { key: "id", label: "user_id", default: true },
   { key: "full_name", label: "Full Name", default: true },
   { key: "email", label: "Email", default: true },
   { key: "phone_number", label: "Phone Number", default: true },
@@ -21,7 +21,6 @@ const RIDER_COLUMNS: ExportColumn[] = [
 interface ExportRidersModalProps {
   isOpen: boolean;
   onClose: () => void;
-  /** Current view's filters (search/status/period/dates) — export respects them. */
   params: RiderQueryParams;
 }
 

@@ -4,7 +4,7 @@ import { RideRequestQueryParams } from "../../types/common.types";
 import ExportModal, { ExportColumn } from "../ExportModal";
 
 const RIDE_REQUEST_COLUMNS: ExportColumn[] = [
-  { key: "id", label: "ID", default: true },
+  { key: "id", label: "user_id", default: true },
   { key: "rider", label: "Rider", default: true },
   { key: "status", label: "Status", default: true },
   { key: "type", label: "Type", default: true },

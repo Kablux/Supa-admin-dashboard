@@ -573,3 +573,10 @@ export interface DriverLocation {
 export interface DriverLocationsResponse {
   data: DriverLocation[];
 }
+
+///Retention Response
+export interface BroadcastRetentionResponse {
+  notified: number;
+  queued: boolean;
+  unknown_ids: string[];
+}
