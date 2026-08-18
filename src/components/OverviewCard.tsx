@@ -29,7 +29,7 @@ export default function OverviewCards({
         maxWidth,
         display: "grid",
         gridTemplateColumns: {
-          xs: "1fr",
+           xs: "1fr 1fr",
           sm: "repeat(2, 1fr)",
           md: "repeat(3, 1fr)",
           lg: `repeat(${columns}, 1fr)`,

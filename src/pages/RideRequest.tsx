@@ -176,7 +176,7 @@ const [exportOpen, setExportOpen] = useState(false);
             mt: 1,
           }}
         >
-          <Box sx={{ display: "flex", gap: 3 }}>
+          <Box sx={{ display: "flex", gap: 3,flexWrap: "wrap", }}>
             {(
               [
                 "all",

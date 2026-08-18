@@ -47,7 +47,7 @@ export default function TripsPage() {
         page: currentPage,
         page_size: pageSize,
         search: searchQuery,
-        status: TRIP_TAB_MAPPING[activeTab], // status comes from the tabs
+        status: TRIP_TAB_MAPPING[activeTab], 
         ...filters, 
       }),
     );
@@ -121,6 +121,7 @@ export default function TripsPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          flexWrap: "wrap",
           gap: 2,
           mt: 1,
         }}
