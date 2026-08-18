@@ -221,7 +221,8 @@ export default function MapWidget() {
                       {/* Avatar */}
                       <Box
                         sx={{
-                          p: 1,
+                          width: 36,
+                          height: 36,
                           borderRadius: "50%",
                           display: "flex",
                           alignItems: "center",
@@ -343,7 +344,6 @@ export default function MapWidget() {
                               fontSize: "11px",
                               color: "#26383F",
                               fontWeight: 600,
-                              mt: 0.2,
                             }}
                           >
                             {driver.phone_number || "Not available"}
@@ -414,7 +414,6 @@ export default function MapWidget() {
                             fontSize: "10px",
                             color: "#26383F",
                             fontWeight: 500,
-                            mt: 0.2,
                           }}
                         >
                           {driver.lat.toFixed(5)}, {driver.lng.toFixed(5)}
