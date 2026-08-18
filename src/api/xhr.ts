@@ -18,6 +18,7 @@ import { cleanQueryParams } from "../utils/hook";
 import {
   ActionDriverPayload,
   AdminRole,
+  BroadcastRetentionResponse,
   CorporateInfo,
   CorporateOwner,
   CorporateStat,
@@ -583,14 +584,6 @@ export async function getFleetData() {
   };
 }
 
-////drivers cordinates
-// export const getDriverLocations = async () => {
-//   const response = await api.get("/business-admin/drivers/locations/");
-//   return response.data.map((item: any) => ({
-//     lat: item.latitude ?? item.lat,
-//     lng: item.longitude ?? item.lng ?? item.long,
-//   }));
-// };
 
 export async function getDriverLocations(): Promise<DriverLocation[]> {
   const response = await api.get<DriverLocationsResponse>(
@@ -684,4 +677,43 @@ export const getReferrals = (params?: ReferralQueryParams) => {
 
 export const getReferralDetails = (id: string) => {
   return api.get<Referral>(`/api/v1/business-admin/referrals/${id}/`);
+};
+
+
+///Broadcast Retention Messages
+ 
+export const broadcastRetention = async (
+  file: File,
+  title: string,
+  message: string,
+): Promise<BroadcastRetentionResponse> => {
+  const form = new FormData();
+  form.append("file", file);
+  form.append("title", title);
+  form.append("message", message);
+ 
+  const { data } = await api.post<BroadcastRetentionResponse>(
+    "/business-admin/riders/broadcast-retention/",
+    form,
+    {
+      transformRequest: [
+        (payload, headers) => {
+          // headers is an AxiosHeaders instance in axios v1 (has .delete);
+          // fall back to plain-object delete for older shapes.
+          const h = headers as unknown as {
+            delete?: (name: string) => void;
+            [k: string]: unknown;
+          };
+          if (typeof h?.delete === "function") {
+            h.delete("Content-Type");
+          } else if (h) {
+            delete h["Content-Type"];
+            delete h["content-type"];
+          }
+          return payload; // FormData passes through untouched
+        },
+      ],
+    },
+  );
+  return data;
 };
