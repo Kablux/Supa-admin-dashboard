@@ -54,6 +54,7 @@ export default function MapWidget() {
           zIndex: 1000,
           display: "flex",
           justifyContent: "space-between",
+          flexWrap: "wrap",
           alignItems: "center",
           gap: 1.5,
           pointerEvents: "none",
@@ -70,6 +71,7 @@ export default function MapWidget() {
             border: "1px solid var(--border)",
             display: "flex",
             alignItems: "center",
+            flexWrap: "wrap",
             gap: 1,
           }}
         >

@@ -200,7 +200,7 @@ export default function DashboardPage() {
       sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
     >
       {/* Filter + search bar */}
-      <Box sx={{ display: "flex", justifyContent: "space-between",flexWrap:"wrap", gap: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between",flexWrap:"wrap", gap: 1 }}>
         {/* Filter + search bar */}
         <FilterBar />
 
@@ -211,7 +211,7 @@ export default function DashboardPage() {
             display: "flex",
             alignItems: "center",
             gap: 1.5,
-            px: 2,
+            px: 1.5,
             py: 1,
             borderRadius: "14px",
             border: "1px solid var(--border)",
@@ -235,11 +235,11 @@ export default function DashboardPage() {
             startIcon={<SendRoundedIcon sx={{ fontSize: 16 }} />}
             sx={{
               textTransform: "none",
-              fontSize: 13,
+              fontSize: 14,
               fontWeight: 700,
               borderRadius: "10px",
               px: 2,
-              height: 36,
+              py:0.9,
               backgroundColor: "var(--accent-gold, #FFD700)",
               color: "#000",
               boxShadow: "none",
