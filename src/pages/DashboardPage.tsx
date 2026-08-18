@@ -200,7 +200,7 @@ export default function DashboardPage() {
       sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
     >
       {/* Filter + search bar */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2.5 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between",flexWrap:"wrap", gap: 2 }}>
         {/* Filter + search bar */}
         <FilterBar />
 

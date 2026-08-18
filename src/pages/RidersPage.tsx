@@ -122,12 +122,13 @@ export default function RidersPage() {
         sx={{
           display: "flex",
           justifyContent: "space-between",
+          flexWrap: "wrap",
           alignItems: "center",
           gap: 2,
           mt: 1,
         }}
       >
-        <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+        <Box sx={{ display: "flex", gap: 3,  }}>
           {(["all", "active", "pending", "suspended"] as const).map((tab) => (
             <Typography
               key={tab}
