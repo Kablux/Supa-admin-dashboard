@@ -8,16 +8,16 @@ import BlockIcon from "@mui/icons-material/Block";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import { FaListCheck } from "react-icons/fa6";
 import { getDashboardStats, fetchDrivers } from "../api/xhrHelper";
-import { approveDriverKyc, suspendDriver } from "../api/xhr";
+import { approveDriverKyc, rejectDriverKyc, suspendDriver } from "../api/xhr";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setCurrentPage } from "../redux/slices/Drivers";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import SearchFilterRow from "../components/SearchFilterRow";
 import DriversTable from "../components/driver/DriversTable";
-import DriverDetailsModal from "../components/driver/DriverDetailModal";
 import DriverFilters, { DriverFilterState } from "../components/driver/DriverFilter";
 import ExportDriversModal from "../components/driver/ExportDriversDataModal";
 import { DRIVER_TAB_MAPPING } from "../types/common.types";
+import DriverDetailsModal from "../components/driver/modal/DriverDetailModal";
 
 
 type UITabType = keyof typeof DRIVER_TAB_MAPPING;
@@ -72,6 +72,7 @@ export default function DriversPage() {
   const handleDriverAction = async (
     driverId: string,
     actionType: "approve" | "activate" | "reject" | "suspend" | "delete",
+     reason?: string,
   ) => {
     try {
       const targetDriver = driversList.find((d: any) => d.id === driverId);
@@ -81,7 +82,7 @@ export default function DriversPage() {
         return;
       }
 
-      if (actionType === "approve") {
+        if (actionType === "approve") {
         const payload = {
           kyc_status: targetDriver.kyc_status,
           is_online: targetDriver.is_online,
@@ -105,11 +106,26 @@ export default function DriversPage() {
         setSelectedDriverId(null);
         dispatch(getDashboardStats());
         refetchDrivers();
+      } else if (actionType === "reject") {
+        if (!reason || !reason.trim()) {
+          toast.error("A rejection reason is required");
+          return;
+        }
+        await rejectDriverKyc(driverId, reason.trim());
+        toast.success(`${targetDriver.full_name}'s KYC was rejected`);
+        setSelectedDriverId(null);
+        dispatch(getDashboardStats());
+        refetchDrivers();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(
         `Failed to execute ${actionType} on driver ID: ${driverId}`,
         error,
+      );
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.rejection_reason?.[0] ||
+          `Failed to ${actionType} driver`,
       );
     }
   };
