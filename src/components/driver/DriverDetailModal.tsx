@@ -9,6 +9,7 @@ import {
   Chip,
   Button,
   DialogActions,
+  TextField,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import CloseIcon from "@mui/icons-material/Close";
@@ -46,6 +47,7 @@ interface DriverDetailsModalProps {
   onDriverAction?: (
     driverId: string,
     actionType: "approve" | "activate" | "reject" | "suspend" | "delete",
+     reason?: string,
   ) => void;
 }
 
@@ -62,6 +64,8 @@ export default function DriverDetailsModal({
   const [copied, setCopied] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomOrigin, setZoomOrigin] = useState({ x: "50%", y: "50%" });
+   const [rejectMode, setRejectMode] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
 
   useEffect(() => {
     if (isOpen && driverId) {
@@ -84,6 +88,8 @@ export default function DriverDetailsModal({
     } else {
       setDriverData(null);
       setActiveImgUrl(null);
+       setRejectMode(false);
+      setRejectReason("");
     }
   }, [isOpen, driverId]);
 
@@ -109,14 +115,15 @@ export default function DriverDetailsModal({
     "approve" | "activate" | "reject" | "suspend" | "delete" | null
   >(null);
 
-  const executeAction = async (
+   const executeAction = async (
     actionType: "approve" | "activate" | "reject" | "suspend" | "delete",
+    reason?: string,
   ) => {
     if (!driverData?.id || !onDriverAction) return;
-
+ 
     try {
       setActionLoading(actionType);
-      await onDriverAction(driverData.id, actionType);
+      await onDriverAction(driverData.id, actionType, reason);
     } catch (error) {
       console.error(`Action ${actionType} failed`, error);
     } finally {
@@ -1033,62 +1040,158 @@ export default function DriverDetailsModal({
               }}
             >
               {/* Action Suite: Registration Approvals */}
-              {isInReview && (
-                <>
-                  <Button
-                    disabled
-                    variant="outlined"
-                    fullWidth
+                 {isInReview &&
+                (rejectMode ? (
+                  <Box
                     sx={{
-                      py: 1.2,
-                      fontSize: 14,
-                      textTransform: "none",
-                      fontWeight: 600,
-                      borderRadius: "8px",
-                      color: "#E57373",
-                      cursor: "not-allowed",
-                      borderColor: "rgba(229, 115, 115, 0.3)",
-                      "&:hover": {
-                        borderColor: "#E57373",
-                        backgroundColor: "rgba(229, 115, 115, 0.08)",
-                      },
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1.5,
                     }}
-                    onClick={() => executeAction("reject")}
                   >
-                    {actionLoading === "reject" ? (
-                      <CircularProgress size={18} color="inherit" />
-                    ) : (
-                      "Decline Request"
-                    )}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    disabled={!!actionLoading}
-                    sx={{
-                      py: 1.2,
-                      fontSize: 14,
-                      textTransform: "none",
-                      fontWeight: 600,
-                      borderRadius: "8px",
-                      backgroundColor: "#2E7D32",
-                      color: "#fff",
-                      boxShadow: "none",
-                      "&:hover": {
-                        backgroundColor: "#1B5E20",
-                        boxShadow: "0 4px 12px rgba(46, 125, 50, 0.3)",
-                      },
-                    }}
-                    onClick={() => executeAction("approve")}
-                  >
-                    {actionLoading === "approve" ? (
-                      <CircularProgress size={18} sx={{ color: "#fff" }} />
-                    ) : (
-                      "Accept Request"
-                    )}
-                  </Button>
-                </>
-              )}
+                    <TextField
+                      label="Rejection reason"
+                      value={rejectReason}
+                      onChange={(e) => setRejectReason(e.target.value)}
+                      placeholder="e.g. Vehicle documents are blurry or expired"
+                      multiline
+                      minRows={2}
+                      maxRows={5}
+                      fullWidth
+                      autoFocus
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "8px",
+                          fontSize: 14,
+                          color: "var(--text-primary)",
+                          backgroundColor: "rgba(255,255,255,0.02)",
+                          "& fieldset": {
+                            borderColor: "rgba(255,255,255,0.12)",
+                          },
+                          "&:hover fieldset": {
+                            borderColor: "rgba(255,255,255,0.25)",
+                          },
+                          "&.Mui-focused fieldset": { borderColor: "#E57373" },
+                        },
+                        "& .MuiInputLabel-root": {
+                          color: "var(--text-secondary)",
+                        },
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#E57373",
+                        },
+                      }}
+                    />
+                    <Box sx={{ display: "flex", gap: 2 }}>
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        disabled={!!actionLoading}
+                        onClick={() => {
+                          setRejectMode(false);
+                          setRejectReason("");
+                        }}
+                        sx={{
+                          py: 1.2,
+                          fontSize: 14,
+                          textTransform: "none",
+                          fontWeight: 600,
+                          borderRadius: "8px",
+                          color: "var(--text-primary)",
+                          borderColor: "rgba(255,255,255,0.15)",
+                          "&:hover": {
+                            borderColor: "rgba(255,255,255,0.3)",
+                            backgroundColor: "rgba(255,255,255,0.03)",
+                          },
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        disabled={!rejectReason.trim() || !!actionLoading}
+                        onClick={() =>
+                          executeAction("reject", rejectReason.trim())
+                        }
+                        sx={{
+                          py: 1.2,
+                          fontSize: 14,
+                          textTransform: "none",
+                          fontWeight: 600,
+                          borderRadius: "8px",
+                          backgroundColor: "#E53935",
+                          color: "#fff",
+                          boxShadow: "none",
+                          "&:hover": {
+                            backgroundColor: "#C62828",
+                            boxShadow: "0 4px 12px rgba(229,57,53,0.3)",
+                          },
+                          "&.Mui-disabled": {
+                            backgroundColor: "rgba(255,255,255,0.12)",
+                            color: "rgba(255,255,255,0.4)",
+                          },
+                        }}
+                      >
+                        {actionLoading === "reject" ? (
+                          <CircularProgress size={18} sx={{ color: "#fff" }} />
+                        ) : (
+                          "Confirm Rejection"
+                        )}
+                      </Button>
+                    </Box>
+                  </Box>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      disabled={!!actionLoading}
+                      sx={{
+                        py: 1.2,
+                        fontSize: 14,
+                        textTransform: "none",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        color: "#E57373",
+                        borderColor: "rgba(229, 115, 115, 0.3)",
+                        "&:hover": {
+                          borderColor: "#E57373",
+                          backgroundColor: "rgba(229, 115, 115, 0.08)",
+                        },
+                      }}
+                      onClick={() => setRejectMode(true)}
+                    >
+                      Reject Request
+                    </Button>
+                   <Button
+                      variant="contained"
+                      fullWidth
+                      disabled={!!actionLoading}
+                      sx={{
+                        py: 1.2,
+                        fontSize: 14,
+                        textTransform: "none",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        backgroundColor: "#2E7D32",
+                        color: "#fff",
+                        boxShadow: "none",
+                        "&:hover": {
+                          backgroundColor: "#1B5E20",
+                          boxShadow: "0 4px 12px rgba(46, 125, 50, 0.3)",
+                        },
+                      }}
+                      onClick={() => executeAction("approve")}
+                    >
+                      {actionLoading === "approve" ? (
+                        <CircularProgress size={18} sx={{ color: "#fff" }} />
+                      ) : (
+                        "Accept Request"
+                      )}
+                    </Button>
+                  </>
+                ))}
 
               {/* Action Suite: Active Moderator Controls */}
               {isActive && (
@@ -1171,7 +1274,7 @@ export default function DriverDetailsModal({
                 </Box>
               )}
 
-              {isRejected && (
+                 {isRejected && (
                 <>
                   <Button
                     variant="contained"

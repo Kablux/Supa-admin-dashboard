@@ -148,6 +148,17 @@ export const suspendDriver = async (
   return response.data;
 };
 
+export const rejectDriverKyc = async (
+  driverId: string,
+  rejectionReason: string,
+) => {
+  const response = await api.post(
+    `/business-admin/drivers/${driverId}/reject_kyc/`,
+    { rejection_reason: rejectionReason },
+  );
+  return response.data;
+};
+
 export async function getRiderSummary() {
   const { data } = await api.get<SummaryResponse>(
     "/business-admin/riders/summary/",
