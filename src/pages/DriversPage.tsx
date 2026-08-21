@@ -14,10 +14,10 @@ import { setCurrentPage } from "../redux/slices/Drivers";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import SearchFilterRow from "../components/SearchFilterRow";
 import DriversTable from "../components/driver/DriversTable";
-import DriverDetailsModal from "../components/driver/DriverDetailModal";
 import DriverFilters, { DriverFilterState } from "../components/driver/DriverFilter";
 import ExportDriversModal from "../components/driver/ExportDriversDataModal";
 import { DRIVER_TAB_MAPPING } from "../types/common.types";
+import DriverDetailsModal from "../components/driver/modal/DriverDetailModal";
 
 
 type UITabType = keyof typeof DRIVER_TAB_MAPPING;
