@@ -8,6 +8,7 @@ const PATH_TO_ID: Record<string, string> = {
   "/": "dashboard",
   "/riders": "rider",
   "/drivers": "driver",
+  "/courier": "courier",
   "/trips": "trip",
   "/corporate": "corporate",
   "/referrals": "referrals",
