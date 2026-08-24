@@ -580,3 +580,20 @@ export interface BroadcastRetentionResponse {
   queued: boolean;
   unknown_ids: string[];
 }
+
+////courier
+export interface FinancePoint {
+  month: string;
+  income: number;
+  expenses: number;
+}
+
+export interface Shipment {
+  id: string;
+  name: string;
+  avatar?: string;
+  date: string;
+  pickup: string;
+  destination: string;
+  status: "Completed" | "In Transit" | "Pending" | "Cancelled";
+}

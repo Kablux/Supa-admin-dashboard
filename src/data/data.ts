@@ -15,12 +15,15 @@ import { MdOutlineFeedback } from "react-icons/md";
 import { HiUsers } from "react-icons/hi";
 import { PiClockUserBold } from "react-icons/pi";
 import { MdOutlineHelpOutline } from "react-icons/md";
+import { RiEBikeFill } from "react-icons/ri";
 import { VscReferences } from "react-icons/vsc";
 import type {
+  FinancePoint,
   MessagesData,
   NavSection,
   NotifCategory,
   PremiumTransaction,
+  Shipment,
 } from "../types/common.types.js";
 
 export const navSections: NavSection[] = [
@@ -50,6 +53,12 @@ export const navSections: NavSection[] = [
         label: "Driver",
         icon: FaCarOn,
         path: "/drivers",
+      },
+      {
+        id: "courier",
+        label: "Courier",
+        icon: RiEBikeFill,
+        path: "/courier",
       },
       {
         id: "trip",
@@ -348,3 +357,47 @@ export const premiumTransactions: PremiumTransaction[] = [
     status: "Completed",
   },
 ];
+
+
+
+
+
+export const RIDERS_INFO = {
+  total: 45,
+  active: 22,
+  suspended: 55,
+};
+
+export const USERS_INFO = {
+  total: 45,
+  suspended: 55,
+};
+
+export const FINANCE_DATA: FinancePoint[] = [
+  { month: "Jan", income: 24000, expenses: 14000 },
+  { month: "Feb", income: 18000, expenses: 11000 },
+  { month: "Mar", income: 21000, expenses: 9000 },
+  { month: "Apr", income: 27000, expenses: 16000 },
+  { month: "May", income: 15000, expenses: 8000 },
+  { month: "Jun", income: 22000, expenses: 12500 },
+  { month: "Jul", income: 19500, expenses: 10500 },
+];
+
+export const QUICK_LINKS = [
+  "Courier Dispatch",
+  "Rider",
+  "Finance",
+  "Partners",
+  "Real Time Tracking",
+];
+
+export const RECENT_SHIPMENTS: Shipment[] = Array.from({ length: 5 }).map(
+  (_, i) => ({
+    id: `shp_${i + 1}`,
+    name: "David Demo",
+    date: "06/04/2022",
+    pickup: "Abraham Adesanya, Ajah Lagos",
+    destination: "Abraham Adesanya, Ajah Lagos",
+    status: "Completed",
+  }),
+);
