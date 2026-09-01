@@ -1,6 +1,11 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
-const API_BASE_URL: string =
-  import.meta.env.VITE_API_BASE_URL || "https://api.kabluxe.com/api/v1";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+if (!API_BASE_URL) {
+  throw new Error(
+    "VITE_API_BASE_URL is not set. Copy .env.example to .env for local, or set it in Vercel for this environment.",
+  );
+}
 
 export const ACCESS_TOKEN_KEY = "access_token";
 export const REFRESH_TOKEN_KEY = "refresh_token";
