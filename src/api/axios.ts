@@ -1,9 +1,9 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL;
 if (!API_BASE_URL) {
   throw new Error(
-    "VITE_API_BASE_URL is not set. Copy .env.example to .env for local, or set it in Vercel for this environment.",
+    "VITE_API_BASE_URL is required. Point test builds at the test API and production builds at the production API."
   );
 }
 
