@@ -1,0 +1,23 @@
+name: PR into production
+
+# Runs from the production branch (pull_request_target) so the check exists
+# even when the PR head is an old feature branch.
+on:
+  pull_request_target:
+    branches: [main, prod]
+
+jobs:
+  from-test:
+    name: Only test may PR into production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require head branch test
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          echo "PR $BASE_REF <- $HEAD_REF"
+          if [ "$HEAD_REF" != "test" ]; then
+            echo "::error::PRs into $BASE_REF must come from test, not $HEAD_REF."
+            exit 1
+          fi
