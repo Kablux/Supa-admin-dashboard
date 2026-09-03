@@ -1,6 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
-const API_BASE_URL: string =
-  import.meta.env.VITE_API_BASE_URL || "https://api.kabluxe.com/api/v1";
+const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL;
 
 export const ACCESS_TOKEN_KEY = "access_token";
 export const REFRESH_TOKEN_KEY = "refresh_token";
