@@ -30,7 +30,10 @@ export const DEFAULT_CONFIG: GlobalConfig = {
     },
   },
   extra: {
-    admin_base_url: "http://api.kabluxe.com",
+    admin_base_url: (import.meta.env.VITE_API_BASE_URL || "").replace(
+      /\/api\/v1\/?$/,
+      "",
+    ),
     kyc_reviewer_email: "adeshina@kabluxe.com",
   },
 };

@@ -1,0 +1,23 @@
+name: PR validate env isolation
+
+on:
+  pull_request:
+    branches: [development]
+
+jobs:
+  env-isolation:
+    name: Test/prod API isolation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject hardcoded production API fallbacks
+        run: |
+          if grep -R --include='*.ts' --include='*.tsx' -n '|| "https://api.kabluxe.com' src ; then
+            echo "Do not fall back to the production API. Set VITE_API_BASE_URL per environment."
+            exit 1
+          fi
+          if [ ! -f .env.development.example ] || [ ! -f .env.production.example ]; then
+            echo "Add .env.development.example and .env.production.example with VITE_API_BASE_URL."
+            exit 1
+          fi
+          echo "Frontend API isolation check passed."
