@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Box, Chip, Typography } from "@mui/material";
+import { Box, Button, Chip, Typography } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import DriveEtaIcon from "@mui/icons-material/DriveEta";
 import PersonIcon from "@mui/icons-material/Person";
-
+import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import { getDashboardStats, fetchReferrals } from "../api/xhrHelper";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import SearchFilterRow from "../components/SearchFilterRow";
@@ -14,12 +14,13 @@ import ReferralFilters, {
 } from "../components/referrals/ReferralFilters";
 import ReferralsTable from "../components/referrals/ReferralsTable";
 import ReferralDetailModal from "../components/referrals/ReferralDetailModal";
+import ExportReferralsModal from "../components/referrals/ExportReferralDataModal";
 
 type UITabType = keyof typeof REFERRALS_TAB;
 
 export default function ReferralPage() {
   const dispatch = useAppDispatch();
-
+const [exportOpen, setExportOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -169,7 +170,29 @@ export default function ReferralPage() {
           ))}
         </Box>
 
-        <ReferralFilters filters={filters} onChange={handleFiltersChange} />
+<Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Button
+            onClick={() => setExportOpen(true)}
+            startIcon={<FileDownloadRoundedIcon sx={{ fontSize: 18 }} />}
+            sx={{
+              height: 40,
+              px: 2,
+              textTransform: "none",
+              fontSize: 13.5,
+              fontWeight: 600,
+              borderRadius: "10px",
+              color: "var(--text-primary)",
+              backgroundColor: "rgba(255,255,255,0.03)",
+              border: "1px solid var(--border, rgba(255,255,255,0.12))",
+              "&:hover": {
+                borderColor: "rgba(255,255,255,0.25)",
+                backgroundColor: "rgba(255,255,255,0.06)",
+              },
+            }}
+          >
+            Export
+          </Button>
+        <ReferralFilters filters={filters} onChange={handleFiltersChange} /></Box>
       </Box>
 
       {/* Ride Request Table */}
@@ -190,6 +213,19 @@ export default function ReferralPage() {
         isOpen={!!selectedReferralId}
         onClose={() => setSelectedReferralId(null)}
       />
+      
+       {/* Export modal — exports the currently filtered view */}
+            <ExportReferralsModal
+              isOpen={exportOpen}
+              onClose={() => setExportOpen(false)}
+              params={{
+               search: searchQuery || undefined,
+          role: activeTab === "all" ? undefined : activeTab,
+          period: filters.period || undefined,
+          created_at_after: filters.created_at_after || undefined,
+          created_at_before: filters.created_at_before || undefined,
+              }}
+            />
     </Box>
   );
 }
