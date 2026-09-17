@@ -44,14 +44,13 @@ export default function DriverActions({ driver, onDriverAction }: Props) {
     }
   };
 
-  if (!isInReview && !isActive && !isRejected) return null;
+  if (!isInReview && !isActive && !isSuspended && !isRejected) return null;
 
   return (
     <DialogActions
       sx={{
-        p: {sm:3},
+        p: { xs: 2, sm: 3 },
         gap: 2,
-        backgroundColor: "",
         borderTop: "1px solid rgba(255,255,255,0.05)",
         display: "flex",
       }}
@@ -200,13 +199,14 @@ export default function DriverActions({ driver, onDriverAction }: Props) {
           </>
         ))}
 
-      {/* ACTIVE: earnings + suspend */}
-      {isActive && (
+      {/* ACTIVE or SUSPENDED: earnings + suspend/unsuspend */}
+      {(isActive || isSuspended) && (
         <Box
           sx={{
             width: "100%",
             display: "flex",
-            flexWrap:"wrap",
+            gap: 2,
+            flexWrap: "wrap",
             justifyContent: "space-between",
             alignItems: "center",
           }}
@@ -235,43 +235,75 @@ export default function DriverActions({ driver, onDriverAction }: Props) {
             </Typography>
           </Box>
 
-          <Button
-            variant="contained"
-            disabled={!!actionLoading || isSuspended}
-            sx={{
-              py: 1.2,
-              px: 4,
-              fontSize: 14,
-              textTransform: "none",
-              fontWeight: 600,
-              borderRadius: "8px",
-              minWidth: 180,
-              boxShadow: "none",
-              backgroundColor: isSuspended
-                ? "rgba(255,255,255,0.12)"
-                : "var(--accent-gold, #FFD700)",
-              color: isSuspended ? "rgba(255,255,255,0.6)" : "#000",
-              "&:hover": {
-                backgroundColor: isSuspended
-                  ? "rgba(255,255,255,0.12)"
-                  : "var(--accent-gold, #FFD700)",
-                boxShadow: isSuspended
-                  ? "none"
-                  : "0 4px 12px rgba(237,108,2,0.2)",
-              },
-            }}
-            onClick={() => {
-              if (!isSuspended) executeAction("suspend");
-            }}
-          >
-            {actionLoading === "suspend" ? (
-              <CircularProgress size={18} sx={{ color: "#000" }} />
-            ) : isSuspended ? (
-              "Driver Suspended"
-            ) : (
-              "Suspend Account"
-            )}
-          </Button>
+          {isSuspended ? (
+            <Button
+              variant="contained"
+              disabled={!!actionLoading}
+              onClick={() => executeAction("unsuspend")}
+              sx={{
+                py: 1.2,
+                px: 4,
+                fontSize: 14,
+                textTransform: "none",
+                fontWeight: 600,
+                borderRadius: "8px",
+                minWidth: 180,
+                width: "100%",
+                maxWidth: 320,
+                boxShadow: "none",
+                backgroundColor: "#2E7D32",
+                color: "#fff",
+                "&:hover": {
+                  backgroundColor: "#1B5E20",
+                  boxShadow: "0 4px 12px rgba(46, 125, 50, 0.3)",
+                },
+                "&.Mui-disabled": {
+                  backgroundColor: "rgba(255,255,255,0.12)",
+                  color: "rgba(255,255,255,0.4)",
+                },
+              }}
+            >
+              {actionLoading === "unsuspend" ? (
+                <CircularProgress size={18} sx={{ color: "#fff" }} />
+              ) : (
+                "Unsuspend Account"
+              )}
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              disabled={!!actionLoading}
+              onClick={() => executeAction("suspend")}
+              sx={{
+                py: 1.2,
+                px: 4,
+                fontSize: 14,
+                textTransform: "none",
+                fontWeight: 600,
+                borderRadius: "8px",
+                minWidth: 180,
+                width: "100%",
+                maxWidth: 320,
+                boxShadow: "none",
+                backgroundColor: "var(--accent-gold, #FFD700)",
+                color: "#000",
+                "&:hover": {
+                  backgroundColor: "var(--accent-gold, #FFD700)",
+                  boxShadow: "0 4px 12px rgba(237,108,2,0.2)",
+                },
+                "&.Mui-disabled": {
+                  backgroundColor: "rgba(255,255,255,0.12)",
+                  color: "rgba(255,255,255,0.4)",
+                },
+              }}
+            >
+              {actionLoading === "suspend" ? (
+                <CircularProgress size={18} sx={{ color: "#000" }} />
+              ) : (
+                "Suspend Account"
+              )}
+            </Button>
+          )}
         </Box>
       )}
 
