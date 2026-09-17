@@ -148,6 +148,18 @@ export const suspendDriver = async (
   return response.data;
 };
 
+export const unsuspendDriver = async (
+  driverId: string,
+  payload: Record<string, unknown> = {},
+) => {
+  const response = await api.post(
+    `/business-admin/drivers/${driverId}/unsuspend/`,
+    payload,
+  );
+  return response.data;
+};
+ 
+
 export const rejectDriverKyc = async (
   driverId: string,
   rejectionReason: string,
