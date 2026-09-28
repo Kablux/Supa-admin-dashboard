@@ -27,6 +27,7 @@ import CorporatePage from "./pages/CorporatePage";
 import RideRequestPage from "./pages/RideRequest";
 import ReferralsPage from "./pages/ReferralsPage";
 import CourierPage from "./pages/CourierPage";
+import BannersPage from "./pages/BannerPage";
 
 function ThemedApp() {
   const { mode } = useThemeMode();
@@ -49,6 +50,7 @@ function ThemedApp() {
             <Route index element={<DashboardPage />} />
             <Route path="riders" element={<RidersPage />} />
             <Route path="drivers" element={<DriversPage />} />
+            <Route path="promo-banner" element={<BannersPage />} />
             <Route path="courier" element={<CourierPage/>} />
             <Route path="trips" element={<TripsPage />} />
             <Route path="ride-request" element={<RideRequestPage />} />

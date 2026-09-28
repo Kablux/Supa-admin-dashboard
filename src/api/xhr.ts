@@ -18,6 +18,9 @@ import { cleanQueryParams } from "../utils/hook";
 import {
   ActionDriverPayload,
   AdminRole,
+  Banner,
+  BannerPayload,
+  BannersQueryParams,
   BroadcastRetentionResponse,
   CorporateInfo,
   CorporateOwner,
@@ -249,6 +252,49 @@ export async function getRideRequestDetails(
   const { data } = await api.get(`/business-admin/ride-requests/${id}/`);
 
   return data;
+}
+
+////Banner 
+export async function fetchBanners(
+  params?: BannersQueryParams
+): Promise<PaginatedResponse<Banner>> {
+  const { data } = await api.get<PaginatedResponse<Banner>>(
+    '/business-admin/banners/',
+    { params }
+  );
+  return data;
+}
+
+
+export async function fetchBannerById(id: string): Promise<Banner> {
+  const { data } = await api.get<Banner>(`/business-admin/banners/${id}/`);
+  return data;
+}
+
+
+export async function createBanner(payload: BannerPayload): Promise<Banner> {
+  const { data } = await api.post<Banner>(
+    '/business-admin/banners/',
+    payload
+  );
+  return data;
+}
+
+
+export async function updateBanner(
+  id: string,
+  payload: Partial<BannerPayload>
+): Promise<Banner> {
+  const { data } = await api.patch<Banner>(
+    `/business-admin/banners/${id}/`,
+    payload
+  );
+  return data;
+}
+
+
+export async function deleteBannerById(id: string): Promise<void> {
+  await api.delete(`/business-admin/banners/${id}/`);
 }
 
 ////ADMIN ROLES

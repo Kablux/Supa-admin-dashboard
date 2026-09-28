@@ -64,7 +64,7 @@ export function CarTypeDonut() {
             <Typography sx={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.2 }}>
               Total income
             </Typography>
-            <Typography sx={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)' }}>
+            <Typography sx={{   fontWeight: 700, fontSize: 14, color: 'var(--text-primary)' }}>
               N{totalInspectedValue.toLocaleString()}.00
             </Typography>
           </Box>

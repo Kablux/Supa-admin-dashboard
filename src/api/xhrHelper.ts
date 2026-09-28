@@ -15,7 +15,10 @@ import {
 } from "./axios";
 import {
   createAdminRole,
+  createBanner,
   deleteAdminRole,
+  deleteBannerById,
+  fetchBanners,
   getAdminRoles,
   getCorporateData,
   getDriverList,
@@ -37,8 +40,9 @@ import {
   loginRequest,
   logoutRequest,
   updateAdminRole,
+  updateBanner,
 } from "./xhr";
-import { AdminRole, PaginatedReferralResponse, Referral, ReferralQueryParams, RideRequestQueryParams } from "../types/common.types";
+import { AdminRole, Banner, BannerPayload, BannersState, PaginatedReferralResponse, Referral, ReferralQueryParams, RideRequestQueryParams } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
@@ -356,3 +360,79 @@ export const fetchReferralDetails = createAsyncThunk<
     }
   }
 );
+
+
+///Banner Thunks
+
+export const loadBanners = createAsyncThunk<
+  { list: Banner[]; count: number },
+  void,
+  { state: { banners: BannersState }; rejectValue: string }
+>('banners/loadBanners', async (_, { getState, rejectWithValue }) => {
+  const { currentPage, pageSize, search, audienceFilter, activeFilter } =
+    getState().banners;
+  try {
+    const data = await fetchBanners({
+      page:      currentPage,
+      page_size: pageSize,
+      search:    search || undefined,
+      audience:  audienceFilter || undefined,
+      is_active: activeFilter === '' ? undefined : activeFilter,
+    });
+    return { list: data.results, count: data.count };
+  } catch (err:any) {
+    return rejectWithValue( err.response?.data?.message || "Failed to fetch banner.");
+  }
+});
+
+export const addBanner = createAsyncThunk<
+  Banner,
+  BannerPayload,
+  { rejectValue: string }
+>('banners/addBanner', async (payload, { rejectWithValue }) => {
+  try {
+    return await createBanner(payload);
+  } catch (err:any) {
+    return rejectWithValue( err.response?.data?.message || "Failed to create banner.");
+  }
+});
+
+export const editBanner = createAsyncThunk<
+  Banner,
+  { id: string; payload: Partial<BannerPayload> },
+  { rejectValue: string }
+>('banners/editBanner', async ({ id, payload }, { rejectWithValue }) => {
+  try {
+    return await updateBanner(id, payload);
+  } catch (err:any) {
+    return rejectWithValue( err.response?.data?.message|| "Failed to update banner.");
+  }
+});
+
+
+export const removeBanner = createAsyncThunk<
+  string,  
+  string,
+  { rejectValue: string }
+>('banners/removeBanner', async (id, { rejectWithValue }) => {
+  try {
+    await deleteBannerById(id);
+    return id;
+  } catch (err:any) {
+    return rejectWithValue( err.response?.data?.message || "Failed to delete banner.");
+  }
+});
+
+// ── Toggle active (optimistic PATCH) ─────────────────────────────────────────
+
+export const toggleBannerActive = createAsyncThunk<
+  Banner,
+  { id: string; is_active: boolean },
+  { rejectValue: string }
+>('banners/toggleActive', async ({ id, is_active }, { rejectWithValue }) => {
+  try {
+    return await updateBanner(id, { is_active });
+  } catch (err:any) {
+    return rejectWithValue( err.message || "Failed to toggle banner active status.");
+  }
+});

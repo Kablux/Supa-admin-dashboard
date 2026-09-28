@@ -597,3 +597,86 @@ export interface Shipment {
   destination: string;
   status: "Completed" | "In Transit" | "Pending" | "Cancelled";
 }
+
+////Bannner
+// ── Enum values from the API ──────────────────────────────────────────────────
+
+export type BannerAudience = 'all' | 'driver' | 'rider';
+
+export type BannerCtaType =
+  | 'NONE'
+  | 'URL'
+  | 'DEEPLINK'
+  | 'PROMOCODE';
+
+
+export interface Banner {
+  id: string;
+  title: string;
+  body: string;
+  image_small: string;   
+  image_large: string;   
+  image_url: string;     
+  audience: BannerAudience;
+  is_active: boolean;
+  sort_order: number;
+  starts_at: string | null;   
+  ends_at: string | null;    
+  is_clickable: boolean;
+  cta_type: BannerCtaType;
+  cta_value: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
+export interface BannerPayload {
+  title: string;
+  body: string;
+  image_small: string;
+  image_large: string;
+  audience: BannerAudience;
+  is_active: boolean;
+  sort_order: number;
+  starts_at: string;
+  ends_at: string;
+  is_clickable: boolean;
+  cta_type: BannerCtaType;
+  cta_value: string;
+}
+
+export interface BannerFormErrors {
+  title?: string;
+  body?: string;
+  audience?: string;
+  starts_at?: string;
+  ends_at?: string;
+  cta_value?: string;
+}
+
+
+export interface BannersQueryParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  audience?: BannerAudience | '';
+  is_active?: boolean | '';
+  ordering?: string;
+}
+
+
+export type BannersRequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
+
+export interface BannersState {
+  list: Banner[];
+  count: number;
+  currentPage: number;
+  pageSize: number;
+  search: string;
+  audienceFilter: BannerAudience | '';
+  activeFilter: boolean | '';
+  listStatus: BannersRequestStatus;
+  mutateStatus: BannersRequestStatus; 
+  error: string | null;
+  mutateError: string | null;
+}
