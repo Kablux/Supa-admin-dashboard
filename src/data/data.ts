@@ -17,6 +17,7 @@ import { PiClockUserBold } from "react-icons/pi";
 import { MdOutlineHelpOutline } from "react-icons/md";
 import { RiEBikeFill } from "react-icons/ri";
 import { VscReferences } from "react-icons/vsc";
+import { IoGift } from "react-icons/io5";
 import type {
   FinancePoint,
   MessagesData,
@@ -71,6 +72,12 @@ export const navSections: NavSection[] = [
         label: "Ride Request",
         icon: PiClockUserBold,
         path: "/ride-request",
+      },
+      {
+        id: "banner",
+        label: "Promo Banner",
+        icon: IoGift,
+        path: "/promo-banner",
       },
       {
         id: "referrals",
@@ -181,10 +188,12 @@ export const navSections: NavSection[] = [
 export const ROUTE_LABELS: Record<string, string> = {
   "/": "Dashboard",
   "/riders": "Riders",
-  "/riders/new": "Riders",
   "/drivers": "Drivers",
   "/trips": "Trips",
+  "/courier": "Courier",
+  "/ride-request": "Ride Request",
   "/corporate": "corporate",
+  "/promo-banner": "Promo Banner",
   "/fleet": "Fleet",
   "/premium": "Premium",
   "/inspection": "Inspection",

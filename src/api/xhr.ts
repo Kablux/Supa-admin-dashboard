@@ -18,6 +18,9 @@ import { cleanQueryParams } from "../utils/hook";
 import {
   ActionDriverPayload,
   AdminRole,
+  Banner,
+  BannerPayload,
+  BannersQueryParams,
   BroadcastRetentionResponse,
   CorporateInfo,
   CorporateOwner,
@@ -35,6 +38,7 @@ import {
   RideRequestSummaryResponse,
   RideTypePricing,
   TransactionAnalytics,
+  UploadResponse,
 } from "../types/common.types";
 
 export interface SummaryResponse {
@@ -251,6 +255,65 @@ export async function getRideRequestDetails(
   return data;
 }
 
+////Banner 
+export async function fetchBanners(
+  params?: BannersQueryParams
+): Promise<PaginatedResponse<Banner>> {
+  const { data } = await api.get<PaginatedResponse<Banner>>(
+    '/business-admin/banners/',
+    { params }
+  );
+  return data;
+}
+
+
+export async function fetchBannerById(id: string): Promise<Banner> {
+  const { data } = await api.get<Banner>(`/business-admin/banners/${id}/`);
+  return data;
+}
+
+
+export async function createBanner(payload: BannerPayload): Promise<Banner> {
+  const { data } = await api.post<Banner>(
+    '/business-admin/banners/',
+    payload
+  );
+  return data;
+}
+
+
+export async function updateBanner(
+  id: string,
+  payload: Partial<BannerPayload>
+): Promise<Banner> {
+  const { data } = await api.patch<Banner>(
+    `/business-admin/banners/${id}/`,
+    payload
+  );
+  return data;
+}
+
+
+export async function deleteBannerById(id: string): Promise<void> {
+  await api.delete(`/business-admin/banners/${id}/`);
+}
+
+export async function uploadFiles(files: File[]) {
+  const formData = new FormData();
+
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
+
+  const { data } = await api.post("/uploads/", formData);
+
+  return data;
+}
+
+export const fetchUploadById = async (id: string | number) => {
+  const response = await api.get(`/uploads/${id}/`);
+  return response.data;
+};
 ////ADMIN ROLES
 
 const ADMIN_ROLE_STORAGE_KEY = "admin_roles";
