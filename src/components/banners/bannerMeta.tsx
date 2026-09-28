@@ -51,8 +51,8 @@ export const cellSx = {
 };
 
 export const selectSx = {
-  fontSize: 13,
-  borderRadius: "10px",
+  fontSize: 14,
+  borderRadius: "8px",
   backgroundColor: "var(--bg-secondary)",
   color: "var(--text-muted)",
   "& .MuiOutlinedInput-notchedOutline": {

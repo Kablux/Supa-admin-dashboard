@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   FormControl,
@@ -12,7 +11,6 @@ import {
 } from '@mui/material';
 import { BannerPayload, BannerFormErrors, BannerAudience, BannerCtaType } from '../../../types/common.types';
 import ImageUploader from './ImageUploader';
-
 
 export const fieldSx = {
   '& .MuiOutlinedInput-root': {
@@ -51,27 +49,6 @@ export const selectSx = {
   '& .MuiSelect-icon': { color: 'var(--text-muted)' },
 } as const;
 
-interface BannerFormFieldsProps {
-  values: BannerPayload;
-  errors: BannerFormErrors;
-  disabled: boolean;
-
-  set: <K extends keyof BannerPayload>(
-    key: K,
-    value: BannerPayload[K],
-  ) => void;
-
-  onSmallImageChange: (
-    file: File | null,
-    preview: string,
-  ) => void;
-
-  onLargeImageChange: (
-    file: File | null,
-    preview: string,
-  ) => void;
-}
-
 const switchSx = {
   '& .MuiSwitch-switchBase.Mui-checked': {
     color: 'var(--accent-gold)',
@@ -81,10 +58,32 @@ const switchSx = {
   },
 };
 
+interface BannerFormFieldsProps {
+  values: BannerPayload;
+  errors: BannerFormErrors;
+  disabled: boolean;
+  smallImagePreview: string;
+  largeImagePreview: string;
+  set: <K extends keyof BannerPayload>(
+    key: K,
+    value: BannerPayload[K],
+  ) => void;
+  onSmallImageChange: (
+    file: File | null,
+    preview: string,
+  ) => void;
+  onLargeImageChange: (
+    file: File | null,
+    preview: string,
+  ) => void;
+}
+
 export default function BannerFormFields({
   values,
   errors,
   disabled,
+  smallImagePreview,
+  largeImagePreview,
   set,
   onSmallImageChange,
   onLargeImageChange,
@@ -116,27 +115,26 @@ export default function BannerFormFields({
       />
 
       <Box
-  sx={{
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: 2,
-  }}
->
-  <ImageUploader
-    label="Image — Small"
-    value={values.image_small}
-    onChange={onSmallImageChange}
-  />
-
-  <ImageUploader
-    label="Image — Large"
-    value={values.image_large}
-    onChange={onLargeImageChange}
-  />
-</Box>
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 2,
+        }}
+      >
+        <ImageUploader
+          label="Image — Small"
+          value={smallImagePreview || values.image_small}
+          onChange={onSmallImageChange}
+        />
+        <ImageUploader
+          label="Image — Large"
+          value={largeImagePreview || values.image_large}
+          onChange={onLargeImageChange}
+        />
+      </Box>
 
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-        <FormControl fullWidth error={Boolean(errors.audience)}>
+        <FormControl fullWidth size="small">
           <InputLabel
             sx={{
               fontSize: 13.5,
@@ -219,7 +217,6 @@ export default function BannerFormFields({
             </Typography>
           }
         />
-
         <FormControlLabel
           control={
             <Switch
@@ -252,9 +249,8 @@ export default function BannerFormFields({
           <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
             Call-to-Action
           </Typography>
-
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 2 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel
                 sx={{
                   fontSize: 13.5,
@@ -271,26 +267,25 @@ export default function BannerFormFields({
                 disabled={disabled}
                 sx={selectSx}
               >
-                <MenuItem value="NONE" sx={{ fontSize: 13 }}>None</MenuItem>
-                <MenuItem value="URL" sx={{ fontSize: 13 }}> URL</MenuItem>
-                <MenuItem value="SCREEN" sx={{ fontSize: 13 }}>Screen</MenuItem>
-              
+                <MenuItem value="NONE" sx={{ fontSize: 14 }}>None</MenuItem>
+                <MenuItem value="URL" sx={{ fontSize: 14 }}>URL</MenuItem>
+                <MenuItem value="SCREEN" sx={{ fontSize: 14 }}>Screen</MenuItem>
               </Select>
             </FormControl>
 
             {values.cta_type !== 'NONE' && (
-  <TextField
-    label={values.cta_type === 'URL' ? 'URL' : 'Screen'}
-    placeholder={values.cta_type === 'URL' ? 'https://...' : 'app://screen'}
-    value={values.cta_value}
-    onChange={(e) => set('cta_value', e.target.value)}
-    error={Boolean(errors.cta_value)}
-    helperText={errors.cta_value}
-    fullWidth
-    disabled={disabled}
-    sx={fieldSx}
-  />
-)}
+              <TextField
+                label={values.cta_type === 'URL' ? 'URL' : 'Screen'}
+                placeholder={values.cta_type === 'URL' ? 'https://...' : 'app://screen'}
+                value={values.cta_value}
+                onChange={(e) => set('cta_value', e.target.value)}
+                error={Boolean(errors.cta_value)}
+                helperText={errors.cta_value}
+                fullWidth
+                disabled={disabled}
+                sx={fieldSx}
+              />
+            )}
           </Box>
         </Box>
       )}

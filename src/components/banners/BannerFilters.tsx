@@ -1,7 +1,6 @@
 import SearchIcon from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
-import InputAdornment from "@mui/material/InputAdornment";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { BannerAudience } from "../../types/common.types";
@@ -44,13 +43,13 @@ export default function BannerFilters({
             All audiences
           </MenuItem>
           <MenuItem value="all" sx={{ fontSize: 13 }}>
-            🌐 All
+             All
           </MenuItem>
           <MenuItem value="rider" sx={{ fontSize: 13 }}>
-            🧍 Riders
+             Riders
           </MenuItem>
           <MenuItem value="driver" sx={{ fontSize: 13 }}>
-            🚗 Drivers
+             Drivers
           </MenuItem>
         </Select>
       </FormControl>

@@ -309,6 +309,11 @@ export async function uploadFiles(files: File[]) {
 
   return data;
 }
+
+export const fetchUploadById = async (id: string | number) => {
+  const response = await api.get(`/uploads/${id}/`);
+  return response.data;
+};
 ////ADMIN ROLES
 
 const ADMIN_ROLE_STORAGE_KEY = "admin_roles";
