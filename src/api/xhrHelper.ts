@@ -41,8 +41,9 @@ import {
   logoutRequest,
   updateAdminRole,
   updateBanner,
+  uploadFiles,
 } from "./xhr";
-import { AdminRole, Banner, BannerPayload, BannersState, PaginatedReferralResponse, Referral, ReferralQueryParams, RideRequestQueryParams } from "../types/common.types";
+import { AdminRole, Banner, BannerPayload, BannersState, PaginatedReferralResponse, Referral, ReferralQueryParams, RideRequestQueryParams, UploadFile } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
@@ -363,6 +364,26 @@ export const fetchReferralDetails = createAsyncThunk<
 
 
 ///Banner Thunks
+
+export const uploadBannerImages = createAsyncThunk<
+  UploadFile[],
+  File[],
+  { rejectValue: string }
+>(
+  'banners/uploadBannerImages',
+  async (files, { rejectWithValue }) => {
+    try {
+      const response = await uploadFiles(files);
+
+      return response.results;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message ||
+        'Failed to upload banner image.',
+      );
+    }
+  },
+);
 
 export const loadBanners = createAsyncThunk<
   { list: Banner[]; count: number },

@@ -6,31 +6,53 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 interface ImageUploaderProps {
   label: string;
   value: string;
-  onChange: (base64: string) => void;
+  onChange: (file: File | null, preview: string) => void;
 }
 
-export default function ImageUploader({ label, value, onChange }: ImageUploaderProps) {
+export default function ImageUploader({
+  label,
+  value,
+  onChange,
+}: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = () => onChange(reader.result as string);
+
+    reader.onload = () => {
+      onChange(file, reader.result as string);
+    };
+
     reader.readAsDataURL(file);
+
+    // Allows selecting the same file again
+    e.target.value = '';
+  };
+
+  const handleRemove = () => {
+    onChange(null, '');
   };
 
   return (
     <Box>
-      <Typography sx={{ fontSize: 12, color: 'var(--text-muted)', mb: 0.75 }}>
+      <Typography
+        sx={{
+          fontSize: 12,
+          color: 'var(--text-muted)',
+          mb: 0.75,
+        }}
+      >
         {label}
       </Typography>
 
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/gif"
         hidden
         onChange={handleFile}
       />
@@ -55,15 +77,23 @@ export default function ImageUploader({ label, value, onChange }: ImageUploaderP
             }}
           />
 
-          <Box sx={{ position: 'absolute', top: 6, right: 6 }}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 6,
+              right: 6,
+            }}
+          >
             <Tooltip title="Remove image">
               <IconButton
                 size="small"
-                onClick={() => onChange('')}
+                onClick={handleRemove}
                 sx={{
                   backgroundColor: 'rgba(0,0,0,0.6)',
                   color: '#fff',
-                  '&:hover': { backgroundColor: 'rgba(239,83,80,0.8)' },
+                  '&:hover': {
+                    backgroundColor: 'rgba(239,83,80,0.8)',
+                  },
                 }}
               >
                 <DeleteOutlinedIcon sx={{ fontSize: 14 }} />
@@ -86,11 +116,24 @@ export default function ImageUploader({ label, value, onChange }: ImageUploaderP
             cursor: 'pointer',
             backgroundColor: 'var(--bg-secondary)',
             transition: 'border-color 0.15s',
-            '&:hover': { borderColor: 'var(--accent-gold)' },
+            '&:hover': {
+              borderColor: 'var(--accent-gold)',
+            },
           }}
         >
-          <ImageOutlinedIcon sx={{ fontSize: 22, color: 'var(--text-muted)' }} />
-          <Typography sx={{ fontSize: 11, color: 'var(--text-muted)' }}>
+          <ImageOutlinedIcon
+            sx={{
+              fontSize: 22,
+              color: 'var(--text-muted)',
+            }}
+          />
+
+          <Typography
+            sx={{
+              fontSize: 11,
+              color: 'var(--text-muted)',
+            }}
+          >
             Click to upload
           </Typography>
         </Box>

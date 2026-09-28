@@ -17,6 +17,8 @@ import { clearMutateError } from '../../../redux/slices/Banner';
 import { BannerPayload, BannerFormErrors, Banner } from '../../../types/common.types';
 import AppButton from '../../common/AppButton';
 import BannerFormFields from './BannerFormFields';
+import { validateForm } from '../../../utils/bannerHelpers';
+import { uploadFiles } from '../../../api/xhr';
 
 
 const EMPTY: BannerPayload = {
@@ -34,30 +36,7 @@ const EMPTY: BannerPayload = {
   cta_value: '',
 };
 
-function validate(v: BannerPayload): BannerFormErrors {
-  const e: BannerFormErrors = {};
 
-  if (!v.title?.trim()) e.title = 'Title is required';
-  if (!v.audience) e.audience = 'Select an audience';
-
-  if (!v.starts_at) e.starts_at = 'Start date is required';
-  if (!v.ends_at) e.ends_at = 'End date is required';
-
-  if (v.starts_at && v.ends_at) {
-    const startObj = new Date(v.starts_at);
-    const endObj = new Date(v.ends_at);
-
-    if (endObj.getTime() <= startObj.getTime()) {
-      e.ends_at = 'End date must be strictly after the start date';
-    }
-  }
-
-  if (v.is_clickable && v.cta_type !== 'NONE' && !v.cta_value?.trim()) {
-    e.cta_value = 'CTA value is required when a CTA type is selected';
-  }
-
-  return e;
-}
 
 interface BannerFormModalProps {
   open: boolean;
@@ -77,27 +56,32 @@ export default function BannerFormModal({
   const isSubmitting = mutateStatus === 'loading';
   const disabled = isSubmitting || false;
 
-  const [values, setValues] = useState<BannerPayload>(EMPTY);
-  const [errors, setErrors] = useState<BannerFormErrors>({});
+ const [values, setValues] = useState<BannerPayload>(EMPTY);
+const [errors, setErrors] = useState<BannerFormErrors>({});
+const [smallImageFile, setSmallImageFile] = useState<File | null>(null);
+const [largeImageFile, setLargeImageFile] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
+  if (!open) return;
 
-    setSaved(false);
-    setErrors({});
-    dispatch(clearMutateError());
+  setSaved(false);
+  setErrors({});
+  dispatch(clearMutateError());
 
-    setValues(
-      banner
-        ? {
-            ...banner,
-            starts_at: banner.starts_at?.slice(0, 16) ?? '',
-            ends_at: banner.ends_at?.slice(0, 16) ?? '',
-          }
-        : EMPTY,
-    );
-  }, [open, banner, dispatch]);
+  setSmallImageFile(null);
+  setLargeImageFile(null);
+
+  setValues(
+    banner
+      ? {
+          ...banner,
+          starts_at: banner.starts_at?.slice(0, 16) ?? '',
+          ends_at: banner.ends_at?.slice(0, 16) ?? '',
+        }
+      : EMPTY,
+  );
+}, [open, banner, dispatch]);
 
   const set = <K extends keyof BannerPayload>(
     key: K,
@@ -110,30 +94,92 @@ export default function BannerFormModal({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const errs = validate(values);
-    setErrors(errs);
-    if (Object.keys(errs).length > 0) return;
+  const errs = validateForm(values);
 
+  setErrors(errs);
+
+  if (Object.keys(errs).length > 0) {
+    return;
+  }
+
+  try {
     const payload: Partial<BannerPayload> = {
       ...values,
+
       starts_at: new Date(values.starts_at).toISOString(),
+
       ends_at: new Date(values.ends_at).toISOString(),
+
       cta_value:
         values.is_clickable && values.cta_type !== 'NONE'
           ? values.cta_value
           : '',
-      cta_type: values.is_clickable ? values.cta_type : 'NONE',
+
+      cta_type: values.is_clickable
+        ? values.cta_type
+        : 'NONE',
     };
 
-    if (payload.image_small?.startsWith('data:image')) delete payload.image_small;
-    if (payload.image_large?.startsWith('data:image')) delete payload.image_large;
+    /*
+     * Upload newly selected images first.
+     */
+    const filesToUpload: File[] = [];
 
-    const result = isEdit && banner
-      ? await dispatch(editBanner({ id: banner.id, payload: payload as BannerPayload }))
-      : await dispatch(addBanner(payload as BannerPayload));
+    if (smallImageFile) {
+      filesToUpload.push(smallImageFile);
+    }
+
+    if (largeImageFile) {
+      filesToUpload.push(largeImageFile);
+    }
+
+    if (filesToUpload.length > 0) {
+      const uploadResponse = await uploadFiles(filesToUpload);
+
+      const uploadedFiles = uploadResponse.results;
+
+      let uploadIndex = 0;
+
+      if (smallImageFile) {
+        const uploadedSmall = uploadedFiles[uploadIndex];
+
+        if (!uploadedSmall) {
+          throw new Error('Small banner image upload failed.');
+        }
+
+        payload.image_small = uploadedSmall.id;
+
+        uploadIndex++;
+      }
+
+      if (largeImageFile) {
+        const uploadedLarge = uploadedFiles[uploadIndex];
+
+        if (!uploadedLarge) {
+          throw new Error('Large banner image upload failed.');
+        }
+
+        payload.image_large = uploadedLarge.id;
+      }
+    }
+
+    /*
+     * Create / update banner
+     */
+    const result =
+      isEdit && banner
+        ? await dispatch(
+            editBanner({
+              id: banner.id,
+              payload: payload as BannerPayload,
+            }),
+          )
+        : await dispatch(
+            addBanner(payload as BannerPayload),
+          );
 
     const succeeded = isEdit
       ? editBanner.fulfilled.match(result)
@@ -141,9 +187,15 @@ export default function BannerFormModal({
 
     if (succeeded) {
       setSaved(true);
-      setTimeout(onClose, 1100);
+
+      setTimeout(() => {
+        onClose();
+      }, 1100);
     }
-  };
+  } catch (error) {
+    console.error('Banner submission failed:', error);
+  }
+};
 
   return (
     <Dialog
@@ -166,7 +218,7 @@ export default function BannerFormModal({
       <DialogTitle sx={{ pb: 0, pt: 2.5, px: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box>
-            <Typography sx={{ fontWeight: 700, fontSize: 17, color: 'var(--text-primary)' }}>
+            <Typography sx={{ fontWeight: 700,  color: 'var(--text-primary)' }}>
               {isEdit ? 'Edit Banner' : 'Create Banner'}
             </Typography>
             <Typography sx={{ fontSize: 12, color: 'var(--text-muted)', mt: 0.25 }}>
@@ -203,12 +255,20 @@ export default function BannerFormModal({
         )}
 
         <Box component="form" id="banner-form" onSubmit={handleSubmit}>
-          <BannerFormFields
-            values={values}
-            errors={errors}
-            disabled={disabled || saved}
-            set={set}
-          />
+         <BannerFormFields
+  values={values}
+  errors={errors}
+  disabled={disabled || saved}
+  set={set}
+  onSmallImageChange={(file, preview) => {
+    setSmallImageFile(file);
+    set('image_small', preview);
+  }}
+  onLargeImageChange={(file, preview) => {
+    setLargeImageFile(file);
+    set('image_large', preview);
+  }}
+/>
         </Box>
       </DialogContent>
 

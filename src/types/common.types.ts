@@ -600,14 +600,26 @@ export interface Shipment {
 
 ////Bannner
 // ── Enum values from the API ──────────────────────────────────────────────────
+export interface UploadFile {
+  id: string;
+  file: string;
+  name: string;
+  owner: string;
+}
+
+export interface UploadResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: UploadFile[];
+}
 
 export type BannerAudience = 'all' | 'driver' | 'rider';
 
 export type BannerCtaType =
   | 'NONE'
   | 'URL'
-  | 'DEEPLINK'
-  | 'PROMOCODE';
+  | 'SCREEN'
 
 
 export interface Banner {

@@ -55,7 +55,21 @@ interface BannerFormFieldsProps {
   values: BannerPayload;
   errors: BannerFormErrors;
   disabled: boolean;
-  set: <K extends keyof BannerPayload>(key: K, value: BannerPayload[K]) => void;
+
+  set: <K extends keyof BannerPayload>(
+    key: K,
+    value: BannerPayload[K],
+  ) => void;
+
+  onSmallImageChange: (
+    file: File | null,
+    preview: string,
+  ) => void;
+
+  onLargeImageChange: (
+    file: File | null,
+    preview: string,
+  ) => void;
 }
 
 const switchSx = {
@@ -72,6 +86,8 @@ export default function BannerFormFields({
   errors,
   disabled,
   set,
+  onSmallImageChange,
+  onLargeImageChange,
 }: BannerFormFieldsProps) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -99,18 +115,25 @@ export default function BannerFormFields({
         sx={fieldSx}
       />
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-        <ImageUploader
-          label="Image — Small"
-          value={values.image_small}
-          onChange={(value) => set('image_small', value)}
-        />
-        <ImageUploader
-          label="Image — Large"
-          value={values.image_large}
-          onChange={(value) => set('image_large', value)}
-        />
-      </Box>
+      <Box
+  sx={{
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: 2,
+  }}
+>
+  <ImageUploader
+    label="Image — Small"
+    value={values.image_small}
+    onChange={onSmallImageChange}
+  />
+
+  <ImageUploader
+    label="Image — Large"
+    value={values.image_large}
+    onChange={onLargeImageChange}
+  />
+</Box>
 
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
         <FormControl fullWidth error={Boolean(errors.audience)}>
@@ -249,37 +272,25 @@ export default function BannerFormFields({
                 sx={selectSx}
               >
                 <MenuItem value="NONE" sx={{ fontSize: 13 }}>None</MenuItem>
-                <MenuItem value="URL" sx={{ fontSize: 13 }}>External URL</MenuItem>
-                <MenuItem value="DEEPLINK" sx={{ fontSize: 13 }}>Deep Link</MenuItem>
-                <MenuItem value="PROMO_CODE" sx={{ fontSize: 13 }}>Promo Code</MenuItem>
+                <MenuItem value="URL" sx={{ fontSize: 13 }}> URL</MenuItem>
+                <MenuItem value="SCREEN" sx={{ fontSize: 13 }}>Screen</MenuItem>
+              
               </Select>
             </FormControl>
 
             {values.cta_type !== 'NONE' && (
-              <TextField
-                label={
-                  values.cta_type === 'URL'
-                    ? 'URL'
-                    : values.cta_type === 'PROMOCODE'
-                      ? 'Promo Code'
-                      : 'Deep Link'
-                }
-                placeholder={
-                  values.cta_type === 'URL'
-                    ? 'https://...'
-                    : values.cta_type === 'PROMOCODE'
-                      ? 'SAVE20'
-                      : 'app://screen'
-                }
-                value={values.cta_value}
-                onChange={(e) => set('cta_value', e.target.value)}
-                error={Boolean(errors.cta_value)}
-                helperText={errors.cta_value}
-                fullWidth
-                disabled={disabled}
-                sx={fieldSx}
-              />
-            )}
+  <TextField
+    label={values.cta_type === 'URL' ? 'URL' : 'Screen'}
+    placeholder={values.cta_type === 'URL' ? 'https://...' : 'app://screen'}
+    value={values.cta_value}
+    onChange={(e) => set('cta_value', e.target.value)}
+    error={Boolean(errors.cta_value)}
+    helperText={errors.cta_value}
+    fullWidth
+    disabled={disabled}
+    sx={fieldSx}
+  />
+)}
           </Box>
         </Box>
       )}

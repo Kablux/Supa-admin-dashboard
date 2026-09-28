@@ -38,6 +38,7 @@ import {
   RideRequestSummaryResponse,
   RideTypePricing,
   TransactionAnalytics,
+  UploadResponse,
 } from "../types/common.types";
 
 export interface SummaryResponse {
@@ -297,6 +298,17 @@ export async function deleteBannerById(id: string): Promise<void> {
   await api.delete(`/business-admin/banners/${id}/`);
 }
 
+export async function uploadFiles(files: File[]) {
+  const formData = new FormData();
+
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
+
+  const { data } = await api.post("/uploads/", formData);
+
+  return data;
+}
 ////ADMIN ROLES
 
 const ADMIN_ROLE_STORAGE_KEY = "admin_roles";
