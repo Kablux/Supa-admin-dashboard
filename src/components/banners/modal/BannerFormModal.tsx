@@ -270,7 +270,7 @@ export default function BannerFormModal({
         <Divider sx={{ borderColor: 'var(--border)' }} />
 
         <DialogActions sx={{ px: 3, py: 2, gap: 1.5 }}>
-          <AppButton onClick={onClose} disabled={isSubmitting || saved}>
+          <AppButton sx={{background:"var(--accent-gold-dimmer)"}} onClick={onClose} disabled={isSubmitting || saved}>
             Cancel
           </AppButton>
           <AppButton

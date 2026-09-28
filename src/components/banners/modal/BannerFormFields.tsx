@@ -14,8 +14,8 @@ import ImageUploader from './ImageUploader';
 
 export const fieldSx = {
   '& .MuiOutlinedInput-root': {
-    borderRadius: '10px',
-    fontSize: 13.5,
+    borderRadius: '8px',
+    fontSize: 12,
     backgroundColor: 'var(--bg-secondary)',
     color: 'var(--text-primary)',
     '& fieldset': { borderColor: 'var(--border)' },
@@ -26,11 +26,11 @@ export const fieldSx = {
     },
   },
   '& .MuiInputLabel-root': {
-    fontSize: 13.5,
+    fontSize: 12,
     color: 'var(--text-muted)',
     '&.Mui-focused': { color: 'var(--accent-gold)' },
   },
-  '& .MuiFormHelperText-root': { fontSize: 11.5, ml: 0 },
+  '& .MuiFormHelperText-root': { fontSize: 12, ml: 0 },
 } as const;
 
 export const selectSx = {
@@ -253,7 +253,7 @@ export default function BannerFormFields({
             <FormControl fullWidth size="small">
               <InputLabel
                 sx={{
-                  fontSize: 13.5,
+                  fontSize: 12,
                   color: 'var(--text-muted)',
                   '&.Mui-focused': { color: 'var(--accent-gold)' },
                 }}

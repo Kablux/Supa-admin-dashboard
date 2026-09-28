@@ -33,7 +33,6 @@ export const AUDIENCE_META: Record<
 };
 
 export const TABLE_HEADERS = [
-  "",
   "Title",
   "Audience",
   "Status",

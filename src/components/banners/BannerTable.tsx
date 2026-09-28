@@ -97,54 +97,14 @@ export default function BannerTable({
                     transition: "background 0.12s ease",
                   }}
                 >
-                  <TableCell sx={{ ...cellSx, width: 52, pl: 2, pr: 1 }}>
-                    <Box
-                      sx={{
-                        width: 44,
-                        height: 34,
-                        borderRadius: "7px",
-                        overflow: "hidden",
-                        border: "1px solid var(--border)",
-                        backgroundColor: "#191e2d",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {image ? (
-                        <img
-                          src={image}
-                          alt={banner.title}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                            display: "block",
-                          }}
-                        />
-                      ) : (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: "100%",
-                          }}
-                        >
-                          <ImageNotSupportedOutlinedIcon
-                            sx={{
-                              fontSize: 14,
-                              color: "var(--text-muted)",
-                            }}
-                          />
-                        </Box>
-                      )}
-                    </Box>
-                  </TableCell>
+                
 
                   <TableCell sx={{ ...cellSx, maxWidth: 200 }}>
                     <Typography
                       sx={{
-                        fontSize: 13,
-                        fontWeight: 600,
+                        fontSize: 12.5,
+                            fontWeight: 500,
+                            textTransform: "capitalize",
                         color: "var(--text-primary)",
                         lineHeight: 1.3,
                       }}

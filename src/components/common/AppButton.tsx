@@ -13,11 +13,11 @@ export default function AppButton({
 }: AppButtonProps) {
   return (
     <Button
-      disabled={disabled}
+      disabled={disabled || loading}
       sx={[
         {
-          py: 1.2,
-          px: 4,
+          py: 1,
+          px: 2.5,
           borderRadius: "8px",
           backgroundColor: "var(--accent-gold)",
           color: "#000",
@@ -25,9 +25,18 @@ export default function AppButton({
           fontWeight: 500,
           textTransform: "none",
           transition: "all .2s ease",
+          border: "1px solid var(--accent-gold-dim)",
           "&:hover": {
+            backgroundColor: "var(--accent-gold-hover)", 
             transform: "translateY(-1px)",
-            boxShadow: "0 10px 25px rgba(245, 197, 24, 0.114)",
+            boxShadow: "0 8px 20px var(--accent-gold-glow)",
+          },
+          
+          "&:active": {
+            backgroundColor: "var(--accent-gold-dimmer)",
+            transform: "translateY(0)",
+            boxShadow: "none",
+            transition: "all .1s ease",
           },
 
           "&.Mui-disabled": {
@@ -35,7 +44,7 @@ export default function AppButton({
             color: "rgba(255, 255, 255, 0.35)",
           },
         },
-        ...(Array.isArray(sx) ? sx : [sx]),
+        ...(Array.isArray(sx) ? sx : [sx ? sx : {}]),
       ]}
       {...props}
     >

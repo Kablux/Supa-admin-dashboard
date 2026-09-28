@@ -73,9 +73,8 @@ export default function DeleteBannerDialog({
 
           <Typography
             sx={{
-              fontSize: 13,
+              fontSize: 12,
               color: "var(--text-secondary)",
-              lineHeight: 1.55,
             }}
           >
             Permanently delete{" "}
@@ -93,6 +92,7 @@ export default function DeleteBannerDialog({
         <AppButton
           onClick={onClose}
           disabled={loading}
+          sx={{background:"var(--accent-gold-dimmer)"}}
         >
           Cancel
         </AppButton>

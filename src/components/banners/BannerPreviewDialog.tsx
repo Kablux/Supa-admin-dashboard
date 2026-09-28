@@ -43,6 +43,7 @@ export default function BannerPreviewDialog({
   const [largeUrl, setLargeUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
+  const [ctaCopied, setCtaCopied] = useState<boolean>(false);
 
   useEffect(() => {
     if (!banner) return;
@@ -108,6 +109,13 @@ export default function BannerPreviewDialog({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleCopyCtaUrl = () => {
+    if (!banner?.cta_value) return;
+    navigator.clipboard.writeText(banner.cta_value);
+    setCtaCopied(true);
+    setTimeout(() => setCtaCopied(false), 2000);
+  };
+
   return (
     <Dialog
       open={Boolean(banner)}
@@ -143,7 +151,6 @@ export default function BannerPreviewDialog({
           <BannerStatusChip banner={banner} />
           <Chip
             size="small"
-        
             label={aud.label}
             sx={{
               padding: "0 6px",
@@ -153,7 +160,6 @@ export default function BannerPreviewDialog({
               backgroundColor: "rgba(255,255,255,0.08)",
               color: "var(--text-primary)",
               border: "1px solid var(--border)",
-              // "& .MuiChip-label": { pl: 0.5, pr: 1 },
             }}
           />
         </Box>
@@ -179,7 +185,7 @@ export default function BannerPreviewDialog({
             px: 2,
             "& .MuiTab-root": {
               minHeight: 42,
-              fontSize: 12.5,
+              fontSize: 12,
               fontWeight: 600,
               textTransform: "none",
               color: "var(--text-muted)",
@@ -256,7 +262,7 @@ export default function BannerPreviewDialog({
             }}
           >
             <ImageNotSupportedOutlinedIcon sx={{ fontSize: 48, color: "var(--text-muted)" }} />
-            <Typography sx={{ fontSize: 13, color: "var(--text-muted)" }}>
+            <Typography sx={{ fontSize: 12, color: "var(--text-muted)" }}>
               No {activeTab} image uploaded for this banner
             </Typography>
           </Box>
@@ -323,11 +329,11 @@ export default function BannerPreviewDialog({
       )}
 
       {/* Banner Details Body */}
-      <DialogContent sx={{ px: 3, py: 2.5 }}>
+      <DialogContent sx={{ px: 3, py: 1.5 }}>
         <Typography
           sx={{
             fontWeight: 700,
-            fontSize: 19,
+            fontSize: 18,
             color: "var(--text-primary)",
             mb: 0.75,
           }}
@@ -338,10 +344,10 @@ export default function BannerPreviewDialog({
         {banner.body && (
           <Typography
             sx={{
-              fontSize: 13.5,
+              fontSize: 12,
               color: "var(--text-secondary)",
-              lineHeight: 1.6,
-              mb: 2,
+              lineHeight: 1.2,
+              mb: 1,
               whiteSpace: "pre-wrap",
             }}
           >
@@ -420,7 +426,7 @@ export default function BannerPreviewDialog({
                 <Typography
                   noWrap
                   sx={{
-                    fontSize: 12.5,
+                    fontSize: 12,
                     color: "var(--accent-gold)",
                     fontWeight: 500,
                   }}
@@ -429,6 +435,24 @@ export default function BannerPreviewDialog({
                 </Typography>
               </Box>
             </Box>
+
+            <Tooltip title={ctaCopied ? "Copied!" : "Copy CTA Target"}>
+              <IconButton
+                size="small"
+                onClick={handleCopyCtaUrl}
+                sx={{
+                  color: "var(--text-muted)",
+                  "&:hover": { color: "var(--accent-gold)" },
+                  flexShrink: 0,
+                }}
+              >
+                {ctaCopied ? (
+                  <CheckOutlinedIcon sx={{ fontSize: 16, color: "#4CAF50" }} />
+                ) : (
+                  <ContentCopyOutlinedIcon sx={{ fontSize: 16 }} />
+                )}
+              </IconButton>
+            </Tooltip>
           </Box>
         )}
       </DialogContent>
@@ -437,7 +461,7 @@ export default function BannerPreviewDialog({
 
       {/* Footer Actions */}
       <DialogActions sx={{ px: 3, py: 2, gap: 1.5 }}>
-        <AppButton onClick={onClose}>
+        <AppButton sx={{ background: "var(--accent-gold-dimmer)" }} onClick={onClose}>
           Close
         </AppButton>
 
