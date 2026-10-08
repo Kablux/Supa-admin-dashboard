@@ -14,6 +14,7 @@ import inspectionReducer from "./slices/Inspection";
 import requestReducer from "./slices/RideRequests";
 import referralsReducer from "./slices/Referrals";
 import bannerReducer from "./slices/Banner";
+import courierReducer from "./slices/Courier";
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     rideRequest: requestReducer,
     referrals: referralsReducer,
     trips: tripsReducer,
+    courier: courierReducer,
     transaction: transactionReducer,
     notification: notificationReducer,
     adminRole: adminRoleReducer,

@@ -692,3 +692,91 @@ export interface BannersState {
   error: string | null;
   mutateError: string | null;
 }
+
+
+////courier types
+export interface BaseApiCourierResponse<T> {
+  success: boolean;
+  data: T;
+  error?: string;
+  errors?: Record<string, string[]>;
+  error_code?: string;
+}
+
+export interface PaginatedCourierResponse<T> {
+  count: number;
+  page: number;
+  page_size: number;
+  results: T[];
+}
+
+export interface CourierUser {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  user_type: string;
+  account_status: string;
+  city: string;
+  state: string;
+  date_joined: string;
+  referral_code: string;
+}
+
+export interface CourierRider extends CourierUser {
+  kyc_status: 'PENDING' | 'UNDER_REVIEW' | 'NEEDS_RESUBMISSION' | 'APPROVED' | 'REJECTED';
+  kyc_submitted_at: string;
+  kyc_rejection_reason?: string;
+  is_approved: boolean;
+  available_to_receive_order: boolean;
+  vehicle_type: string;
+  vehicle_registration_number: string;
+  rating: number;
+}
+
+export interface CourierReferral {
+  id: string;
+  created_at: string;
+  referrer: CourierUser;
+  referred: CourierUser;
+}
+
+export interface ApproveKycResponse {
+  id: string;
+  email: string;
+  account_status: string;
+  kyc_status: string;
+  is_approved: boolean;
+  approval_date: string;
+}
+
+// Query Parameters
+export interface FetchRidersParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  account_status?: string;
+  kyc_status?: string;
+  vehicle_type?: string;
+  is_approved?: boolean;
+  available_to_receive_order?: boolean;
+}
+
+export interface FetchUsersParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  account_status?: string;
+  user_type?: string;
+}
+
+export interface FetchReferralsParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  referrer_id?: string;
+  referrer_user_type?: string;
+  referred_id?: string;
+  referred_user_type?: string;
+}

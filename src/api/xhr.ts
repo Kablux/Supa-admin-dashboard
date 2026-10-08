@@ -18,17 +18,26 @@ import { cleanQueryParams } from "../utils/hook";
 import {
   ActionDriverPayload,
   AdminRole,
+  ApproveKycResponse,
   Banner,
   BannerPayload,
   BannersQueryParams,
+  BaseApiCourierResponse,
   BroadcastRetentionResponse,
   CorporateInfo,
   CorporateOwner,
   CorporateStat,
+  CourierReferral,
+  CourierRider,
+  CourierUser,
   DriverLocation,
   DriverLocationsResponse,
   DriverSummaryData,
+  FetchReferralsParams,
+  FetchRidersParams,
+  FetchUsersParams,
   GlobalConfig,
+  PaginatedCourierResponse,
   PaginatedReferralResponse,
   PaginatedRideRequests,
   Referral,
@@ -38,7 +47,6 @@ import {
   RideRequestSummaryResponse,
   RideTypePricing,
   TransactionAnalytics,
-  UploadResponse,
 } from "../types/common.types";
 
 export interface SummaryResponse {
@@ -314,6 +322,46 @@ export const fetchUploadById = async (id: string | number) => {
   const response = await api.get(`/uploads/${id}/`);
   return response.data;
 };
+
+///////COURIER TRACKING
+export const courierService = {
+  // GET /riders/
+  fetchRiders: async (params?: FetchRidersParams) => {
+    const response = await api.get<BaseApiCourierResponse<PaginatedCourierResponse<CourierRider>>>(
+      `/business-admin/courier/riders/`,
+      { params }
+    );
+    return response.data;
+  },
+
+  // POST /riders/{user_id}/kyc/approve/
+  approveRiderKyc: async (userId: string) => {
+    const response = await api.post<BaseApiCourierResponse<ApproveKycResponse>>(
+      `/business-admin/courier/riders/${userId}/kyc/approve/`
+    );
+    return response.data;
+  },
+
+  // GET /users/
+  fetchUsers: async (params?: FetchUsersParams) => {
+    const response = await api.get<BaseApiCourierResponse<PaginatedCourierResponse<CourierUser>>>(
+      `/business-admin/courier/users/`,
+      { params }
+    );
+    return response.data;
+  },
+
+  // GET /referrals/
+  fetchReferrals: async (params?: FetchReferralsParams) => {
+    const response = await api.get<BaseApiCourierResponse<PaginatedCourierResponse<CourierReferral>>>(
+      `/business-admin/courier/referrals/`,
+      { params }
+    );
+    return response.data;
+  },
+};
+
+
 ////ADMIN ROLES
 
 const ADMIN_ROLE_STORAGE_KEY = "admin_roles";

@@ -53,7 +53,7 @@ export const selectSx = {
   fontSize: 14,
   borderRadius: "8px",
   backgroundColor: "var(--bg-secondary)",
-  color: "var(--text-muted)",
+  color: "var(--text-secondary)",
   "& .MuiOutlinedInput-notchedOutline": {
     borderColor: "var(--border)",
   },

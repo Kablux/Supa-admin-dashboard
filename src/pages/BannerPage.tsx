@@ -103,7 +103,7 @@ export default function BannersPage(): React.ReactElement {
       sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}
     >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-        <Box className="md:max-w-[768px] w-full" >
+        <Box className="md:max-w-3xl w-full" >
       {/* ── Filters bar ── */}
       
       <SearchFilterRow

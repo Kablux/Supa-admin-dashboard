@@ -39,16 +39,16 @@ export default function BannerFilters({
           }
           sx={selectSx}
         >
-          <MenuItem value="" sx={{ fontSize: 13 }}>
+          <MenuItem value="" sx={{ fontSize: 14 }}>
             All audiences
           </MenuItem>
-          <MenuItem value="all" sx={{ fontSize: 13 }}>
+          <MenuItem value="all" sx={{ fontSize: 14 }}>
              All
           </MenuItem>
-          <MenuItem value="rider" sx={{ fontSize: 13 }}>
+          <MenuItem value="rider" sx={{ fontSize: 14 }}>
              Riders
           </MenuItem>
-          <MenuItem value="driver" sx={{ fontSize: 13 }}>
+          <MenuItem value="driver" sx={{ fontSize: 14 }}>
              Drivers
           </MenuItem>
         </Select>
@@ -64,13 +64,13 @@ export default function BannerFilters({
           }}
           sx={selectSx}
         >
-          <MenuItem value="" sx={{ fontSize: 13 }}>
+          <MenuItem value="" sx={{ fontSize: 14 }}>
             All status
           </MenuItem>
-          <MenuItem value="true" sx={{ fontSize: 13 }}>
+          <MenuItem value="true" sx={{ fontSize: 14 }}>
             🟢 Active
           </MenuItem>
-          <MenuItem value="false" sx={{ fontSize: 13 }}>
+          <MenuItem value="false" sx={{ fontSize: 14 }}>
             🔴 Inactive
           </MenuItem>
         </Select>

@@ -14,6 +14,7 @@ import {
   getStoredRefreshToken,
 } from "./axios";
 import {
+  courierService,
   createAdminRole,
   createBanner,
   deleteAdminRole,
@@ -43,7 +44,7 @@ import {
   updateBanner,
   uploadFiles,
 } from "./xhr";
-import { AdminRole, Banner, BannerPayload, BannersState, PaginatedReferralResponse, Referral, ReferralQueryParams, RideRequestQueryParams, UploadFile } from "../types/common.types";
+import { AdminRole, Banner, BannerPayload, BannersState, CourierReferral, CourierRider, CourierUser, FetchReferralsParams, FetchRidersParams, FetchUsersParams, PaginatedReferralResponse, Referral, ReferralQueryParams, RideRequestQueryParams, UploadFile } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
@@ -443,6 +444,57 @@ export const removeBanner = createAsyncThunk<
     return rejectWithValue( err.response?.data?.message || "Failed to delete banner.");
   }
 });
+
+
+////Courier Thunks
+// Async Thunks
+export const fetchCourierRiders = createAsyncThunk(
+  'courier/fetchRiders',
+  async (params: FetchRidersParams, { rejectWithValue }) => {
+    try {
+      const res = await courierService.fetchRiders(params);
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.error || 'Failed to fetch riders');
+    }
+  }
+);
+
+export const approveCourierRiderKyc = createAsyncThunk(
+  'courier/approveRiderKyc',
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const res = await courierService.approveRiderKyc(userId);
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.error || 'Failed to approve KYC');
+    }
+  }
+);
+
+export const fetchCourierUsers = createAsyncThunk(
+  'courier/fetchUsers',
+  async (params: FetchUsersParams, { rejectWithValue }) => {
+    try {
+      const res = await courierService.fetchUsers(params);
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.error || 'Failed to fetch users');
+    }
+  }
+);
+
+export const fetchCourierReferrals = createAsyncThunk(
+  'courier/fetchReferrals',
+  async (params: FetchReferralsParams, { rejectWithValue }) => {
+    try {
+      const res = await courierService.fetchReferrals(params);
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.error || 'Failed to fetch referrals');
+    }
+  }
+);
 
 // ── Toggle active (optimistic PATCH) ─────────────────────────────────────────
 
