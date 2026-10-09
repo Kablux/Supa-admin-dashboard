@@ -30,9 +30,11 @@ import {
   CourierReferral,
   CourierRider,
   CourierUser,
+  CreatePromotionPayload,
   DriverLocation,
   DriverLocationsResponse,
   DriverSummaryData,
+  FetchPromotionsParams,
   FetchReferralsParams,
   FetchRidersParams,
   FetchUsersParams,
@@ -40,6 +42,8 @@ import {
   PaginatedCourierResponse,
   PaginatedReferralResponse,
   PaginatedRideRequests,
+  Promotion,
+  PromotionSummary,
   Referral,
   ReferralQueryParams,
   RideRequestDetail,
@@ -844,10 +848,84 @@ export const broadcastRetention = async (
             delete h["Content-Type"];
             delete h["content-type"];
           }
-          return payload; // FormData passes through untouched
+          return payload; 
         },
       ],
     },
   );
   return data;
+};
+
+
+////PROMOTIONS
+export const fetchPromotionsXHR = async (
+  params: FetchPromotionsParams
+) => {
+  const response = await api.get(
+    "/business-admin/promotions/",
+    { params }
+  );
+
+  return response.data;
+};
+
+// Fetch promotions summary
+export const fetchPromotionSummaryXHR =
+  async (): Promise<PromotionSummary> => {
+    const response = await api.get(
+      "/business-admin/promotions/summary/"
+    );
+
+    return response.data.data as PromotionSummary;
+  };
+
+// Create promotion
+export const createPromotionXHR = async (
+  payload: CreatePromotionPayload
+): Promise<Promotion> => {
+  const response = await api.post(
+    "/business-admin/promotions/",
+    payload
+  );
+
+  return response.data as Promotion;
+};
+
+// Update promotion
+export const updatePromotionXHR = async ({
+  id,
+  payload,
+}: {
+  id: string;
+  payload: Partial<CreatePromotionPayload>;
+}): Promise<Promotion> => {
+  const response = await api.patch(
+    `/business-admin/promotions/${id}/`,
+    payload
+  );
+
+  return response.data as Promotion;
+};
+
+// Delete promotion
+export const deletePromotionXHR = async (
+  id: string
+): Promise<string> => {
+  await api.delete(`/business-admin/promotions/${id}/`);
+
+  return id;
+};
+
+// Fetch promotion usages
+export const fetchPromotionUsagesXHR = async (params: {
+  promotion?: string;
+  page?: number;
+  page_size?: number;
+}) => {
+  const response = await api.get(
+    "/business-admin/promotions/usages/",
+    { params }
+  );
+
+  return response.data;
 };

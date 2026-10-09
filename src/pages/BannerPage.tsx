@@ -276,7 +276,7 @@ export default function BannersPage(): React.ReactElement {
   }}
   rowsPerPageOptions={[5, 10, 25]}
   sx={{
-    color: "rgba(255,255,255,0.6)",
+    color: "var(--text-secondary, #C1C7D0)",
     "& .MuiTablePagination-actions": { color: "var(--accent-gold)" },
     borderTop: "1px solid rgba(255,255,255,0.05)",
   }}

@@ -15,6 +15,7 @@ import requestReducer from "./slices/RideRequests";
 import referralsReducer from "./slices/Referrals";
 import bannerReducer from "./slices/Banner";
 import courierReducer from "./slices/Courier";
+import promotionReducer from "./slices/Promotions";
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     premium: premiumReducer,
     inspection: inspectionReducer,
     banners: bannerReducer,
+    promotions: promotionReducer,
   },
 });
 

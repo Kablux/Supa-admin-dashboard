@@ -17,9 +17,14 @@ import {
   courierService,
   createAdminRole,
   createBanner,
+  createPromotionXHR,
   deleteAdminRole,
   deleteBannerById,
+  deletePromotionXHR,
   fetchBanners,
+  fetchPromotionSummaryXHR,
+  fetchPromotionsXHR,
+  fetchPromotionUsagesXHR,
   getAdminRoles,
   getCorporateData,
   getDriverList,
@@ -42,9 +47,10 @@ import {
   logoutRequest,
   updateAdminRole,
   updateBanner,
+  updatePromotionXHR,
   uploadFiles,
 } from "./xhr";
-import { AdminRole, Banner, BannerPayload, BannersState, CourierReferral, CourierRider, CourierUser, FetchReferralsParams, FetchRidersParams, FetchUsersParams, PaginatedReferralResponse, Referral, ReferralQueryParams, RideRequestQueryParams, UploadFile } from "../types/common.types";
+import { AdminRole, Banner, BannerPayload, BannersState, CourierReferral, CourierRider, CourierUser, CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, UploadFile } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
@@ -496,7 +502,6 @@ export const fetchCourierReferrals = createAsyncThunk(
   }
 );
 
-// ── Toggle active (optimistic PATCH) ─────────────────────────────────────────
 
 export const toggleBannerActive = createAsyncThunk<
   Banner,
@@ -509,3 +514,122 @@ export const toggleBannerActive = createAsyncThunk<
     return rejectWithValue( err.message || "Failed to toggle banner active status.");
   }
 });
+
+
+//////Promotions 
+export const fetchPromotions = createAsyncThunk(
+  "promotions/fetchList",
+  async (params: FetchPromotionsParams, { rejectWithValue }) => {
+    try {
+      return await fetchPromotionsXHR(params);
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data || "Failed to fetch promotions"
+      );
+    }
+  }
+);
+
+// Fetch promotions summary
+export const fetchPromotionSummary = createAsyncThunk(
+  "promotions/fetchSummary",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await fetchPromotionSummaryXHR();
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data || "Failed to fetch promotion summary"
+      );
+    }
+  }
+);
+
+// Create promotion
+export const createPromotion = createAsyncThunk(
+  "promotions/create",
+  async (
+    payload: CreatePromotionPayload,
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const promotion: Promotion = await createPromotionXHR(payload);
+
+      dispatch(fetchPromotionSummary());
+
+      return promotion;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data || "Failed to create promotion"
+      );
+    }
+  }
+);
+
+// Update promotion
+export const updatePromotion = createAsyncThunk(
+  "promotions/update",
+  async (
+    {
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: Partial<CreatePromotionPayload>;
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const promotion: Promotion = await updatePromotionXHR({
+        id,
+        payload,
+      });
+
+      dispatch(fetchPromotionSummary());
+
+      return promotion;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data || "Failed to update promotion"
+      );
+    }
+  }
+);
+
+// Delete promotion
+export const deletePromotion = createAsyncThunk(
+  "promotions/delete",
+  async (id: string, { rejectWithValue, dispatch }) => {
+    try {
+      const deletedId = await deletePromotionXHR(id);
+
+      dispatch(fetchPromotionSummary());
+
+      return deletedId;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data || "Failed to delete promotion"
+      );
+    }
+  }
+);
+
+// Fetch promotion usages
+export const fetchPromotionUsages = createAsyncThunk(
+  "promotions/fetchUsages",
+  async (
+    params: {
+      promotion?: string;
+      page?: number;
+      page_size?: number;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      return await fetchPromotionUsagesXHR(params);
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data || "Failed to fetch promo usages"
+      );
+    }
+  }
+);

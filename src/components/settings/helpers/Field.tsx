@@ -12,7 +12,7 @@ export default function Field({ label, hint, children }: FieldProps) {
     <Box>
       <Typography
         sx={{
-          fontSize: 13,
+          fontSize: 12,
           fontWeight: 500,
           color: "var(--text-primary)",
           mb: 0.75,
@@ -23,7 +23,7 @@ export default function Field({ label, hint, children }: FieldProps) {
       {children}
       {hint && (
         <Typography
-          sx={{ fontSize: 11.5, color: "var(--text-secondary)", mt: 0.5 }}
+          sx={{ fontSize: 12, color: "var(--text-secondary)", mt: 0.5 }}
         >
           {hint}
         </Typography>

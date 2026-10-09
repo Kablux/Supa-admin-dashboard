@@ -88,7 +88,7 @@ export default function SettingsActionBar({
             fontWeight: 600,
             borderRadius: "10px",
             px: 2.5,
-            height: 42,
+            height: 40,
             color: "var(--text-primary)",
             border: "1px solid var(--border, rgba(255,255,255,0.15))",
             "&:hover": {
@@ -115,7 +115,7 @@ export default function SettingsActionBar({
             px: 3,
             height: 42,
             backgroundColor: "var(--accent-gold, #FFD700)",
-            color: "#000",
+            color: "var(--text-primary)",
             boxShadow: "none",
             "&:hover": {
               backgroundColor: "var(--accent-gold, #FFD700)",
@@ -123,7 +123,7 @@ export default function SettingsActionBar({
             },
             "&.Mui-disabled": {
               backgroundColor: "rgba(255,255,255,0.12)",
-              color: "rgba(255,255,255,0.4)",
+              color: "var(--text-secondary)",
             },
           }}
         >
