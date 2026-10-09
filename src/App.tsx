@@ -21,7 +21,6 @@ import DisputePage from "./pages/DisputePage";
 import HelpPage from "./pages/HelpPage";
 import LoginPage from "./pages/auth/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import { ToastContainer } from "react-toastify";
 import CreateAdminRolePage from "./pages/admin-role/CreateAdminPage";
 import CorporatePage from "./pages/CorporatePage";
 import RideRequestPage from "./pages/RideRequest";
@@ -29,6 +28,7 @@ import ReferralsPage from "./pages/ReferralsPage";
 import CourierPage from "./pages/CourierPage";
 import BannersPage from "./pages/BannerPage";
 import CampaignPage from "./pages/CampaignPage";
+import { Toaster } from "react-hot-toast";
 
 function ThemedApp() {
   const { mode } = useThemeMode();
@@ -82,14 +82,17 @@ function ThemedApp() {
 export default function App() {
   return (
     <ThemeModeProvider>
-      <ToastContainer
+       <Toaster
         position="top-right"
-        autoClose={4000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        // theme="dark"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            border: "1px solid #010e14",
+            padding: "8px",
+            color: "#010e14",
+            fontSize: "14px",
+          },
+        }}
       />
 
       <ThemedApp />

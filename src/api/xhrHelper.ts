@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
 import {
   LoginResponse,
   LoginCredentials,
@@ -50,10 +49,11 @@ import {
   updatePromotionXHR,
   uploadFiles,
 } from "./xhr";
-import { AdminRole, Banner, BannerPayload, BannersState, CourierReferral, CourierRider, CourierUser, CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, UploadFile } from "../types/common.types";
+import { AdminRole, Banner, BannerPayload, BannersState,  CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, UploadFile } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
+import toast from "react-hot-toast";
 
 export const loginAdmin = createAsyncThunk<
   LoginResponse,

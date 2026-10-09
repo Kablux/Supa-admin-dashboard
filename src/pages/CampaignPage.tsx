@@ -26,8 +26,8 @@ import { MdCampaign, MdPayments, MdRedeem } from "react-icons/md";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RunningWithErrorsIcon from "@mui/icons-material/RunningWithErrors";
 import AppButton from "../components/common/AppButton";
-import { toast } from "react-toastify";
 import ConfirmDeleteModal from "../components/promotions/DeleteModal";
+import toast from "react-hot-toast";
 
 export default function CampaignPage() {
   const dispatch = useDispatch<AppDispatch>();

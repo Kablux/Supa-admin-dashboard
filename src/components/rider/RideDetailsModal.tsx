@@ -15,10 +15,10 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CloseIcon from "@mui/icons-material/Close";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import { toast } from "react-toastify";
 import { Rider } from "../../types/auth";
 import { fetchRiderDetails, verifyRiderEmail } from "../../api/xhr";
 import { MetricBox } from "../ModalMetricsBox";
+import toast from "react-hot-toast";
 
 const infoBoxStyle = {
   display: "flex",
