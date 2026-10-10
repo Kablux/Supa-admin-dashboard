@@ -13,7 +13,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import * as XLSX from "xlsx";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 // NOTE: requires the SheetJS dependency —  npm i xlsx
 
