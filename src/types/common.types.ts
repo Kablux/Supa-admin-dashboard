@@ -50,6 +50,23 @@ export interface RideSummaryData {
   suspended: number;
 }
 
+export interface RiderSummaryData {
+  total: number;
+  active: number;
+  suspended: number;
+  pending_verification: number;
+  never_requested: number;
+  expired_unmatched: number;
+  cancelled_request: number;
+  completed_one_ride: number;
+}
+
+export interface UserSummaryData {
+  total: number;
+  active: number;
+  suspended: number;
+}
+
 export interface DriverSummaryData {
   total: number;
   online: number;
