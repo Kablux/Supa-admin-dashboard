@@ -49,16 +49,18 @@ import {
   RideRequestDetail,
   RideRequestQueryParams,
   RideRequestSummaryResponse,
+  RiderSummaryData,
   RideTypePricing,
   TransactionAnalytics,
+  UserSummaryData,
 } from "../types/common.types";
 
-export interface SummaryResponse {
-  data: {
-    total: number;
-    active: number;
-    suspended: number;
-  };
+export interface UserSummaryResponse {
+  data: UserSummaryData
+}
+
+export interface RiderSummaryResponse {
+  data: RiderSummaryData;
 }
 
 export interface DriverSummaryResponse {
@@ -129,7 +131,7 @@ export async function verifyRiderEmail(riderId: string): Promise<Rider> {
 }
 
 export async function getUserSummary() {
-  const { data } = await api.get<SummaryResponse>(
+  const { data } = await api.get<UserSummaryResponse>(
     "/business-admin/users/summary/",
   );
   return data.data;
@@ -188,7 +190,7 @@ export const rejectDriverKyc = async (
 };
 
 export async function getRiderSummary() {
-  const { data } = await api.get<SummaryResponse>(
+  const { data } = await api.get<RiderSummaryResponse>(
     "/business-admin/riders/summary/",
   );
   return data.data;
