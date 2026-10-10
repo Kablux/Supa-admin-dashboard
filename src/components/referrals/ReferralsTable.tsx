@@ -293,7 +293,7 @@ export default function ReferralsTable({
             }
             rowsPerPageOptions={[5, 10, 25, 50]}
             sx={{
-              color: "text.secondary",
+              color: "var(--text-secondary, #C1C7D0)",
               "& .MuiTablePagination-actions": {
                 color: "var(--accent-gold)",
               },

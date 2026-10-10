@@ -20,8 +20,8 @@ import { clearAuthError } from "../../redux/slices/Auth";
 import { LoginCredentials, LoginFormErrors } from "../../types/auth";
 import { validateLoginForm } from "../../utils/hook";
 import AdminTextField from "../../components/common/TextInput";
-import { toast } from "react-toastify";
 import AppButton from "../../components/common/AppButton";
+import { toast } from "react-hot-toast";
 
 const initialValues: LoginCredentials = {
   email: "",
@@ -70,7 +70,7 @@ export default function LoginPage(): React.ReactElement {
 
       if (firstError) {
         toast.error(firstError, {
-          toastId: "validation-error",
+          toasterId: "validation-error",
         });
       }
 

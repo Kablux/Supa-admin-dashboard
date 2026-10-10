@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "react-toastify";
 import { getGlobalConfig, updateGlobalConfig } from "../api/xhr";
 import { DEFAULT_FORM } from "../components/settings/helpers/DefaultFormConfig";
 import { FormState, toForm, RideTypeRow, toConfig } from "../components/settings/helpers/FormMapper";
+import { toast } from "react-hot-toast";
 
 
 export type SavingMode = false | "save" | "continue";

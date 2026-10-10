@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
-import { toast } from "react-toastify";
 import PeopleIcon from "@mui/icons-material/People";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -18,6 +17,7 @@ import DriverFilters, { DriverFilterState } from "../components/driver/DriverFil
 import ExportDriversModal from "../components/driver/ExportDriversDataModal";
 import { DRIVER_TAB_MAPPING } from "../types/common.types";
 import DriverDetailsModal from "../components/driver/modal/DriverDetailModal";
+import toast from "react-hot-toast";
 
 
 type UITabType = keyof typeof DRIVER_TAB_MAPPING;

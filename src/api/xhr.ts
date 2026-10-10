@@ -18,16 +18,32 @@ import { cleanQueryParams } from "../utils/hook";
 import {
   ActionDriverPayload,
   AdminRole,
+  ApproveKycResponse,
+  Banner,
+  BannerPayload,
+  BannersQueryParams,
+  BaseApiCourierResponse,
   BroadcastRetentionResponse,
   CorporateInfo,
   CorporateOwner,
   CorporateStat,
+  CourierReferral,
+  CourierRider,
+  CourierUser,
+  CreatePromotionPayload,
   DriverLocation,
   DriverLocationsResponse,
   DriverSummaryData,
+  FetchPromotionsParams,
+  FetchReferralsParams,
+  FetchRidersParams,
+  FetchUsersParams,
   GlobalConfig,
+  PaginatedCourierResponse,
   PaginatedReferralResponse,
   PaginatedRideRequests,
+  Promotion,
+  PromotionSummary,
   Referral,
   ReferralQueryParams,
   RideRequestDetail,
@@ -250,6 +266,105 @@ export async function getRideRequestDetails(
 
   return data;
 }
+
+////Banner 
+export async function fetchBanners(
+  params?: BannersQueryParams
+): Promise<PaginatedResponse<Banner>> {
+  const { data } = await api.get<PaginatedResponse<Banner>>(
+    '/business-admin/banners/',
+    { params }
+  );
+  return data;
+}
+
+
+export async function fetchBannerById(id: string): Promise<Banner> {
+  const { data } = await api.get<Banner>(`/business-admin/banners/${id}/`);
+  return data;
+}
+
+
+export async function createBanner(payload: BannerPayload): Promise<Banner> {
+  const { data } = await api.post<Banner>(
+    '/business-admin/banners/',
+    payload
+  );
+  return data;
+}
+
+
+export async function updateBanner(
+  id: string,
+  payload: Partial<BannerPayload>
+): Promise<Banner> {
+  const { data } = await api.patch<Banner>(
+    `/business-admin/banners/${id}/`,
+    payload
+  );
+  return data;
+}
+
+
+export async function deleteBannerById(id: string): Promise<void> {
+  await api.delete(`/business-admin/banners/${id}/`);
+}
+
+export async function uploadFiles(files: File[]) {
+  const formData = new FormData();
+
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
+
+  const { data } = await api.post("/uploads/", formData);
+
+  return data;
+}
+
+export const fetchUploadById = async (id: string | number) => {
+  const response = await api.get(`/uploads/${id}/`);
+  return response.data;
+};
+
+///////COURIER TRACKING
+export const courierService = {
+  // GET /riders/
+  fetchRiders: async (params?: FetchRidersParams) => {
+    const response = await api.get<BaseApiCourierResponse<PaginatedCourierResponse<CourierRider>>>(
+      `/business-admin/courier/riders/`,
+      { params }
+    );
+    return response.data;
+  },
+
+  // POST /riders/{user_id}/kyc/approve/
+  approveRiderKyc: async (userId: string) => {
+    const response = await api.post<BaseApiCourierResponse<ApproveKycResponse>>(
+      `/business-admin/courier/riders/${userId}/kyc/approve/`
+    );
+    return response.data;
+  },
+
+  // GET /users/
+  fetchUsers: async (params?: FetchUsersParams) => {
+    const response = await api.get<BaseApiCourierResponse<PaginatedCourierResponse<CourierUser>>>(
+      `/business-admin/courier/users/`,
+      { params }
+    );
+    return response.data;
+  },
+
+  // GET /referrals/
+  fetchReferrals: async (params?: FetchReferralsParams) => {
+    const response = await api.get<BaseApiCourierResponse<PaginatedCourierResponse<CourierReferral>>>(
+      `/business-admin/courier/referrals/`,
+      { params }
+    );
+    return response.data;
+  },
+};
+
 
 ////ADMIN ROLES
 
@@ -733,10 +848,84 @@ export const broadcastRetention = async (
             delete h["Content-Type"];
             delete h["content-type"];
           }
-          return payload; // FormData passes through untouched
+          return payload; 
         },
       ],
     },
   );
   return data;
+};
+
+
+////PROMOTIONS
+export const fetchPromotionsXHR = async (
+  params: FetchPromotionsParams
+) => {
+  const response = await api.get(
+    "/business-admin/promotions/",
+    { params }
+  );
+
+  return response.data;
+};
+
+// Fetch promotions summary
+export const fetchPromotionSummaryXHR =
+  async (): Promise<PromotionSummary> => {
+    const response = await api.get(
+      "/business-admin/promotions/summary/"
+    );
+
+    return response.data.data as PromotionSummary;
+  };
+
+// Create promotion
+export const createPromotionXHR = async (
+  payload: CreatePromotionPayload
+): Promise<Promotion> => {
+  const response = await api.post(
+    "/business-admin/promotions/",
+    payload
+  );
+
+  return response.data as Promotion;
+};
+
+// Update promotion
+export const updatePromotionXHR = async ({
+  id,
+  payload,
+}: {
+  id: string;
+  payload: Partial<CreatePromotionPayload>;
+}): Promise<Promotion> => {
+  const response = await api.patch(
+    `/business-admin/promotions/${id}/`,
+    payload
+  );
+
+  return response.data as Promotion;
+};
+
+// Delete promotion
+export const deletePromotionXHR = async (
+  id: string
+): Promise<string> => {
+  await api.delete(`/business-admin/promotions/${id}/`);
+
+  return id;
+};
+
+// Fetch promotion usages
+export const fetchPromotionUsagesXHR = async (params: {
+  promotion?: string;
+  page?: number;
+  page_size?: number;
+}) => {
+  const response = await api.get(
+    "/business-admin/promotions/usages/",
+    { params }
+  );
+
+  return response.data;
 };

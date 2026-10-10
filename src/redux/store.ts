@@ -13,6 +13,9 @@ import fleetReducer from "./slices/Fleet";
 import inspectionReducer from "./slices/Inspection";
 import requestReducer from "./slices/RideRequests";
 import referralsReducer from "./slices/Referrals";
+import bannerReducer from "./slices/Banner";
+import courierReducer from "./slices/Courier";
+import promotionReducer from "./slices/Promotions";
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +26,7 @@ export const store = configureStore({
     rideRequest: requestReducer,
     referrals: referralsReducer,
     trips: tripsReducer,
+    courier: courierReducer,
     transaction: transactionReducer,
     notification: notificationReducer,
     adminRole: adminRoleReducer,
@@ -30,6 +34,8 @@ export const store = configureStore({
     fleet: fleetReducer,
     premium: premiumReducer,
     inspection: inspectionReducer,
+    banners: bannerReducer,
+    promotions: promotionReducer,
   },
 });
 

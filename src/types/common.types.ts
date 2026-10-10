@@ -597,3 +597,280 @@ export interface Shipment {
   destination: string;
   status: "Completed" | "In Transit" | "Pending" | "Cancelled";
 }
+
+////Bannner
+// ── Enum values from the API ──────────────────────────────────────────────────
+export interface UploadFile {
+  id: string;
+  file: string;
+  name: string;
+  owner: string;
+}
+
+export interface UploadResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: UploadFile[];
+}
+
+export type BannerAudience = 'all' | 'driver' | 'rider';
+
+export type BannerCtaType =
+  | 'NONE'
+  | 'URL'
+  | 'SCREEN'
+
+
+export interface Banner {
+  id: string;
+  title: string;
+  body: string;
+  image_small: string;   
+  image_large: string;   
+  image_url: string;     
+  audience: BannerAudience;
+  is_active: boolean;
+  sort_order: number;
+  starts_at: string | null;   
+  ends_at: string | null;    
+  is_clickable: boolean;
+  cta_type: BannerCtaType;
+  cta_value: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
+export interface BannerPayload {
+  title: string;
+  body: string;
+  image_small: string;
+  image_large: string;
+  audience: BannerAudience;
+  is_active: boolean;
+  sort_order: number;
+  starts_at: string;
+  ends_at: string;
+  is_clickable: boolean;
+  cta_type: BannerCtaType;
+  cta_value: string;
+}
+
+export interface BannerFormErrors {
+  title?: string;
+  body?: string;
+  audience?: string;
+  starts_at?: string;
+  ends_at?: string;
+  cta_value?: string;
+}
+
+
+export interface BannersQueryParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  audience?: BannerAudience | '';
+  is_active?: boolean | '';
+  ordering?: string;
+}
+
+
+export type BannersRequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
+
+export interface BannersState {
+  list: Banner[];
+  count: number;
+  currentPage: number;
+  pageSize: number;
+  search: string;
+  audienceFilter: BannerAudience | '';
+  activeFilter: boolean | '';
+  listStatus: BannersRequestStatus;
+  mutateStatus: BannersRequestStatus; 
+  error: string | null;
+  mutateError: string | null;
+}
+
+
+////courier types
+export interface BaseApiCourierResponse<T> {
+  success: boolean;
+  data: T;
+  error?: string;
+  errors?: Record<string, string[]>;
+  error_code?: string;
+}
+
+export interface PaginatedCourierResponse<T> {
+  count: number;
+  page: number;
+  page_size: number;
+  results: T[];
+}
+
+export interface CourierUser {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  user_type: string;
+  account_status: string;
+  city: string;
+  state: string;
+  date_joined: string;
+  referral_code: string;
+}
+
+export interface CourierRider extends CourierUser {
+  kyc_status: 'PENDING' | 'UNDER_REVIEW' | 'NEEDS_RESUBMISSION' | 'APPROVED' | 'REJECTED';
+  kyc_submitted_at: string;
+  kyc_rejection_reason?: string;
+  is_approved: boolean;
+  available_to_receive_order: boolean;
+  vehicle_type: string;
+  vehicle_registration_number: string;
+  rating: number;
+}
+
+export interface CourierReferral {
+  id: string;
+  created_at: string;
+  referrer: CourierUser;
+  referred: CourierUser;
+}
+
+export interface ApproveKycResponse {
+  id: string;
+  email: string;
+  account_status: string;
+  kyc_status: string;
+  is_approved: boolean;
+  approval_date: string;
+}
+
+// Query Parameters
+export interface FetchRidersParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  account_status?: string;
+  kyc_status?: string;
+  vehicle_type?: string;
+  is_approved?: boolean;
+  available_to_receive_order?: boolean;
+}
+
+export interface FetchUsersParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  account_status?: string;
+  user_type?: string;
+}
+
+export interface FetchReferralsParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  referrer_id?: string;
+  referrer_user_type?: string;
+  referred_id?: string;
+  referred_user_type?: string;
+}
+
+/////PROMOTIONS
+export type DiscountType = "FIXED" | "PERCENTAGE";
+
+export interface Promotion {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  applies_to: string;
+  discount_type: DiscountType;
+  discount_value: string | number;
+  max_eligible_amount: string | number;
+  priority: number;
+  is_active: boolean;
+  status: string;
+  start_date: string;
+  end_date: string;
+  max_redemptions: number;
+  is_clickable: boolean;
+  cta_type: string;
+  cta_value: string;
+  redemption_count: number;
+  unique_redeemer_count: number;
+  total_discount_given: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PromotionSummaryPromo {
+    id: string;
+    name: string;
+    code: string;
+    is_active: boolean;
+    status: string;
+    redemption_count: number;
+    unique_redeemer_count: number;
+    total_discount_given: string;
+    max_redemptions: number | null;
+}
+
+export interface PromotionSummary {
+  total_promos: number;
+  active: number;
+  inactive: number;
+  expired: number;
+  scheduled: number;
+  total_redemptions: number;
+  unique_redeemers: number;
+  total_discount_given: string;
+  promos: PromotionSummaryPromo[];
+}
+
+export interface PromotionUsage {
+  id: string;
+  promotion: string;
+  promotion_name: string;
+  promotion_code: string;
+  user: string;
+  user_email: string;
+  ride: string;
+  original_amount: string;
+  discount_amount: string;
+  final_amount: string;
+  applied_at: string;
+  created_at: string;
+}
+
+export interface FetchPromotionsParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  discount_type?: DiscountType | "";
+  is_active?: boolean | string;
+  ordering?: string;
+}
+
+export interface CreatePromotionPayload {
+  name: string;
+  code: string;
+  description?: string;
+  applies_to?: string;
+  discount_type: DiscountType;
+  discount_value: number | string;
+  max_eligible_amount?: number | string;
+  priority?: number;
+  is_active?: boolean;
+  start_date: string;
+  end_date: string;
+  max_redemptions?: number;
+  is_clickable?: boolean;
+  cta_type?: string;
+  cta_value?: string;
+}

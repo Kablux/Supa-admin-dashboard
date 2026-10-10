@@ -1,6 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
 const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL;
+
 if (!API_BASE_URL) {
   throw new Error(
     "VITE_API_BASE_URL is required. Point test builds at the test API and production builds at the production API."
@@ -12,16 +13,22 @@ export const REFRESH_TOKEN_KEY = "refresh_token";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getStoredAccessToken();
+
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // Handle FormData differently from normal JSON requests
+  if (config.data instanceof FormData) {
+    config.headers?.delete("Content-Type");
+  } else {
+    config.headers?.set("Content-Type", "application/json");
+  }
+
   return config;
 });
 
