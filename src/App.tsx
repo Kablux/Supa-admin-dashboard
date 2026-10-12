@@ -29,6 +29,7 @@ import CourierPage from "./pages/CourierPage";
 import BannersPage from "./pages/BannerPage";
 import CampaignPage from "./pages/CampaignPage";
 import { Toaster } from "react-hot-toast";
+import SessionTimeoutManager from "./components/auth/SessionTimeoutManager";
 
 function ThemedApp() {
   const { mode } = useThemeMode();
@@ -38,6 +39,7 @@ function ThemedApp() {
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       <BrowserRouter>
+      <SessionTimeoutManager />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
 

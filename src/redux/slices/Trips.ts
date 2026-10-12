@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchTrips } from "../../api/xhrHelper";
 import { Trip } from "../../types/auth";
 
-
 interface TripsState {
   items: Trip[];
   totalCount: number;
@@ -16,14 +15,14 @@ const initialState: TripsState = {
   totalCount: 0,
   currentPage: 1,
   isLoading: false,
-   error: null
+  error: null,
 };
 
 const tripsSlice = createSlice({
   name: "trips",
   initialState,
   reducers: {
-     setCurrentPage: (state, action: PayloadAction<number>) => {
+    setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
     },
   },
@@ -44,5 +43,7 @@ const tripsSlice = createSlice({
       });
   },
 });
+
+export const { setCurrentPage } = tripsSlice.actions;
 
 export default tripsSlice.reducer;
