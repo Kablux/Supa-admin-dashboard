@@ -91,8 +91,9 @@ export default function App() {
           style: {
             border: "1px solid #010e14",
             padding: "8px",
+            whiteSpace: "nowrap",
             color: "#010e14",
-            fontSize: "14px",
+            fontSize: "13px",
           },
         }}
       />

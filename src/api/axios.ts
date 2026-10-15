@@ -13,7 +13,7 @@ export const REFRESH_TOKEN_KEY = "refresh_token";
 export const SESSION_START_KEY = "session_start_time";
 export const LAST_ACTIVITY_KEY = "last_activity_time";
 
-export const SESSION_TIMEOUT_MS = 2 * 60 * 1000; 
+export const SESSION_TIMEOUT_MS = 60 * 60 * 1000; 
 export const SESSION_WARNING_MS = 60 * 1000;
 const api = axios.create({
   baseURL: API_BASE_URL,

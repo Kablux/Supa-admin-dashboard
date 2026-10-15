@@ -54,10 +54,11 @@ const headerCellSx = {
 
 const bodyCellSx = {
   fontSize: 14,
-  color: "var(--text-primary, #FFFFFF)",
-  borderColor: "var(--border, rgba(255, 255, 255, 0.08))",
-  py: 4,
-  px: 2,
+  color: "var(--text-primary, #FFF)",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.055)",
+  py: 2,
+  px: 2.5,
+  whiteSpace: "nowrap",
 } as const;
 
 const ReferralsTable: React.FC<ReferralsTableProps> = ({
@@ -69,14 +70,8 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
 }) => {
   return (
     <TableContainer
-      component={Paper}
-      elevation={0}
-      sx={{
-        backgroundColor: "var(--bg-card, #11141D)",
-        border: "1px solid var(--border, rgba(255, 255, 255, 0.08))",
-        borderRadius: "14px",
+       sx={{
         overflow: "hidden",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.25)",
       }}
     >
       <Table size="small">
@@ -112,14 +107,14 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
               <TableRow
                 key={ref.id}
                 sx={{
-                  transition: "background-color 0.15s ease",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.025)",
-                  },
-                  "&:last-child td, &:last-child th": {
-                    borderBottom: 0,
-                  },
-                }}
+                    transition: "background-color 0.15s ease",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.035)",
+                    },
+                    "&:last-child td, &:last-child th": {
+                      borderBottom: 0,
+                    },
+                  }}
               >
                 {/* Referrer */}
                 <TableCell sx={bodyCellSx}>
@@ -131,8 +126,8 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
                       lineHeight: 1.3,
                     }}
                   >
-                    {ref.referrer?.first_name || "—"}{" "}
-                    {ref.referrer?.last_name || ""}
+                    {ref.referrer?.first_name }{" "}
+                    {ref.referrer?.last_name || "N/A"}
                   </Typography>
 
                   <Typography
@@ -143,7 +138,7 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
                       display: "block",
                     }}
                   >
-                    {ref.referrer?.email || "—"}
+                    {ref.referrer?.email || "N/A"}
                   </Typography>
                 </TableCell>
 
@@ -157,8 +152,8 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
                       lineHeight: 1.3,
                     }}
                   >
-                    {ref.referred?.first_name || "—"}{" "}
-                    {ref.referred?.last_name || ""}
+                    {ref.referred?.first_name }{" "}
+                    {ref.referred?.last_name || "N/A"}
                   </Typography>
 
                   <Typography
@@ -169,7 +164,7 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
                       display: "block",
                     }}
                   >
-                    {ref.referred?.email || "—"}
+                    {ref.referred?.email || "N/A"}
                   </Typography>
                 </TableCell>
 
@@ -184,7 +179,7 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
                         : "var(--text-muted, #8A92A6)",
                     }}
                   >
-                    {ref.referrer?.referral_code || "—"}
+                    {ref.referrer?.referral_code || "N/A"}
                   </Typography>
                 </TableCell>
 
@@ -198,7 +193,7 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
                   >
                     {ref.created_at
                       ? new Date(ref.created_at).toLocaleDateString()
-                      : "—"}
+                      : "N/A"}
                   </Typography>
                 </TableCell>
               </TableRow>

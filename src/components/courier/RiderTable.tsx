@@ -6,12 +6,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   TablePagination,
   CircularProgress,
   Typography,
   Button,
-  Box,
 } from "@mui/material";
 
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
@@ -49,6 +47,7 @@ interface RidersTableProps {
   onApproveKyc: (userId: string) => void;
 }
 
+
 const headerCellSx = {
   fontSize: 12,
   fontWeight: 500,
@@ -63,11 +62,13 @@ const headerCellSx = {
 
 const bodyCellSx = {
   fontSize: 14,
-  color: "var(--text-primary, #FFFFFF)",
-  borderColor: "var(--border, rgba(255, 255, 255, 0.08))",
-  py: 4,
-  px: 2,
+  color: "var(--text-primary, #FFF)",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.055)",
+  py: 2,
+  px: 2.5,
+  whiteSpace: "nowrap",
 } as const;
+
 
 const RidersTable: React.FC<RidersTableProps> = ({
   riders,
@@ -78,22 +79,18 @@ const RidersTable: React.FC<RidersTableProps> = ({
   onPageSizeChange,
   onApproveKyc,
 }) => {
+  
   return (
     <TableContainer
-      component={Paper}
-      elevation={0}
       sx={{
-        backgroundColor: "var(--bg-card, #11141D)",
-        border: "1px solid var(--border, rgba(255, 255, 255, 0.08))",
-        borderRadius: "14px",
         overflow: "hidden",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.25)",
       }}
     >
       <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell sx={headerCellSx}>Name & Contact</TableCell>
+            <TableCell sx={headerCellSx}>Phone No</TableCell>
             <TableCell sx={headerCellSx}>Location</TableCell>
             <TableCell sx={headerCellSx}>Vehicle Info</TableCell>
             <TableCell sx={headerCellSx}>KYC Status</TableCell>
@@ -107,146 +104,172 @@ const RidersTable: React.FC<RidersTableProps> = ({
         <TableBody>
           {riders.loading ? (
             <TableRow>
-              <TableCell colSpan={6} align="center" sx={{ ...bodyCellSx }}>
+              <TableCell colSpan={7} align="center" sx={{ ...bodyCellSx }}>
                 <CircularProgress size={28} sx={{ color: "var(--accent-gold, #FFD700)" }} />
               </TableCell>
             </TableRow>
           ) : riders.data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} align="center" sx={{ ...bodyCellSx }}>
+              <TableCell colSpan={7} align="center" sx={{ ...bodyCellSx }}>
                 <Typography sx={{ color: "var(--text-secondary, #8A92A6)" }}>
                   No riders found matching query.
                 </Typography>
               </TableCell>
             </TableRow>
           ) : (
-            riders.data.map((rider) => (
-              <TableRow
-                key={rider.id}
-                sx={{
-                  transition: "background-color 0.15s ease",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.025)",
-                  },
-                  "&:last-child td, &:last-child th": {
-                    borderBottom: 0,
-                  },
-                }}
-              >
-                {/* Name & Contact */}
-                <TableCell sx={bodyCellSx}>
-                  <Typography
+            riders.data.map((rider) => {
+              const isVerified = rider.kyc_status === "VERIFIED";
+              const isEligibleForApproval = !isVerified;
+
+              return (
+                <TableRow
+                  key={rider.id}
+                  sx={{
+                    transition: "background-color 0.15s ease",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.035)",
+                    },
+                    "&:last-child td, &:last-child th": {
+                      borderBottom: 0,
+                    },
+                  }}
+                >
+                  {/* Name & Contact */}
+                  <TableCell sx={bodyCellSx}>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: "var(--text-primary, #FFF)",
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {rider.first_name} {rider.last_name}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: "var(--text-muted, #8A92A6)",
+                        mt: 0.25,
+                        display: "block",
+                      }}
+                    >
+                      {rider.email}
+                    </Typography>
+                  </TableCell>
+
+                  {/* Phone */}
+                  <TableCell sx={bodyCellSx}>
+                    <Typography sx={{ fontSize: 14, color: "var(--text-primary, #C1C7D0)" }}>
+                      {rider.phone_number ? ` ${rider.phone_number}` : "N/A"}
+                    </Typography>
+                  </TableCell>
+                  
+                  {/* Location */}
+                  <TableCell sx={bodyCellSx}>
+                    <Typography sx={{ fontSize: 14, color: "var(--text-secondary, #C1C7D0)" }}>
+                      {rider.city || "N/A"}
+                    </Typography>
+                  </TableCell>
+
+                  {/* Vehicle Info */}
+                  <TableCell sx={bodyCellSx}>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: "var(--text-primary, #FFF)",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {rider.vehicle_type ? rider.vehicle_type.toLowerCase() : "—"}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: "var(--text-muted, #8A92A6)",
+                        mt: 0.25,
+                      }}
+                    >
+                      {rider.vehicle_registration_number || "No plate number"}
+                    </Typography>
+                  </TableCell>
+
+                  {/* KYC Status */}
+                  <TableCell sx={bodyCellSx}>
+                    <KycStatusChip status={rider.kyc_status} />
+                  </TableCell>
+
+                  {/* Rating */}
+                  <TableCell sx={bodyCellSx}>
+                    <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
+                      {rider.rating ? `⭐ ${rider.rating.toFixed(1)}` : "N/A"}
+                    </Typography>
+                  </TableCell>
+
+                  {/* Actions (Always rendered now, disabled if not eligible) */}
+                  <TableCell align="right" sx={bodyCellSx}>
+                    <Button
+                      size="small"
+                      disabled={!isEligibleForApproval || kycApprovingId === rider.id}
+                      startIcon={
+                        kycApprovingId === rider.id ? (
+                          <CircularProgress size={12} color="inherit" />
+                        ) : (
+                          <VerifiedUserIcon sx={{ fontSize: 14 }} />
+                        )
+                      }
+                      onClick={() => isEligibleForApproval && onApproveKyc(rider.id)}
+                      
                     sx={{
-                      fontSize: 14,
-                      fontWeight: 500,
-                      color: "var(--text-primary, #FFF)",
-                      lineHeight: 1.3,
+                      minWidth: 112,
+                      height: 32,
+                      px: 1.5,
+                      fontSize: 11.5,
+                      fontWeight: 700,
+                      textTransform: "none",
+                      letterSpacing: "0.1px",
+                      borderRadius: "7px",
+                      backgroundColor: isVerified
+                        ? "rgba(52, 211, 153, 0.10)"
+                        : "#FFBE18",
+                      color: isVerified ? "#34D399" : "#17130A",
+                      border: isVerified
+                        ? "1px solid rgba(52, 211, 153, 0.22)"
+                        : "1px solid rgba(255, 190, 24, 0.35)",
+                      boxShadow: "none",
+                      whiteSpace: "nowrap",
+                      "&:hover": {
+                        backgroundColor: isVerified
+                          ? "rgba(52, 211, 153, 0.15)"
+                          : "#F4B400",
+                        boxShadow: isVerified
+                          ? "none"
+                          : "0 3px 12px rgba(255, 190, 24, 0.16)",
+                      },
+                      "&.Mui-disabled": {
+                        backgroundColor: isVerified
+                          ? "rgba(52, 211, 153, 0.10)"
+                          : "rgba(255, 255, 255, 0.045)",
+                        color: isVerified ? "#34D399" : "#778196",
+                        borderColor: isVerified
+                          ? "rgba(52, 211, 153, 0.22)"
+                          : "rgba(255, 255, 255, 0.06)",
+                      },
                     }}
-                  >
-                    {rider.first_name} {rider.last_name}
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      color: "var(--text-muted, #8A92A6)",
-                      mt: 0.25,
-                      display: "block",
-                    }}
-                  >
-                    {rider.email} {rider.phone_number ? `• ${rider.phone_number}` : ""}
-                  </Typography>
-                </TableCell>
-
-                {/* Location */}
-                <TableCell sx={bodyCellSx}>
-                  <Typography sx={{ fontSize: 14, color: "var(--text-secondary, #C1C7D0)" }}>
-                    {rider.city || "—"}{rider.state ? `, ${rider.state}` : ""}
-                  </Typography>
-                </TableCell>
-
-                {/* Vehicle Info */}
-                <TableCell sx={bodyCellSx}>
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      fontWeight: 500,
-                      color: "var(--text-primary, #FFF)",
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    {rider.vehicle_type ? rider.vehicle_type.toLowerCase() : "—"}
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      color: "var(--text-muted, #8A92A6)",
-                      mt: 0.25,
-                    }}
-                  >
-                    {rider.vehicle_registration_number || "No plate number"}
-                  </Typography>
-                </TableCell>
-
-                {/* KYC Status */}
-                <TableCell sx={bodyCellSx}>
-                  <KycStatusChip
-                    status={rider.kyc_status}
-                    isApproved={rider.is_approved}
-                  />
-                </TableCell>
-
-                {/* Rating */}
-                <TableCell sx={bodyCellSx}>
-                  <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
-                    {rider.rating ? `⭐ ${rider.rating.toFixed(1)}` : "N/A"}
-                  </Typography>
-                </TableCell>
-
-                {/* Actions */}
-                <TableCell align="right" sx={bodyCellSx}>
-                  {!rider.is_approved &&
-                    (rider.kyc_status === "UNDER_REVIEW" ||
-                      rider.kyc_status === "NEEDS_RESUBMISSION") && (
-                      <Button
-                        size="small"
-                        disabled={kycApprovingId === rider.id}
-                        startIcon={
-                          kycApprovingId === rider.id ? (
-                            <CircularProgress size={12} color="inherit" />
-                          ) : (
-                            <VerifiedUserIcon sx={{ fontSize: 14 }} />
-                          )
-                        }
-                        onClick={() => onApproveKyc(rider.id)}
-                        sx={{
-                          height: 30,
-                          px: 1.5,
-                          fontSize: 14,
-                          fontWeight: 500,
-                          textTransform: "none",
-                          borderRadius: "6px",
-                          backgroundColor: "#10B981",
-                          color: "#FFF",
-                          boxShadow: "none",
-                          whiteSpace: "nowrap",
-                          "&:hover": {
-                            backgroundColor: "#059669",
-                            boxShadow: "0 2px 8px rgba(16, 185, 129, 0.3)",
-                          },
-                          "&.Mui-disabled": {
-                            backgroundColor: "rgba(16, 185, 129, 0.3)",
-                            color: "rgba(255,255,255,0.5)",
-                          },
-                        }}
-                      >
-                        {kycApprovingId === rider.id ? "Approving..." : "Approve KYC"}
-                      </Button>
-                    )}
-                </TableCell>
-              </TableRow>
-            ))
+                    >
+                      {kycApprovingId === rider.id
+                        ? "Approving..."
+                        : isVerified
+                        ? "Verified"
+                        : "Approve KYC"}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })
           )}
         </TableBody>
       </Table>
