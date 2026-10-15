@@ -54,10 +54,11 @@ const headerCellSx = {
 
 const bodyCellSx = {
   fontSize: 14,
-  color: "var(--text-primary, #FFFFFF)",
-  borderColor: "var(--border, rgba(255, 255, 255, 0.08))",
-  py: 4,
-  px: 2,
+  color: "var(--text-primary, #FFF)",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.055)",
+  py: 2,
+  px: 2.5,
+  whiteSpace: "nowrap",
 } as const;
 
 const UsersTable: React.FC<UsersTableProps> = ({
@@ -68,17 +69,11 @@ const UsersTable: React.FC<UsersTableProps> = ({
   onPageSizeChange,
 }) => {
   return (
-    <TableContainer
-      component={Paper}
-      elevation={0}
-      sx={{
-        backgroundColor: "var(--bg-card, #11141D)",
-        border: "1px solid var(--border, rgba(255, 255, 255, 0.08))",
-        borderRadius: "14px",
-        overflow: "hidden",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.25)",
-      }}
-    >
+   <TableContainer
+         sx={{
+           overflow: "hidden",
+         }}
+       >
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -156,7 +151,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       color: "var(--text-secondary, #C1C7D0)",
                     }}
                   >
-                    {user.phone_number || "—"}
+                    {user.phone_number || "N/A"}
                   </Typography>
                 </TableCell>
 
@@ -167,17 +162,22 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     size="small"
                     variant="outlined"
                     sx={{
-                      fontSize: 12,
-                      fontWeight: 500,
-                      textTransform: "capitalize",
-                      borderColor: "var(--border, rgba(255, 255, 255, 0.15))",
-                      color: "var(--text-secondary, #C1C7D0)",
-                      backgroundColor: "rgba(255, 255, 255, 0.03)",
+                      height: 27,
+                        borderRadius: "8px",
+                        backgroundColor: "var(--bg-secondary, #161B26)",
+                        color:" var(--text-secondary, #C1C7D0)",
+                        border: `1px solid var(--border, rgba(255, 255, 255, 0.08))`,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        letterSpacing: "0.15px",
+                        "& .MuiChip-label": {
+                          px: 1.2,
+                        },
                     }}
                   />
                 </TableCell>
 
-                {/* City/State */}
+                {/* City/*/}
                 <TableCell sx={bodyCellSx}>
                   <Typography
                     sx={{
@@ -185,8 +185,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       color: "var(--text-secondary, #C1C7D0)",
                     }}
                   >
-                    {user.city || "—"}
-                    {user.state ? `, ${user.state}` : ""}
+                    {user.city || "N/A"}
                   </Typography>
                 </TableCell>
 
@@ -195,13 +194,13 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   <Typography
                     sx={{
                       fontSize: 14,
-                      fontFamily: "monospace",
+                      fontWeight: 500,
                       color: user.referral_code
                         ? "var(--accent-gold, #FFD700)"
                         : "var(--text-muted, #8A92A6)",
                     }}
                   >
-                    {user.referral_code || "—"}
+                    {user.referral_code || "No Ref Code"}
                   </Typography>
                 </TableCell>
 
