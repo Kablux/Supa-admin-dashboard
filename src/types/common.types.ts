@@ -742,7 +742,7 @@ export interface CourierUser {
 }
 
 export interface CourierRider extends CourierUser {
-  kyc_status: 'PENDING' | 'UNDER_REVIEW' | 'NEEDS_RESUBMISSION' | 'APPROVED' | 'REJECTED';
+  kyc_status: string;
   kyc_submitted_at: string;
   kyc_rejection_reason?: string;
   is_approved: boolean;

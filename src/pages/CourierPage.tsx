@@ -1,79 +1,10 @@
-// import React from "react";
-// import { Box } from "@mui/material";
-// import { RIDERS_INFO, USERS_INFO, FINANCE_DATA, QUICK_LINKS, RECENT_SHIPMENTS } from "../data/data";
-// import QuickActionsCard from "../components/courier/QuickActionCard";
-// import CourierInfoCards from "../components/courier/CourierInfoCard";
-// import RecentShipmentTable from "../components/courier/RecentShipmentTable";
-// import FinanceAnalyticsChart from "../components/courier/FinanceAnalytics";
-// import OverviewCards, { OverviewItem } from "../components/OverviewCard";
-// import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
-// import DirectionsBikeRoundedIcon from "@mui/icons-material/DirectionsBikeRounded";
-// import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
-// import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-// import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-
-// export default function CourierPage() {
-
-//     const courierStats: OverviewItem[] = [
-//       {
-//         title: "Total Rider",
-//         value: 100,
-//         icon: <DirectionsBikeRoundedIcon />,
-//       },
-//       {
-//         title: "Active Rider",
-//         value: 52,
-//         icon: <PeopleAltRoundedIcon color="success" />,
-//       },
-//       {
-//         title: "Suspended Rider",
-//         value: 3,
-//         icon: <BlockRoundedIcon color="error" />,
-//       },
-//       {
-//         title: "Total User",
-//         value: 112,
-//         icon: <PersonRoundedIcon color="info" />,
-//       },
-//       {
-//         title: "Total Delivered",
-//         value: 19,
-//         icon: <CheckCircleIcon color="success" />,
-//       },
-//     ];
-
-//   return (
-//     <Box
-//       className="fade-in"
-//       sx={{ display: "flex", flexDirection: "column", gap: 3.5, p: 1 }}
-//     >
-//        <OverviewCards items={courierStats}  />
-
-//       <Box
-//         sx={{
-//           display: "grid",
-//           gridTemplateColumns: { xs: "1fr", lg: "1.7fr 1fr" },
-//           gap: 2.5,
-//           alignItems: "stretch",
-//         }}
-//       >
-//         <FinanceAnalyticsChart data={FINANCE_DATA} />
-//         <QuickActionsCard links={QUICK_LINKS} />
-//       </Box>
-
-//       {/* Row 3 — recent shipments */}
-//       <RecentShipmentTable shipments={RECENT_SHIPMENTS} />
-//     </Box>
-//   );
-// }
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import {
   Box,
   Typography,
 } from "@mui/material";
+import toast from "react-hot-toast";
 
 import {
   fetchCourierRiders,
@@ -88,6 +19,7 @@ import CourierFilters from "../components/courier/CourierFilter";
 import ReferralsTable from "../components/courier/ReferralsTable";
 import UsersTable from "../components/courier/UsersTable";
 import SearchFilterRow from "../components/SearchFilterRow";
+import ApproveKycConfirmationModal from "../components/courier/ApproveKycModal";
 
 type CourierTab = "riders" | "users" | "referrals";
 
@@ -110,14 +42,15 @@ export default function CourierManagementPage() {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
+  // State to control KYC approval confirmation modal
+  const [confirmingRiderId, setConfirmingRiderId] = useState<string | null>(null);
+
   const {
     riders,
     users,
     referrals,
     kycApprovingId,
-  } = useSelector(
-    (state: RootState) => state.courier
-  );
+  } = useSelector((state: RootState) => state.courier);
 
   useEffect(() => {
     const params = {
@@ -165,15 +98,43 @@ export default function CourierManagementPage() {
     setPage(0);
   };
 
-  const handleApproveKyc = (userId: string) => {
-    if (
-      window.confirm(
-        "Are you sure you want to approve this rider’s KYC?"
-      )
-    ) {
-      dispatch(approveCourierRiderKyc(userId));
+  // Triggered when clicking "Approve KYC" on a row
+  const handleOpenApproveConfirm = (userId: string) => {
+    setConfirmingRiderId(userId);
+  };
+
+  // Triggered inside the confirmation modal
+  const handleConfirmApproveKyc = async () => {
+    if (!confirmingRiderId) return;
+
+    try {
+      await dispatch(approveCourierRiderKyc(confirmingRiderId)).unwrap();
+      toast.success("Rider KYC approved successfully!");
+      setConfirmingRiderId(null);
+
+      // Refetch riders list to update the table status
+      dispatch(
+        fetchCourierRiders({
+          page: page + 1,
+          page_size: pageSize,
+          search: search || undefined,
+          account_status: accountStatus || undefined,
+          kyc_status: kycStatus || undefined,
+          vehicle_type: vehicleType || undefined,
+        })
+      );
+    } catch (error: any) {
+      toast.error(
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to approve rider KYC"
+      );
     }
   };
+
+  const selectedRiderForConfirm = riders.data.find(
+    (r) => r.id === confirmingRiderId
+  );
 
   return (
     <Box
@@ -192,79 +153,82 @@ export default function CourierManagementPage() {
         />
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-      {/* Tabs */}
       <Box
         sx={{
           display: "flex",
-          gap: 3,
-          width: "max-content",
-          mb: 3,
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 2,
         }}
       >
-        {courierTabs.map((tab) => (
-          <Typography
-            key={tab.value}
-            onClick={() => handleTabChange(tab.value)}
-            sx={{
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: "pointer",
-              color:
-                activeTab === tab.value
-                  ? "var(--accent-gold)"
-                  : "secondary.main",
+        {/* Tabs */}
+        <Box
+          sx={{
+            display: "flex",
+            gap: 3,
+            width: "max-content",
+            mb: 3,
+          }}
+        >
+          {courierTabs.map((tab) => (
+            <Typography
+              key={tab.value}
+              onClick={() => handleTabChange(tab.value)}
+              sx={{
+                fontSize: 14,
+                fontWeight: 500,
+                cursor: "pointer",
+                color:
+                  activeTab === tab.value
+                    ? "var(--accent-gold)"
+                    : "secondary.main",
+                position: "relative",
+                pb: 1.2,
+                transition: "color 0.2s ease",
+                "&:hover": {
+                  color: "var(--accent-gold)",
+                },
+                "&::after":
+                  activeTab === tab.value
+                    ? {
+                        content: '""',
+                        position: "absolute",
+                        bottom: -1,
+                        left: 0,
+                        width: "100%",
+                        height: "2px",
+                        backgroundColor: "var(--accent-gold)",
+                        borderRadius: "2px 2px 0 0",
+                      }
+                    : {},
+              }}
+            >
+              {tab.label}
+            </Typography>
+          ))}
+        </Box>
 
-              position: "relative",
-              pb: 1.2,
-
-              transition: "color 0.2s ease",
-
-              "&:hover": {
-                color: "var(--accent-gold)",
-              },
-
-              "&::after":
-                activeTab === tab.value
-                  ? {
-                      content: '""',
-                      position: "absolute",
-                      bottom: -1,
-                      left: 0,
-                      width: "100%",
-                      height: "2px",
-                      backgroundColor: "var(--accent-gold)",
-                      borderRadius: "2px 2px 0 0",
-                    }
-                  : {},
-            }}
-          >
-            {tab.label}
-          </Typography>
-        ))}
+        {/* Filters */}
+        <CourierFilters
+          activeTab={activeTab}
+          accountStatus={accountStatus}
+          kycStatus={kycStatus}
+          vehicleType={vehicleType}
+          onAccountStatusChange={(val) => {
+            setAccountStatus(val);
+            setPage(0);
+          }}
+          onKycStatusChange={(val) => {
+            setKycStatus(val);
+            setPage(0);
+          }}
+          onVehicleTypeChange={(val) => {
+            setVehicleType(val);
+            setPage(0);
+          }}
+        />
       </Box>
-
-      {/* Filters */}
-      <CourierFilters
-        activeTab={activeTab}
-        accountStatus={accountStatus}
-        kycStatus={kycStatus}
-        vehicleType={vehicleType}
-        onAccountStatusChange={(val) => {
-          setAccountStatus(val);
-          setPage(0);
-        }}
-        onKycStatusChange={(val) => {
-          setKycStatus(val);
-          setPage(0);
-        }}
-        onVehicleTypeChange={(val) => {
-          setVehicleType(val);
-          setPage(0);
-        }}
-      />
-      </Box>
-
 
       {/* Riders */}
       {activeTab === "riders" && (
@@ -275,7 +239,7 @@ export default function CourierManagementPage() {
           kycApprovingId={kycApprovingId}
           onPageChange={setPage}
           onPageSizeChange={handlePageSizeChange}
-          onApproveKyc={handleApproveKyc}
+          onApproveKyc={handleOpenApproveConfirm}
         />
       )}
 
@@ -300,6 +264,19 @@ export default function CourierManagementPage() {
           onPageSizeChange={handlePageSizeChange}
         />
       )}
+
+      {/* Approve KYC Confirmation Modal */}
+      <ApproveKycConfirmationModal
+          open={Boolean(confirmingRiderId)}
+          riderName={
+            selectedRiderForConfirm
+              ? `${selectedRiderForConfirm.first_name} ${selectedRiderForConfirm.last_name}`
+              : undefined
+          }
+          loading={Boolean(kycApprovingId)}
+          onClose={() => setConfirmingRiderId(null)}
+          onConfirm={handleConfirmApproveKyc}
+        />
     </Box>
   );
 }

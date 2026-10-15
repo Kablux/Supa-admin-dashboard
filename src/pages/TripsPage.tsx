@@ -13,7 +13,7 @@ import SearchFilterRow from "../components/SearchFilterRow";
 import TripsTable from "../components/trips/TripsTable";
 import TripDetailsModal from "../components/trips/TripDetailModal";
 import TripFilters, { TripFilterState } from "../components/trips/TripFilterDrawer";
-import { setCurrentPage } from "../redux/slices/Drivers";
+import { setCurrentPage } from "../redux/slices/Trips";
 import ExportTripsModal from "../components/trips/ExportTripsData";
 type UITabType = keyof typeof TRIP_TAB_MAPPING;
 
