@@ -50,9 +50,22 @@ Push (or merge) to `test` / `main` runs [.github/workflows/deploy.yml](../.githu
 
 6. **Disconnect Vercel**
    - In project `codewithgodstimes-projects/kabluxe-dashboard`, disconnect the GitHub repo and disable production deploys so merges to `main` no longer publish there
+   - Until disconnected, merges to `main`/`test` may still trigger a Vercel build in parallel with the VPS deploy
 
 ## Smoke checks
 
 - Staging: open https://staging-admin.kabluxe.com, log in against staging API
 - Production: open https://admin.kabluxe.com, log in against production API
 - Confirm the site is no longer served only from `kabluxe-dashboard.vercel.app`
+
+## Status after initial land
+
+| Item | Status |
+| --- | --- |
+| Backend nginx vhosts + volume | Merged to `development` and `test` |
+| Dashboard deploy workflow | Merged to `development` and `test` |
+| `VITE_API_BASE_URL` / `SSH_HOST` / `SSH_USER` | Set on test + production environments |
+| `SSH_PRIVATE_KEY` | **Not set** — first test deploy failed waiting for this |
+| DNS `staging-admin` / `admin` | **Not resolving yet** — add A records |
+| Certbot for admin hosts | Blocked on DNS |
+| Vercel disconnect | Manual in Vercel dashboard |
