@@ -14,9 +14,9 @@ import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import { toast } from "react-toastify";
 import { BroadcastRetentionResponse } from "../../types/common.types";
 import { broadcastRetention } from "../../api/xhr";
+import toast from "react-hot-toast";
 
 
 interface PushNotificationModalProps {

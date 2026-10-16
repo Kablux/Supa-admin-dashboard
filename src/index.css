@@ -11,8 +11,10 @@
   --text-primary: #f0f0f0;
   --text-secondary: #888888;
   --text-muted: #555555;
-  --accent-gold: #feb914;
+--accent-gold: #feb914;
+  --accent-gold-hover: #e5a612; 
   --accent-gold-dim: #c99d10;
+  --accent-gold-dimmer: #5e4804; 
   --accent-gold-glow: rgba(245, 197, 24, 0.15);
   --success: #4caf50;
   --danger: #ef5350;

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
-import { toast } from "react-toastify";
 import PeopleIcon from "@mui/icons-material/People";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -8,7 +7,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import { FaListCheck } from "react-icons/fa6";
 import { getDashboardStats, fetchDrivers } from "../api/xhrHelper";
-import { approveDriverKyc, rejectDriverKyc, suspendDriver } from "../api/xhr";
+import { approveDriverKyc, rejectDriverKyc, suspendDriver, unsuspendDriver } from "../api/xhr";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setCurrentPage } from "../redux/slices/Drivers";
 import OverviewCards, { OverviewItem } from "../components/OverviewCard";
@@ -18,6 +17,7 @@ import DriverFilters, { DriverFilterState } from "../components/driver/DriverFil
 import ExportDriversModal from "../components/driver/ExportDriversDataModal";
 import { DRIVER_TAB_MAPPING } from "../types/common.types";
 import DriverDetailsModal from "../components/driver/modal/DriverDetailModal";
+import toast from "react-hot-toast";
 
 
 type UITabType = keyof typeof DRIVER_TAB_MAPPING;
@@ -69,67 +69,76 @@ export default function DriversPage() {
       }),
     );
 
-  const handleDriverAction = async (
-    driverId: string,
-    actionType: "approve" | "activate" | "reject" | "suspend" | "delete",
-     reason?: string,
-  ) => {
-    try {
-      const targetDriver = driversList.find((d: any) => d.id === driverId);
+ const handleDriverAction = async (
+  driverId: string,
+  actionType: "approve" | "activate" | "reject" | "suspend" | "unsuspend" | "delete",
+  reason?: string,
+) => {
+  try {
+    const targetDriver = driversList.find((d: any) => d.id === driverId);
 
-      if (!targetDriver) {
-        toast.error("Driver not found in state!");
+    if (!targetDriver) {
+      toast.error("Driver not found in state!");
+      return;
+    }
+
+    if (actionType === "approve") {
+      const payload = {
+        kyc_status: targetDriver.kyc_status,
+        is_online: targetDriver.is_online,
+        rating: targetDriver.rating || "N/A",
+        ready_for_dispatch: targetDriver.ready_for_dispatch,
+      };
+      await approveDriverKyc(driverId, payload);
+      // Synchronize state before closing modal and showing toast
+      await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
+      toast.success(`${targetDriver.full_name} is Approved Successfully`);
+      setSelectedDriverId(null);
+    } else if (actionType === "suspend") {
+      const payload = {
+        kyc_status: targetDriver.kyc_status,
+        is_online: targetDriver.is_online,
+        rating: targetDriver.rating || "N/A",
+        ready_for_dispatch: targetDriver.ready_for_dispatch,
+      };
+      await suspendDriver(driverId, payload);
+      await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
+      toast.success(`${targetDriver.full_name} is suspended!`);
+      setSelectedDriverId(null);
+    } else if (actionType === "unsuspend") {
+      const payload = {
+        kyc_status: targetDriver.kyc_status,
+        rating: targetDriver.rating || "N/A",
+        ready_for_dispatch: targetDriver.ready_for_dispatch,
+        in_ride_status: (targetDriver as any).in_ride_status ?? false,
+      };
+      await unsuspendDriver(driverId, payload);
+      await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
+      toast.success(`${targetDriver.full_name} is unsuspended`);
+      setSelectedDriverId(null);
+    } else if (actionType === "reject") {
+      if (!reason || !reason.trim()) {
+        toast.error("A rejection reason is required");
         return;
       }
-
-        if (actionType === "approve") {
-        const payload = {
-          kyc_status: targetDriver.kyc_status,
-          is_online: targetDriver.is_online,
-          rating: targetDriver.rating || "N/A",
-          ready_for_dispatch: targetDriver.ready_for_dispatch,
-        };
-        await approveDriverKyc(driverId, payload);
-        toast.success(`${targetDriver.full_name} is Approved Successfully`);
-        setSelectedDriverId(null);
-        dispatch(getDashboardStats());
-        refetchDrivers();
-      } else if (actionType === "suspend") {
-        const payload = {
-          kyc_status: targetDriver.kyc_status,
-          is_online: targetDriver.is_online,
-          rating: targetDriver.rating || "N/A",
-          ready_for_dispatch: targetDriver.ready_for_dispatch,
-        };
-        await suspendDriver(driverId, payload);
-        toast.success(`${targetDriver.full_name} is suspended!`);
-        setSelectedDriverId(null);
-        dispatch(getDashboardStats());
-        refetchDrivers();
-      } else if (actionType === "reject") {
-        if (!reason || !reason.trim()) {
-          toast.error("A rejection reason is required");
-          return;
-        }
-        await rejectDriverKyc(driverId, reason.trim());
-        toast.success(`${targetDriver.full_name}'s KYC was rejected`);
-        setSelectedDriverId(null);
-        dispatch(getDashboardStats());
-        refetchDrivers();
-      }
-    } catch (error: any) {
-      console.error(
-        `Failed to execute ${actionType} on driver ID: ${driverId}`,
-        error,
-      );
-      toast.error(
-        error?.response?.data?.message ||
-          error?.response?.data?.rejection_reason?.[0] ||
-          `Failed to ${actionType} driver`,
-      );
+      await rejectDriverKyc(driverId, reason.trim());
+      await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
+      toast.success(`${targetDriver.full_name}'s KYC was rejected`);
+      setSelectedDriverId(null);
     }
-  };
-
+  } catch (error: any) {
+    console.error(
+      `Failed to execute ${actionType} on driver ID: ${driverId}`,
+      error,
+    );
+    toast.error(
+      error?.response?.data?.message ||
+        error?.response?.data?.rejection_reason?.[0] ||
+        `Failed to ${actionType} driver`,
+    );
+  }
+};
+ 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     dispatch(setCurrentPage(1));

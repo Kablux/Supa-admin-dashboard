@@ -11,7 +11,7 @@ export const cardSx = {
 export const inputSx = {
   "& .MuiOutlinedInput-root": {
     height: 44,
-    borderRadius: "10px",
+    borderRadius: "8px",
     fontSize: 14,
     color: "var(--text-primary)",
     backgroundColor: "rgba(255,255,255,0.02)",
@@ -20,7 +20,7 @@ export const inputSx = {
     "&.Mui-focused fieldset": { borderColor: "var(--accent-gold, #FFD700)" },
   },
   "& .MuiInputBase-input::placeholder": {
-    color: "rgba(255,255,255,0.35)",
+    color: "var(--text-muted, rgba(255,255,255,0.5))",
     opacity: 1,
   },
 };

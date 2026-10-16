@@ -9,10 +9,22 @@ import {
   LiveTripsSummary,
   ReferralSummaryData,
   RideRequestSummaryData,
-  RideSummaryData,
+  RiderSummaryData,
+  UserSummaryData,
 } from "../../types/common.types";
 
-const emptySummary: RideSummaryData = {
+const emptyRiderSummary: RiderSummaryData = {
+  total: 0,
+  active: 0,
+  suspended: 0,
+  pending_verification: 0,
+  never_requested: 0,
+  expired_unmatched: 0,
+  cancelled_request: 0,
+  completed_one_ride: 0,
+};
+
+const emptyUserSummary: UserSummaryData = {
   total: 0,
   active: 0,
   suspended: 0,
@@ -55,9 +67,9 @@ const initialState: DashboardState = {
   referralsSummary: emptyReferralsSummary,
   isLoading: false,
   error: null,
-  usersummary: emptySummary,
+  usersummary: emptyUserSummary,
   driversummary: emptyDriverSummary,
-  ridersummary: emptySummary,
+  ridersummary: emptyRiderSummary,
   requestsummary: emptyRideRequestSummary,
   analytics: null,
   analyticsLoading: false,

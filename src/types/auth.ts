@@ -3,8 +3,9 @@ import {
   LiveTripsSummary,
   ReferralSummaryData,
   RideRequestSummaryData,
-  RideSummaryData,
+  RiderSummaryData,
   TransactionAnalytics,
+  UserSummaryData,
 } from "./common.types";
 
 export interface LoginCredentials {
@@ -26,9 +27,9 @@ export interface DashboardState {
   // liveTrips: number;
   liveTripsSummary: LiveTripsSummary;
   referralsSummary: ReferralSummaryData;
-  usersummary: RideSummaryData;
+  usersummary: UserSummaryData;
   driversummary: DriverSummaryData;
-  ridersummary: RideSummaryData;
+  ridersummary: RiderSummaryData;
   requestsummary: RideRequestSummaryData;
   isLoading: boolean;
   error: string | null;

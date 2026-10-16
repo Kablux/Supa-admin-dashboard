@@ -5,11 +5,13 @@ export type DriverActionType =
   | "activate"
   | "reject"
   | "suspend"
+  | "unsuspend"
   | "delete";
 
 export const primaryVehicleOf = (d?: Driver | null) =>
   d?.vehicles?.[0] || d?.vehicle;
 
+/** First "front" vehicle image, else first image, else null. */
 export const primaryImageOf = (d?: Driver | null): string | null => {
   const v: any = primaryVehicleOf(d);
   return (

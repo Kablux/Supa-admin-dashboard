@@ -20,7 +20,7 @@ export default function DriverCustomerInfo({ driver }: { driver: Driver }) {
       <Typography sx={{ fontSize: 14, mb: 1.5, color: "primary" }}>
         Customer Info
       </Typography>
-      <Box className="gap-4 flex">
+      <Box className="gap-4 flex-wrap sm:flex-nowrap flex">
         <Box sx={infoBoxStyle}>
           <PhoneIcon sx={{ fontSize: 18, color: "secondary.main" }} />
           <Typography sx={{ fontSize: 14 }}>

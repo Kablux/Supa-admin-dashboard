@@ -26,6 +26,14 @@ const authSlice = createSlice({
     clearAuthError(state) {
       state.error = null;
     },
+    sessionExpired(state) {
+    state.user = null;
+    state.accessToken = null;
+    state.refreshToken = null;
+    state.isAuthenticated = false;
+    state.status = "idle";
+    state.error = null;
+  },
   },
   extraReducers: (builder) => {
     builder
@@ -72,6 +80,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, clearAuthError } = authSlice.actions;
+export const { setUser, clearAuthError, sessionExpired } = authSlice.actions;
 export default authSlice.reducer;
 
