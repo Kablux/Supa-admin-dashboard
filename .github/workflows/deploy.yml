@@ -86,8 +86,10 @@ jobs:
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
           SSH=(ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes)
           RSYNC=(rsync -az --delete -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes")
-          "${SSH[@]}" "${SSH_USER}@${SSH_HOST}" "mkdir -p /var/www/kabluxe-admin /var/www/kabluxe-admin-next"
-          "${RSYNC[@]}" dist/ "${SSH_USER}@${SSH_HOST}:/var/www/kabluxe-admin-next/"
+          # Stage under /tmp so non-root users (e.g. production deploy) can write.
+          # Final dir must already exist and be writable by SSH_USER.
+          "${SSH[@]}" "${SSH_USER}@${SSH_HOST}" "mkdir -p /var/www/kabluxe-admin /tmp/kabluxe-admin-next"
+          "${RSYNC[@]}" dist/ "${SSH_USER}@${SSH_HOST}:/tmp/kabluxe-admin-next/"
           "${SSH[@]}" "${SSH_USER}@${SSH_HOST}" \
-            "rsync -a --delete /var/www/kabluxe-admin-next/ /var/www/kabluxe-admin/ && rm -rf /var/www/kabluxe-admin-next"
+            "rsync -a --delete /tmp/kabluxe-admin-next/ /var/www/kabluxe-admin/ && rm -rf /tmp/kabluxe-admin-next"
           echo "Published to /var/www/kabluxe-admin on $SSH_HOST ($KABLUX_ENV)"
