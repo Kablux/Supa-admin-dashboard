@@ -1,16 +1,24 @@
-# React + Vite
+# Kablux Ops Admin Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite + TypeScript ops dashboard (riders, drivers, trips, banners, promotions).
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+cp .env.development.example .env
+npm ci
+npm run dev
+```
 
-## React Compiler
+`VITE_API_BASE_URL` is required. Use the staging API for local/test work; never hardcode the production API as a fallback.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Deploy
 
-## Expanding the ESLint configuration
+GitHub Actions builds and rsyncs the SPA to the API VPS:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Branch | URL |
+| --- | --- |
+| `test` | https://staging-admin.kabluxe.com |
+| `main` | https://admin.kabluxe.com |
+
+See [docs/VPS_DEPLOY.md](docs/VPS_DEPLOY.md) for secrets, DNS, TLS, and Vercel cutover.

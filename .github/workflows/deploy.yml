@@ -1,0 +1,93 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [test, main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-admin-${{ github.ref_name == 'main' && 'production' || 'test' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and publish SPA
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref_name == 'main' && 'production' || 'test' }}
+      url: ${{ github.ref_name == 'main' && 'https://admin.kabluxe.com' || 'https://staging-admin.kabluxe.com' }}
+    env:
+      KABLUX_ENV: ${{ github.ref_name == 'main' && 'production' || 'test' }}
+      VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Require deploy secrets
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          set -e
+          missing=0
+          [ -z "$SSH_HOST" ] && echo "Missing SSH_HOST" && missing=1
+          [ -z "$SSH_USER" ] && echo "Missing SSH_USER" && missing=1
+          [ -z "$SSH_PRIVATE_KEY" ] && echo "Missing SSH_PRIVATE_KEY" && missing=1
+          [ -z "$VITE_API_BASE_URL" ] && echo "Missing VITE_API_BASE_URL" && missing=1
+          if [ "$missing" -ne 0 ]; then
+            echo "Add these secrets to the $KABLUX_ENV GitHub environment (Settings → Environments)."
+            exit 1
+          fi
+          if [ "$KABLUX_ENV" = "test" ]; then
+            case "$VITE_API_BASE_URL" in
+              *staging-api.kabluxe.com*) ;;
+              *)
+                echo "test environment VITE_API_BASE_URL must point at staging-api.kabluxe.com. Got: $VITE_API_BASE_URL"
+                exit 1
+                ;;
+            esac
+          else
+            case "$VITE_API_BASE_URL" in
+              *staging-api*|*api-test*|*-test*)
+                echo "production environment VITE_API_BASE_URL must not be a test API. Got: $VITE_API_BASE_URL"
+                exit 1
+                ;;
+              *api.kabluxe.com*) ;;
+              *)
+                echo "production environment VITE_API_BASE_URL must point at api.kabluxe.com. Got: $VITE_API_BASE_URL"
+                exit 1
+                ;;
+            esac
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install and build
+        run: |
+          npm ci
+          npm run build
+          test -f dist/index.html
+
+      - name: Publish dist to VPS
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          SSH=(ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes)
+          RSYNC=(rsync -az --delete -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes")
+          "${SSH[@]}" "${SSH_USER}@${SSH_HOST}" "mkdir -p /var/www/kabluxe-admin /var/www/kabluxe-admin-next"
+          "${RSYNC[@]}" dist/ "${SSH_USER}@${SSH_HOST}:/var/www/kabluxe-admin-next/"
+          "${SSH[@]}" "${SSH_USER}@${SSH_HOST}" \
+            "rsync -a --delete /var/www/kabluxe-admin-next/ /var/www/kabluxe-admin/ && rm -rf /var/www/kabluxe-admin-next"
+          echo "Published to /var/www/kabluxe-admin on $SSH_HOST ($KABLUX_ENV)"
