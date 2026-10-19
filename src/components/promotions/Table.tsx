@@ -65,17 +65,30 @@ export default function PromotionsTable({
   onDelete,
 }: PromotionsTableProps) {
   return (
-    <TableContainer
-      // component={Paper}
-      // elevation={0}
-      sx={{
-        // backgroundColor: "var(--bg-card)",
-        // border: "1px solid var(--border)",
-        overflow: "hidden",
-        // boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
-      }}
+      <TableContainer
+    sx={{
+    width: "100%",
+    maxWidth: "100%",
+    overflowX: "auto",
+    WebkitOverflowScrolling: "touch",
+    "&::-webkit-scrollbar": {
+      height: 5,
+    },
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      borderRadius: 10,
+    },
+    "&::-webkit-scrollbar-track": {
+      backgroundColor: "transparent",
+    },
+  }}
     >
-      <Table size="small">
+      <Table size="small" 
+      sx={{
+      minWidth: 1000,
+      width: "100%",
+      tableLayout: "auto",
+    }}>
         <TableHead>
           <TableRow>
             <TableCell sx={headerCellSx}>Name & Code</TableCell>
@@ -229,22 +242,11 @@ export default function PromotionsTable({
         onPageChange={(_, newPage) => onPageChange(newPage)}
         rowsPerPage={pageSize}
         onRowsPerPageChange={(e) => onPageSizeChange(parseInt(e.target.value, 10))}
-        sx={{
-          color: "var(--text-secondary, #C1C7D0)",
-          ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows": {
-            fontSize: 14,
-            fontWeight: 500,
-          },
-          ".MuiTablePagination-select": {
-            fontSize: 14,
-          },
-          ".MuiTablePagination-actions button": {
+          sx={{
             color: "var(--text-secondary, #C1C7D0)",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-            },
-          },
-        }}
+            "& .MuiTablePagination-actions": { color: "var(--accent-gold)" },
+            borderTop: "1px solid rgba(255,255,255,0.05)",
+          }}
       />
     </TableContainer>
   );

@@ -768,6 +768,81 @@ export interface ApproveKycResponse {
   approval_date: string;
 }
 
+////SOS
+export type SosStatus = "OPEN" | "RESOLVED" | "IN_PROGRESS" | string;
+
+export interface SosRideInfo {
+  id: string;
+  pickup_address: string;
+  dropoff_address: string;
+  status: string;
+  rider: string;
+  driver: string;
+}
+
+export interface SosUserInfo {
+  id: string;
+  email: string;
+  full_name: string;
+  role: string;
+  phone_number: string;
+}
+
+export interface SosAudioInfo {
+  id: string;
+  audio_file: string;
+  duration_seconds: number;
+  created_at: string;
+}
+
+export interface SosIncident {
+  id: string;
+  status: SosStatus;
+  reason?: string;
+  created_at: string;
+  updated_at: string;
+  ride: SosRideInfo | null;
+  triggered_by: SosUserInfo | null;
+  audio: SosAudioInfo | null;
+}
+
+export interface PaginatedSosResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SosIncident[];
+}
+
+export interface FetchSosParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  status?: string;
+  ride?: string;
+  triggered_by?: string;
+  created_at_after?: string;
+  created_at_before?: string;
+  ordering?: string;
+}
+
+export interface SosState {
+  items: SosIncident[];
+  count: number;
+  currentPage: number;
+  pageSize: number;
+  search: string;
+  statusFilter: string;
+  rideFilter: string;
+  triggeredByFilter: string;
+  createdAtAfter: string;
+  createdAtBefore: string;
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+}
+
+
+
+
 // Query Parameters
 export interface FetchRidersParams {
   page?: number;
