@@ -20,35 +20,13 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
-import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 import SearchFilterRow from "../components/SearchFilterRow";
 import { loadSosIncidents } from "../api/xhrHelper";
-import { setCurrentPage,setSearch,setPageSize,setStatusFilter, setRideFilter, setTriggeredByFilter, clearFilters } from "../redux/slices/Sos";
+import { setCurrentPage,setSearch,setPageSize,setStatusFilter } from "../redux/slices/Sos";
 import SosIncidentsTable from "../components/sos/SosTable";
 
-const headerCellSx = {
-  fontSize: 12,
-  fontWeight: 600,
-  letterSpacing: "0.5px",
-  color: "var(--text-secondary, #8A92A6)",
-  backgroundColor: "var(--bg-secondary, #141721)",
-  borderColor: "var(--border, rgba(255, 255, 255, 0.08))",
-  py: 1.75,
-  px: 2.5,
-  whiteSpace: "nowrap",
-} as const;
-
-const bodyCellSx = {
-  fontSize: 13.5,
-  color: "var(--text-primary, #FFFFFF)",
-  borderColor: "var(--border, rgba(255, 255, 255, 0.06))",
-  py: 1.75,
-  px: 2.5,
-} as const;
 
 const selectSx = {
   fontSize: 14,
