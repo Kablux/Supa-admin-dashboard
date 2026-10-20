@@ -20,6 +20,7 @@ import ReferralsTable from "../components/courier/ReferralsTable";
 import UsersTable from "../components/courier/UsersTable";
 import SearchFilterRow from "../components/SearchFilterRow";
 import ApproveKycConfirmationModal from "../components/courier/ApproveKycModal";
+import RiderDetailsModal from "../components/courier/RiderDetailsModal"; // Import your rider details modal
 
 type CourierTab = "riders" | "users" | "referrals";
 
@@ -44,6 +45,9 @@ export default function CourierManagementPage() {
 
   // State to control KYC approval confirmation modal
   const [confirmingRiderId, setConfirmingRiderId] = useState<string | null>(null);
+
+  // State to control the Rider Details modal
+  const [selectedRider, setSelectedRider] = useState<any | null>(null);
 
   const {
     riders,
@@ -111,6 +115,8 @@ export default function CourierManagementPage() {
       await dispatch(approveCourierRiderKyc(confirmingRiderId)).unwrap();
       toast.success("Rider KYC approved successfully!");
       setConfirmingRiderId(null);
+      // Close details modal if open for this rider
+      setSelectedRider(null);
 
       // Refetch riders list to update the table status
       dispatch(
@@ -240,6 +246,7 @@ export default function CourierManagementPage() {
           onPageChange={setPage}
           onPageSizeChange={handlePageSizeChange}
           onApproveKyc={handleOpenApproveConfirm}
+          onRowClick={(rider) => setSelectedRider(rider)}
         />
       )}
 
@@ -267,16 +274,28 @@ export default function CourierManagementPage() {
 
       {/* Approve KYC Confirmation Modal */}
       <ApproveKycConfirmationModal
-          open={Boolean(confirmingRiderId)}
-          riderName={
-            selectedRiderForConfirm
-              ? `${selectedRiderForConfirm.first_name} ${selectedRiderForConfirm.last_name}`
-              : undefined
-          }
-          loading={Boolean(kycApprovingId)}
-          onClose={() => setConfirmingRiderId(null)}
-          onConfirm={handleConfirmApproveKyc}
-        />
+        open={Boolean(confirmingRiderId)}
+        riderName={
+          selectedRiderForConfirm
+            ? `${selectedRiderForConfirm.first_name} ${selectedRiderForConfirm.last_name}`
+            : undefined
+        }
+        loading={Boolean(kycApprovingId)}
+        onClose={() => setConfirmingRiderId(null)}
+        onConfirm={handleConfirmApproveKyc}
+      />
+
+      {/* Rider Details Modal */}
+      <RiderDetailsModal
+        open={Boolean(selectedRider)}
+        rider={selectedRider}
+        onClose={() => setSelectedRider(null)}
+        // onApproveKyc={(id) => {
+        //   setSelectedRider(null);
+        //   handleOpenApproveConfirm(id);
+        // }}
+        // isApproving={kycApprovingId === selectedRider?.id}
+      />
     </Box>
   );
 }
