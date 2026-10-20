@@ -24,6 +24,7 @@ import {
   fetchPromotionSummaryXHR,
   fetchPromotionsXHR,
   fetchPromotionUsagesXHR,
+  fetchSosIncidentsApi,
   getAdminRoles,
   getCorporateData,
   getDriverList,
@@ -49,7 +50,7 @@ import {
   updatePromotionXHR,
   uploadFiles,
 } from "./xhr";
-import { AdminRole, Banner, BannerPayload, BannersState,  CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, UploadFile } from "../types/common.types";
+import { AdminRole, Banner, BannerPayload, BannersState,  CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, SosState, UploadFile } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
@@ -502,6 +503,39 @@ export const fetchCourierReferrals = createAsyncThunk(
   }
 );
 
+///SOS THUNK
+export const loadSosIncidents = createAsyncThunk(
+  "sos/loadIncidents",
+  async (_, { getState, rejectWithValue }) => {
+    const state = getState() as { sos: SosState };
+    const {
+      currentPage,
+      pageSize,
+      search,
+      statusFilter,
+      rideFilter,
+      triggeredByFilter,
+      createdAtAfter,
+      createdAtBefore,
+    } = state.sos;
+
+    try {
+      const data = await fetchSosIncidentsApi({
+        page: currentPage,
+        page_size: pageSize,
+        search: search || undefined,
+        status: statusFilter || undefined,
+        ride: rideFilter || undefined,
+        triggered_by: triggeredByFilter || undefined,
+        created_at_after: createdAtAfter ? new Date(createdAtAfter).toISOString() : undefined,
+        created_at_before: createdAtBefore ? new Date(createdAtBefore).toISOString() : undefined,
+      });
+      return data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || "Failed to fetch SOS incidents");
+    }
+  }
+);
 
 export const toggleBannerActive = createAsyncThunk<
   Banner,

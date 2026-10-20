@@ -2,7 +2,6 @@ import React from "react";
 import {
   Chip,
   CircularProgress,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -11,6 +10,7 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  Box,
 } from "@mui/material";
 
 interface User {
@@ -20,8 +20,9 @@ interface User {
   email: string;
   phone_number: string;
   user_type: string;
-  city: string;
-  state: string;
+  account_status: string;
+  city: string | null;
+  state: string | null;
   referral_code?: string;
   date_joined: string;
 }
@@ -32,10 +33,8 @@ interface UsersTableProps {
     count: number;
     loading: boolean;
   };
-
   page: number;
   pageSize: number;
-
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
 }
@@ -43,7 +42,6 @@ interface UsersTableProps {
 const headerCellSx = {
   fontSize: 12,
   fontWeight: 500,
-  letterSpacing: "0.5px",
   color: "var(--text-secondary, #8A92A6)",
   backgroundColor: "var(--bg-secondary, #161B26)",
   borderColor: "var(--border, rgba(255, 255, 255, 0.08))",
@@ -53,12 +51,11 @@ const headerCellSx = {
 } as const;
 
 const bodyCellSx = {
-  fontSize: 14,
-  color: "var(--text-primary, #FFF)",
-  borderBottom: "1px solid rgba(255, 255, 255, 0.055)",
-  py: 2,
-  px: 2.5,
-  whiteSpace: "nowrap",
+  fontSize: 12,
+  color: "var(--text-primary, #FFFFFF)",
+  borderColor: "var(--border, rgba(255, 255, 255, 0.08))",
+  py: 1.5,
+  px: 2,
 } as const;
 
 const UsersTable: React.FC<UsersTableProps> = ({
@@ -68,20 +65,48 @@ const UsersTable: React.FC<UsersTableProps> = ({
   onPageChange,
   onPageSizeChange,
 }) => {
+  const renderStatusChip = (status: string) => {
+    const isActive = status?.toUpperCase() === "ACTIVE";
+    return (
+      <Chip
+        label={status || "UNKNOWN"}
+        size="small"
+        sx={{
+          height: 24,
+          fontSize: 10,
+          fontWeight: 600,
+          backgroundColor: isActive ? "rgba(16, 185, 129, 0.018)" : "rgba(239, 68, 68, 0.023)",
+          color: isActive ? "#34d399cc" : "#f87171bd",
+          border: `1px solid ${isActive ? "rgba(16, 185, 129, 0.096)" : "rgba(239, 68, 68, 0.068)"}`,
+        }}
+      />
+    );
+  };
+
   return (
-   <TableContainer
-         sx={{
-           overflow: "hidden",
-         }}
-       >
-      <Table size="small">
+    <TableContainer
+      sx={{
+        width: "100%",
+        maxWidth: "100%",
+        overflowX: "auto",
+        WebkitOverflowScrolling: "touch",
+        "&::-webkit-scrollbar": { height: 5 },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "rgba(255, 255, 255, 0.2)",
+          borderRadius: 10,
+        },
+        "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
+      }}
+    >
+      <Table size="small" sx={{ minWidth: 1000, width: "100%", tableLayout: "auto" }}>
         <TableHead>
           <TableRow>
-            <TableCell sx={headerCellSx}>Name & Email</TableCell>
+            <TableCell sx={headerCellSx}>Name &amp; Email</TableCell>
             <TableCell sx={headerCellSx}>Phone</TableCell>
             <TableCell sx={headerCellSx}>User Type</TableCell>
-            <TableCell sx={headerCellSx}>City/State</TableCell>
+            <TableCell sx={headerCellSx}>City / State</TableCell>
             <TableCell sx={headerCellSx}>Referral Code</TableCell>
+            <TableCell sx={headerCellSx}>Account Status</TableCell>
             <TableCell sx={headerCellSx}>Date Joined</TableCell>
           </TableRow>
         </TableHead>
@@ -89,18 +114,17 @@ const UsersTable: React.FC<UsersTableProps> = ({
         <TableBody>
           {users.loading ? (
             <TableRow>
-              <TableCell colSpan={6} align="center" sx={{ ...bodyCellSx }}>
-                <CircularProgress
-                  size={28}
-                  sx={{ color: "var(--accent-gold, #FFD700)" }}
-                />
+              <TableCell colSpan={7} align="center" sx={bodyCellSx}>
+                <Box sx={{ py: 4 }}>
+                  <CircularProgress size={28} sx={{ color: "var(--accent-gold, #FEB914)" }} />
+                </Box>
               </TableCell>
             </TableRow>
           ) : users.data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} align="center" sx={{ ...bodyCellSx }}>
-                <Typography sx={{ color: "var(--text-secondary, #8A92A6)" }}>
-                  No users found.
+              <TableCell colSpan={7} align="center" sx={bodyCellSx}>
+                <Typography sx={{ py: 4, color: "var(--text-secondary, #8A92A6)", fontSize: 14 }}>
+                  No users found matching query.
                 </Typography>
               </TableCell>
             </TableRow>
@@ -110,30 +134,25 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 key={user.id}
                 sx={{
                   transition: "background-color 0.15s ease",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.025)",
-                  },
-                  "&:last-child td, &:last-child th": {
-                    borderBottom: 0,
-                  },
+                  "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.025)" },
+                  "&:last-child td, &:last-child th": { borderBottom: 0 },
                 }}
               >
                 {/* Name & Email */}
                 <TableCell sx={bodyCellSx}>
                   <Typography
                     sx={{
-                      fontSize: 14,
-                      fontWeight: 500,
+                      fontSize: 12.5,
+                      fontWeight: 600,
                       color: "var(--text-primary, #FFF)",
                       lineHeight: 1.3,
                     }}
                   >
                     {user.first_name} {user.last_name}
                   </Typography>
-
                   <Typography
                     sx={{
-                      fontSize: 14,
+                      fontSize: 11.5,
                       color: "var(--text-muted, #8A92A6)",
                       mt: 0.25,
                       display: "block",
@@ -145,12 +164,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
 
                 {/* Phone */}
                 <TableCell sx={bodyCellSx}>
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      color: "var(--text-secondary, #C1C7D0)",
-                    }}
-                  >
+                  <Typography sx={{ fontSize: 12, color: "var(--text-secondary, #C1C7D0)" }}>
                     {user.phone_number || "N/A"}
                   </Typography>
                 </TableCell>
@@ -162,30 +176,22 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     size="small"
                     variant="outlined"
                     sx={{
-                      height: 27,
-                        borderRadius: "8px",
-                        backgroundColor: "var(--bg-secondary, #161B26)",
-                        color:" var(--text-secondary, #C1C7D0)",
-                        border: `1px solid var(--border, rgba(255, 255, 255, 0.08))`,
-                        fontSize: 11,
-                        fontWeight: 600,
-                        letterSpacing: "0.15px",
-                        "& .MuiChip-label": {
-                          px: 1.2,
-                        },
+                      height: 24,
+                      borderRadius: "6px",
+                      backgroundColor: "var(--bg-secondary, #161B26)",
+                      color: "var(--text-secondary, #C1C7D0)",
+                      border: "1px solid var(--border, rgba(255, 255, 255, 0.08))",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      "& .MuiChip-label": { px: 1 },
                     }}
                   />
                 </TableCell>
 
-                {/* City/*/}
+                {/* City / State */}
                 <TableCell sx={bodyCellSx}>
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      color: "var(--text-secondary, #C1C7D0)",
-                    }}
-                  >
-                    {user.city || "N/A"}
+                  <Typography sx={{ fontSize: 12, color: "var(--text-secondary, #C1C7D0)" }}>
+                    {[user.city, user.state].filter(Boolean).join(", ") || "N/A"}
                   </Typography>
                 </TableCell>
 
@@ -193,8 +199,9 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 <TableCell sx={bodyCellSx}>
                   <Typography
                     sx={{
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: 500,
+                      fontFamily: "monospace",
                       color: user.referral_code
                         ? "var(--accent-gold, #FFD700)"
                         : "var(--text-muted, #8A92A6)",
@@ -204,17 +211,15 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   </Typography>
                 </TableCell>
 
+                {/* Account Status */}
+                <TableCell sx={bodyCellSx}>
+                  {renderStatusChip(user.account_status)}
+                </TableCell>
+
                 {/* Date Joined */}
                 <TableCell sx={bodyCellSx}>
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      color: "var(--text-secondary, #C1C7D0)",
-                    }}
-                  >
-                    {user.date_joined
-                      ? new Date(user.date_joined).toLocaleDateString()
-                      : "—"}
+                  <Typography sx={{ fontSize: 12, color: "var(--text-secondary, #C1C7D0)" }}>
+                    {user.date_joined ? new Date(user.date_joined).toLocaleDateString() : "—"}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -226,28 +231,14 @@ const UsersTable: React.FC<UsersTableProps> = ({
       <TablePagination
         component="div"
         count={users.count}
-        page={page}
+        page={Math.max(0, page)}
         onPageChange={(_, newPage) => onPageChange(newPage)}
         rowsPerPage={pageSize}
-        onRowsPerPageChange={(e) =>
-          onPageSizeChange(parseInt(e.target.value, 10))
-        }
+        onRowsPerPageChange={(e) => onPageSizeChange(parseInt(e.target.value, 10))}
         sx={{
           color: "var(--text-secondary, #C1C7D0)",
-          borderTop: "1px solid var(--border, rgba(255, 255, 255, 0.08))",
-          ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows": {
-            fontSize: 14,
-            fontWeight: 500,
-          },
-          ".MuiTablePagination-select": {
-            fontSize: 14,
-          },
-          ".MuiTablePagination-actions button": {
-            color: "var(--text-secondary, #C1C7D0)",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-            },
-          },
+          "& .MuiTablePagination-actions": { color: "var(--accent-gold)" },
+          // borderTop: "1px solid rgba(255,255,255,0.05)",
         }}
       />
     </TableContainer>

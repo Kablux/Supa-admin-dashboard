@@ -74,6 +74,9 @@ const CourierFilters: React.FC<CourierFiltersProps> = ({
             <MenuItem value="PENDING_APPROVAL" sx={{ fontSize: 14 }}>
               Pending Approval
             </MenuItem>
+            <MenuItem value="PENDING_EMAIL_VERIFICATION" sx={{ fontSize: 14 }}>
+              Pending Email Verification
+            </MenuItem>
             <MenuItem value="SUSPENDED" sx={{ fontSize: 14 }}>
               Suspended
             </MenuItem>

@@ -16,6 +16,7 @@ import referralsReducer from "./slices/Referrals";
 import bannerReducer from "./slices/Banner";
 import courierReducer from "./slices/Courier";
 import promotionReducer from "./slices/Promotions";
+import sosReducer from "./slices/Sos";
 
 export const store = configureStore({
   reducer: {
@@ -36,6 +37,7 @@ export const store = configureStore({
     inspection: inspectionReducer,
     banners: bannerReducer,
     promotions: promotionReducer,
+    sos: sosReducer,
   },
 });
 
