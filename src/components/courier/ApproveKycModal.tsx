@@ -36,7 +36,6 @@ const ApproveKycConfirmationModal: React.FC<
           color: "var(--text-primary)",
           p: 1,
           backgroundImage: "none",
-          boxShadow: "0 24px 80px rgba(0, 0, 0, 0.35)",
         },
       }}
     >

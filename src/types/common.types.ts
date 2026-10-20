@@ -759,6 +759,28 @@ export interface CourierReferral {
   referred: CourierUser;
 }
 
+export interface Rider {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  user_type: string;
+  account_status: string;
+  city: string | null;
+  state: string | null;
+  date_joined: string;
+  referral_code: string;
+  kyc_status: string;
+  kyc_submitted_at: string;
+  kyc_rejection_reason?: string | null; 
+  is_approved: boolean;
+  available_to_receive_order: boolean;
+  vehicle_type: string;
+  vehicle_registration_number: string | null;
+  rating?: number | null;
+}
+
 export interface ApproveKycResponse {
   id: string;
   email: string;
