@@ -29,8 +29,8 @@ const DARK_VARS: ThemeVars = {
 };
 
 const LIGHT_VARS: ThemeVars = {
-  "--bg-primary": "#f4f5f7",
-  "--bg-secondary": "#ffffff",
+  "--bg-primary": "#ffffff",
+  "--bg-secondary": "#f4f5f7",
   "--bg-card": "#ffffff",
   "--bg-card-hover": "#f9f9fb",
   "--border": "#e4e4e7",
