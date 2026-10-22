@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -6,17 +7,21 @@ import {
   Typography,
   IconButton,
   Chip,
-
+  Button,
+  Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PersonIcon from "@mui/icons-material/Person";
+import DescriptionIcon from "@mui/icons-material/Description";
+import GroupIcon from "@mui/icons-material/Group";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import KycStatusChip from "./KycStatusChip";
-import { Rider } from "../../types/common.types";
+import { CourierRider } from "../../types/common.types";
 
 interface RiderDetailsModalProps {
   open: boolean;
-  rider: Rider | null;
+  rider: CourierRider | null;
   onClose: () => void;
 }
 
@@ -27,14 +32,13 @@ export default function RiderDetailsModal({
 }: RiderDetailsModalProps) {
   if (!rider) return null;
 
-
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
-       sx={{
+      sx={{
         "& .MuiDialog-paper": {
           backgroundColor: "var(--bg-card, #1A1D26)",
           backgroundImage: "none",
@@ -86,9 +90,9 @@ export default function RiderDetailsModal({
       </DialogTitle>
 
       {/* Content */}
-      <DialogContent sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2 }}>
+      <DialogContent sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2.5, maxHeight: "80vh", overflowY: "auto" }}>
         {/* Status Badges Row */}
-        <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap", mt:1}} >
+        <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap", mt: 0.5 }}>
           <KycStatusChip status={rider.kyc_status} />
           <Chip
             label={`Account: ${rider.account_status}`}
@@ -137,6 +141,12 @@ export default function RiderDetailsModal({
               <Typography variant="body2" sx={{ fontWeight: 500 }}>{rider.phone_number || "N/A"}</Typography>
             </Box>
             <Box>
+              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Gender &amp; DOB</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {rider.gender || "N/A"} {rider.date_of_birth ? `(${rider.date_of_birth})` : ""}
+              </Typography>
+            </Box>
+            <Box>
               <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>City / State</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {[rider.city, rider.state].filter(Boolean).join(", ") || "N/A"}
@@ -150,12 +160,6 @@ export default function RiderDetailsModal({
               <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Date Joined</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {rider.date_joined ? new Date(rider.date_joined).toLocaleDateString() : "N/A"}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Rating</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {rider.rating ? `⭐ ${rider.rating.toFixed(1)}` : "No ratings yet"}
               </Typography>
             </Box>
           </Box>
@@ -172,15 +176,21 @@ export default function RiderDetailsModal({
               borderRadius: "10px",
               p: 2,
               display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(3, 1fr)",
               gap: 2,
-              border: "1px solid rgba(255, 255, 255, 0.04)",
+              border: "1px solid var(--border, rgba(255,255,255,0.09))",
             }}
           >
             <Box>
               <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Vehicle Type</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, textTransform: "capitalize" }}>
                 {rider.vehicle_type || "N/A"}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Brand / Make</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {rider.vehicle_brand || "N/A"}
               </Typography>
             </Box>
             <Box>
@@ -192,10 +202,141 @@ export default function RiderDetailsModal({
           </Box>
         </Box>
 
-        {/* KYC & Verification Details */}
+        {/* KYC Documents & Uploads */}
+        <Box>
+          <Typography variant="subtitle2" sx={{ color: "var(--accent-gold, #FEB914)", mb: 1.5, fontWeight: 500, display: "flex", alignItems: "center", gap: 1 }}>
+            <DescriptionIcon fontSize="small" /> KYC Documents &amp; Media
+          </Typography>
+          <Box
+            sx={{
+              backgroundColor: "var(--bg-secondary, #141721)",
+              borderRadius: "10px",
+              p: 2,
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 1.5,
+              border: "1px solid rgba(255, 255, 255, 0.04)",
+            }}
+          >
+            {rider.rider_permit_url && (
+              <Button
+                variant="outlined"
+                size="small"
+                component="a"
+                href={rider.rider_permit_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                endIcon={<OpenInNewIcon fontSize="small" />}
+                sx={{ textTransform: "none", color: "var(--text-primary)", borderColor: "var(--border, rgba(255,255,255,0.09))" }}
+              >
+                Rider Permit
+              </Button>
+            )}
+
+            {rider.government_id_front_url && (
+              <Button
+                variant="outlined"
+                size="small"
+                component="a"
+                href={rider.government_id_front_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                endIcon={<OpenInNewIcon fontSize="small" />}
+                sx={{ textTransform: "none", color: "var(--text-primary)", borderColor: "var(--border, rgba(255,255,255,0.09))" }}
+              >
+                Government ID
+              </Button>
+            )}
+
+            {rider.vehicle_picture_url && (
+              <Button
+                variant="outlined"
+                size="small"
+                component="a"
+                href={rider.vehicle_picture_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                endIcon={<OpenInNewIcon fontSize="small" />}
+                sx={{ textTransform: "none", color: "var(--text-primary)", borderColor: "var(--border, rgba(255,255,255,0.09))" }}
+              >
+                Vehicle Picture
+              </Button>
+            )}
+
+            {!rider.rider_permit_url && !rider.government_id_front_url && !rider.vehicle_picture_url && (
+              <Typography variant="body2" sx={{ color: "var(--text-muted)" }}>
+                No document URLs available.
+              </Typography>
+            )}
+          </Box>
+        </Box>
+
+        {/* Guarantors & Next of Kin */}
+        <Box>
+          <Typography variant="subtitle2" sx={{ color: "var(--accent-gold, #FEB914)", mb: 1.5, fontWeight: 500, display: "flex", alignItems: "center", gap: 1 }}>
+            <GroupIcon fontSize="small" /> Guarantors &amp; Next of Kin
+          </Typography>
+          <Box
+            sx={{
+              backgroundColor: "var(--bg-secondary, #141721)",
+              borderRadius: "10px",
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              border: "1px solid rgba(255, 255, 255, 0.04)",
+            }}
+          >
+            {/* Next of Kin */}
+            <Box>
+              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Next of Kin</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                {rider.next_of_kin_full_name || "N/A"} ({rider.next_of_kin_phone_number || "No Phone"})
+              </Typography>
+            </Box>
+
+            <Divider sx={{ borderColor: "var(--border)" }} />
+
+            {/* Guarantors List */}
+            <Box>
+              <Typography variant="caption" sx={{ color: "var(--text-muted)", display: "block", mb: 1 }}>
+                Registered Guarantors ({rider.guarantors?.length || 0})
+              </Typography>
+              {rider.guarantors && rider.guarantors.length > 0 ? (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  {rider.guarantors.map((g) => (
+                    <Box key={g.slot} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "rgba(255,255,255,0.02)", p: 1, borderRadius: "6px" }}>
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          Slot {g.slot}: {g.full_name}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>
+                          {g.phone_number}
+                        </Typography>
+                      </Box>
+                      <Chip label={g.status} size="small" sx={{ fontSize: 10, height: 20 }} />
+                    </Box>
+                  ))}
+                </Box>
+              ) : (
+                <Typography variant="body2" sx={{ color: "var(--text-muted)" }}>No guarantors listed.</Typography>
+              )}
+            </Box>
+
+            {/* Past Work History */}
+            <Box sx={{ mt: 0.5 }}>
+              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Work Experience</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {rider.previous_place_of_work ? `${rider.previous_place_of_work} (${rider.years_worked || "Duration N/A"})` : "N/A"}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* KYC Compliance Status & Rejection */}
         <Box>
           <Typography variant="subtitle2" sx={{ color: "var(--accent-gold, #FEB914)", mb: 1.5, fontWeight: 500 }}>
-            KYC & Compliance
+            Compliance Notes
           </Typography>
           <Box
             sx={{

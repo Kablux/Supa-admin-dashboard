@@ -735,50 +735,61 @@ export interface CourierUser {
   phone_number: string;
   user_type: string;
   account_status: string;
-  city: string;
-  state: string;
+  city: string | null;
+  state: string | null;
   date_joined: string;
   referral_code: string;
 }
 
-export interface CourierRider extends CourierUser {
-  kyc_status: string;
-  kyc_submitted_at: string;
-  kyc_rejection_reason?: string;
-  is_approved: boolean;
-  available_to_receive_order: boolean;
-  vehicle_type: string;
-  vehicle_registration_number: string;
-  rating: number;
+export interface CourierGuarantor {
+  slot: number;
+  full_name: string;
+  phone_number: string;
+  status: string;
 }
+
+export interface CourierRider extends CourierUser {
+  gender?: string | null;
+  profile_photo?: string | null;
+  date_of_birth?: string | null;
+  
+  // KYC & Verification
+  kyc_status: string;
+  kyc_submitted_at: string | null;
+  kyc_rejection_reason?: string | null;
+  is_approved: boolean;
+  approval_date?: string | null;
+  available_to_receive_order: boolean;
+
+  // Media / Document URLs
+  rider_permit_url?: string | null;
+  government_id_front_url?: string | null;
+  vehicle_picture_url?: string | null;
+
+  // Vehicle Information
+  vehicle_type: string;
+  vehicle_brand?: string | null;
+  vehicle_registration_number: string | null;
+  rating?: number | null;
+
+  // Next of Kin & Guarantors
+  next_of_kin_full_name?: string | null;
+  next_of_kin_phone_number?: string | null;
+  guarantors?: CourierGuarantor[];
+
+  // Work Experience
+  previous_place_of_work?: string | null;
+  years_worked?: string | null;
+}
+
+// Alias Rider to CourierRider to avoid duplicate interfaces across components
+export type Rider = CourierRider;
 
 export interface CourierReferral {
   id: string;
   created_at: string;
   referrer: CourierUser;
   referred: CourierUser;
-}
-
-export interface Rider {
-  id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  user_type: string;
-  account_status: string;
-  city: string | null;
-  state: string | null;
-  date_joined: string;
-  referral_code: string;
-  kyc_status: string;
-  kyc_submitted_at: string;
-  kyc_rejection_reason?: string | null; 
-  is_approved: boolean;
-  available_to_receive_order: boolean;
-  vehicle_type: string;
-  vehicle_registration_number: string | null;
-  rating?: number | null;
 }
 
 export interface ApproveKycResponse {
@@ -789,7 +800,6 @@ export interface ApproveKycResponse {
   is_approved: boolean;
   approval_date: string;
 }
-
 ////SOS
 export type SosStatus = "OPEN" | "RESOLVED" | "IN_PROGRESS" | string;
 
