@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined";
-import CloseIcon from "@mui/icons-material/Close";
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import AppButton from "../common/AppButton";
 

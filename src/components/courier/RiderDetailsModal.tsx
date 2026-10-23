@@ -49,7 +49,7 @@ export default function RiderDetailsModal({
   const isEligibleForApproval = !isVerified;
   const isEligibleForRejection =
     rider.account_status === "PENDING_APPROVAL" ||
-    ["UNDER_REVIEW", "NEEDS_RESUBMISSION"].includes(rider.kyc_status);
+    ["UNDER_REVIEW", "NEEDS_RESUBMISSION"].includes(rider.kyc_status)
 
   const isApproving = kycApprovingId === rider.id;
   const isRejecting = kycRejectingId === rider.id;
