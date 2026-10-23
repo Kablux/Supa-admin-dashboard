@@ -41,7 +41,7 @@ export default function AppButton({
 
           "&.Mui-disabled": {
             backgroundColor: "rgba(255, 255, 255, 0.12)",
-            color: "rgba(255, 255, 255, 0.35)",
+            color: "var(--text-secondary, #8A92A6)",
           },
         },
         ...(Array.isArray(sx) ? sx : [sx ? sx : {}]),

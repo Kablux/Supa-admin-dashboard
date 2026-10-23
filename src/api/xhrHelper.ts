@@ -479,6 +479,18 @@ export const approveCourierRiderKyc = createAsyncThunk(
   }
 );
 
+export const rejectCourierRiderKyc = createAsyncThunk(
+  'courier/rejectRiderKyc',
+  async ({ userId, reason }: { userId: string; reason: string }, { rejectWithValue }) => {
+    try {
+      const res = await courierService.rejectRiderKyc(userId,reason);
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.error || 'Failed to reject KYC');
+    }
+  }
+);
+
 export const fetchCourierUsers = createAsyncThunk(
   'courier/fetchUsers',
   async (params: FetchUsersParams, { rejectWithValue }) => {

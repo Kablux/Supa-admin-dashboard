@@ -3,12 +3,14 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogActions,
   Box,
   Typography,
   IconButton,
   Chip,
   Button,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -16,21 +18,41 @@ import PersonIcon from "@mui/icons-material/Person";
 import DescriptionIcon from "@mui/icons-material/Description";
 import GroupIcon from "@mui/icons-material/Group";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import CancelIcon from "@mui/icons-material/Cancel";
 import KycStatusChip from "./KycStatusChip";
 import { CourierRider } from "../../types/common.types";
+import AppButton from "../common/AppButton";
 
 interface RiderDetailsModalProps {
   open: boolean;
   rider: CourierRider | null;
+  kycApprovingId?: string | null;
+  kycRejectingId?: string | null;
   onClose: () => void;
+  onApproveKyc: (userId: string) => void;
+  onRejectKyc: (rider: CourierRider) => void;
 }
 
 export default function RiderDetailsModal({
   open,
   rider,
+  kycApprovingId,
+  kycRejectingId,
   onClose,
+  onApproveKyc,
+  onRejectKyc,
 }: RiderDetailsModalProps) {
   if (!rider) return null;
+
+  const isVerified = rider.kyc_status === "VERIFIED";
+  const isEligibleForApproval = !isVerified;
+  const isEligibleForRejection =
+    rider.account_status === "PENDING_APPROVAL" ||
+    ["UNDER_REVIEW", "NEEDS_RESUBMISSION"].includes(rider.kyc_status)
+
+  const isApproving = kycApprovingId === rider.id;
+  const isRejecting = kycRejectingId === rider.id;
 
   return (
     <Dialog
@@ -90,7 +112,16 @@ export default function RiderDetailsModal({
       </DialogTitle>
 
       {/* Content */}
-      <DialogContent sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2.5, maxHeight: "80vh", overflowY: "auto" }}>
+      <DialogContent
+        sx={{
+          p: 3,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2.5,
+          maxHeight: "70vh",
+          overflowY: "auto",
+        }}
+      >
         {/* Status Badges Row */}
         <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap", mt: 0.5 }}>
           <KycStatusChip status={rider.kyc_status} />
@@ -108,7 +139,9 @@ export default function RiderDetailsModal({
             label={rider.available_to_receive_order ? "🟢 Online / Available" : "⚪ Offline"}
             size="small"
             sx={{
-              backgroundColor: rider.available_to_receive_order ? "rgba(16, 185, 129, 0.1)" : "rgba(255, 255, 255, 0.04)",
+              backgroundColor: rider.available_to_receive_order
+                ? "rgba(16, 185, 129, 0.1)"
+                : "rgba(255, 255, 255, 0.04)",
               color: rider.available_to_receive_order ? "#34D399" : "var(--text-muted)",
               fontSize: 11,
               fontWeight: 500,
@@ -119,7 +152,7 @@ export default function RiderDetailsModal({
         {/* Contact & Personal Information */}
         <Box>
           <Typography variant="subtitle2" sx={{ color: "var(--accent-gold, #FEB914)", mb: 1.5, fontWeight: 500 }}>
-            Contact & General Information
+            Contact &amp; General Information
           </Typography>
           <Box
             sx={{
@@ -287,7 +320,6 @@ export default function RiderDetailsModal({
               border: "1px solid rgba(255, 255, 255, 0.04)",
             }}
           >
-            {/* Next of Kin */}
             <Box>
               <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Next of Kin</Typography>
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -297,7 +329,6 @@ export default function RiderDetailsModal({
 
             <Divider sx={{ borderColor: "var(--border)" }} />
 
-            {/* Guarantors List */}
             <Box>
               <Typography variant="caption" sx={{ color: "var(--text-muted)", display: "block", mb: 1 }}>
                 Registered Guarantors ({rider.guarantors?.length || 0})
@@ -323,7 +354,6 @@ export default function RiderDetailsModal({
               )}
             </Box>
 
-            {/* Past Work History */}
             <Box sx={{ mt: 0.5 }}>
               <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Work Experience</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
@@ -333,7 +363,7 @@ export default function RiderDetailsModal({
           </Box>
         </Box>
 
-        {/* KYC Compliance Status & Rejection */}
+        {/* Compliance Notes */}
         <Box>
           <Typography variant="subtitle2" sx={{ color: "var(--accent-gold, #FEB914)", mb: 1.5, fontWeight: 500 }}>
             Compliance Notes
@@ -366,6 +396,65 @@ export default function RiderDetailsModal({
           </Box>
         </Box>
       </DialogContent>
+
+      {/* Modal Footer Actions */}
+      <DialogActions
+        sx={{
+          px: 3,
+          py: 2,
+          backgroundColor: "var(--bg-secondary, #141721)",
+          borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+
+        <Box sx={{ display: "flex",justifyContent:"center", alignItems:"center", gap: 1.5, width: "100%" }}>
+        <Box>
+          {isEligibleForRejection && (
+            <AppButton
+              variant="outlined"
+              size="small"
+              disabled={isRejecting}
+              startIcon={isRejecting ? <CircularProgress size={13} color="inherit" /> : <CancelIcon />}
+              onClick={() => onRejectKyc(rider)}
+              sx={{
+                color: "#EF4444",
+                border: "2px solid rgba(239, 68, 68, 0.3)",
+                backgroundColor: "transparent",
+                textTransform: "none",
+                "&:hover": { backgroundColor: "rgba(239, 68, 68, 0.1)" },
+              }}
+            >
+              {isRejecting ? "Rejecting..." : "Reject KYC"}
+            </AppButton>
+          )}
+        </Box>
+         
+
+          <AppButton
+            variant="contained"
+            size="small"
+            disabled={!isEligibleForApproval || isApproving}
+            startIcon={
+              isApproving ? <CircularProgress size={13} color="inherit" /> : <VerifiedUserIcon />
+            }
+            onClick={() => onApproveKyc(rider.id)}
+            sx={{
+              backgroundColor: isVerified ? "rgba(52, 211, 153, 0.15)" : "#FFBE18",
+              color: isVerified ? "var(--text-primary)" : "#17130A",
+              border:"2px solid var(--border, rgba(255, 255, 255, 0.08))",
+              textTransform: "none",
+              boxShadow: "none",
+              "&:hover": {
+                backgroundColor: isVerified ? "rgba(52, 211, 153, 0.25)" : "#F4B400",
+              },
+            }}
+          >
+            {isApproving ? "Approving..." : isVerified ? "Verified" : "Approve KYC"}
+          </AppButton>
+        </Box>
+      </DialogActions>
     </Dialog>
   );
 }

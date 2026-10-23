@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Box,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import toast from "react-hot-toast";
 
 import {
@@ -11,6 +8,7 @@ import {
   fetchCourierUsers,
   fetchCourierReferrals,
   approveCourierRiderKyc,
+  rejectCourierRiderKyc,
 } from "../api/xhrHelper";
 
 import { AppDispatch, RootState } from "../redux/store";
@@ -20,7 +18,8 @@ import ReferralsTable from "../components/courier/ReferralsTable";
 import UsersTable from "../components/courier/UsersTable";
 import SearchFilterRow from "../components/SearchFilterRow";
 import ApproveKycConfirmationModal from "../components/courier/ApproveKycModal";
-import RiderDetailsModal from "../components/courier/RiderDetailsModal"; // Import your rider details modal
+import RejectKycConfirmationModal from "../components/courier/RejectKycModal";
+import RiderDetailsModal from "../components/courier/RiderDetailsModal";
 
 type CourierTab = "riders" | "users" | "referrals";
 
@@ -43,10 +42,11 @@ export default function CourierManagementPage() {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
-  // State to control KYC approval confirmation modal
+  // Modal triggers
   const [confirmingRiderId, setConfirmingRiderId] = useState<string | null>(null);
+  const [rejectingRiderId, setRejectingRiderId] = useState<string | null>(null);
 
-  // State to control the Rider Details modal
+  // Selected rider for detail drawer
   const [selectedRider, setSelectedRider] = useState<any | null>(null);
 
   const {
@@ -54,7 +54,21 @@ export default function CourierManagementPage() {
     users,
     referrals,
     kycApprovingId,
+    kycRejectingId,
   } = useSelector((state: RootState) => state.courier);
+
+  const refetchRiders = () => {
+    dispatch(
+      fetchCourierRiders({
+        page: page + 1,
+        page_size: pageSize,
+        search: search || undefined,
+        account_status: accountStatus || undefined,
+        kyc_status: kycStatus || undefined,
+        vehicle_type: vehicleType || undefined,
+      })
+    );
+  };
 
   useEffect(() => {
     const params = {
@@ -102,12 +116,11 @@ export default function CourierManagementPage() {
     setPage(0);
   };
 
-  // Triggered when clicking "Approve KYC" on a row
+  // ── Approval Handlers ──
   const handleOpenApproveConfirm = (userId: string) => {
     setConfirmingRiderId(userId);
   };
 
-  // Triggered inside the confirmation modal
   const handleConfirmApproveKyc = async () => {
     if (!confirmingRiderId) return;
 
@@ -115,20 +128,8 @@ export default function CourierManagementPage() {
       await dispatch(approveCourierRiderKyc(confirmingRiderId)).unwrap();
       toast.success("Rider KYC approved successfully!");
       setConfirmingRiderId(null);
-      // Close details modal if open for this rider
       setSelectedRider(null);
-
-      // Refetch riders list to update the table status
-      dispatch(
-        fetchCourierRiders({
-          page: page + 1,
-          page_size: pageSize,
-          search: search || undefined,
-          account_status: accountStatus || undefined,
-          kyc_status: kycStatus || undefined,
-          vehicle_type: vehicleType || undefined,
-        })
-      );
+      refetchRiders();
     } catch (error: any) {
       toast.error(
         typeof error === "string"
@@ -138,8 +139,36 @@ export default function CourierManagementPage() {
     }
   };
 
+  // ── Rejection Handlers ──
+  const handleOpenRejectConfirm = (rider: any) => {
+    setRejectingRiderId(rider.id);
+  };
+
+  const handleConfirmRejectKyc = async (reason: string) => {
+    if (!rejectingRiderId) return;
+
+    try {
+      await dispatch(
+        rejectCourierRiderKyc({ userId: rejectingRiderId, reason })
+      ).unwrap();
+      toast.success("Rider KYC rejected successfully!");
+      setRejectingRiderId(null);
+      setSelectedRider(null);
+      refetchRiders();
+    } catch (error: any) {
+      toast.error(
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to reject rider KYC"
+      );
+    }
+  };
+
   const selectedRiderForConfirm = riders.data.find(
     (r) => r.id === confirmingRiderId
+  );
+  const selectedRiderForReject = riders.data.find(
+    (r) => r.id === rejectingRiderId
   );
 
   return (
@@ -242,10 +271,8 @@ export default function CourierManagementPage() {
           riders={riders}
           page={page}
           pageSize={pageSize}
-          kycApprovingId={kycApprovingId}
           onPageChange={setPage}
           onPageSizeChange={handlePageSizeChange}
-          onApproveKyc={handleOpenApproveConfirm}
           onRowClick={(rider) => setSelectedRider(rider)}
         />
       )}
@@ -285,16 +312,28 @@ export default function CourierManagementPage() {
         onConfirm={handleConfirmApproveKyc}
       />
 
+      {/* Reject KYC Confirmation Modal */}
+      <RejectKycConfirmationModal
+        open={Boolean(rejectingRiderId)}
+        riderName={
+          selectedRiderForReject
+            ? `${selectedRiderForReject.first_name} ${selectedRiderForReject.last_name}`
+            : undefined
+        }
+        loading={Boolean(kycRejectingId)}
+        onClose={() => setRejectingRiderId(null)}
+        onConfirm={handleConfirmRejectKyc}
+      />
+
       {/* Rider Details Modal */}
       <RiderDetailsModal
         open={Boolean(selectedRider)}
         rider={selectedRider}
+        kycApprovingId={kycApprovingId}
+        kycRejectingId={kycRejectingId}
         onClose={() => setSelectedRider(null)}
-        // onApproveKyc={(id) => {
-        //   setSelectedRider(null);
-        //   handleOpenApproveConfirm(id);
-        // }}
-        // isApproving={kycApprovingId === selectedRider?.id}
+        onApproveKyc={handleOpenApproveConfirm}
+        onRejectKyc={handleOpenRejectConfirm}
       />
     </Box>
   );
