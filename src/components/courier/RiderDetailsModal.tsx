@@ -46,10 +46,15 @@ export default function RiderDetailsModal({
   if (!rider) return null;
 
   const isVerified = rider.kyc_status === "VERIFIED";
-  const isEligibleForApproval = !isVerified;
+
+const isEligibleForApproval = [
+  "UNDER_REVIEW",
+  "NEEDS_RESUBMISSION",
+].includes(rider.kyc_status);
+
   const isEligibleForRejection =
-    rider.account_status === "PENDING_APPROVAL" ||
-    ["UNDER_REVIEW", "NEEDS_RESUBMISSION"].includes(rider.kyc_status)
+  rider.account_status === "PENDING_APPROVAL" &&
+  ["UNDER_REVIEW", "NEEDS_RESUBMISSION"].includes(rider.kyc_status);
 
   const isApproving = kycApprovingId === rider.id;
   const isRejecting = kycRejectingId === rider.id;
@@ -209,7 +214,7 @@ export default function RiderDetailsModal({
               borderRadius: "10px",
               p: 2,
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: {sm:"repeat(3, 1fr)"},
               gap: 2,
               border: "1px solid var(--border, rgba(255,255,255,0.09))",
             }}
@@ -336,7 +341,7 @@ export default function RiderDetailsModal({
               {rider.guarantors && rider.guarantors.length > 0 ? (
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                   {rider.guarantors.map((g) => (
-                    <Box key={g.slot} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "rgba(255,255,255,0.02)", p: 1, borderRadius: "6px" }}>
+                    <Box key={g.slot} sx={{ display: "flex", justifyContent: "space-between",flexWrap:"wrap", alignItems: "center", backgroundColor: "rgba(255,255,255,0.02)", p: 1, borderRadius: "6px" }}>
                       <Box>
                         <Typography variant="body2" sx={{ fontWeight: 500 }}>
                           Slot {g.slot}: {g.full_name}
@@ -379,7 +384,7 @@ export default function RiderDetailsModal({
               border: "1px solid rgba(255, 255, 255, 0.04)",
             }}
           >
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box sx={{ display: "flex",gap:1,fleWrap:"wrap", justifyContent: "space-between" }}>
               <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Submitted At</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {rider.kyc_submitted_at ? new Date(rider.kyc_submitted_at).toLocaleString() : "Not submitted"}
@@ -432,27 +437,33 @@ export default function RiderDetailsModal({
         </Box>
          
 
-          <AppButton
-            variant="contained"
-            size="small"
-            disabled={!isEligibleForApproval || isApproving}
-            startIcon={
-              isApproving ? <CircularProgress size={13} color="inherit" /> : <VerifiedUserIcon />
-            }
-            onClick={() => onApproveKyc(rider.id)}
-            sx={{
-              backgroundColor: isVerified ? "rgba(52, 211, 153, 0.15)" : "#FFBE18",
-              color: isVerified ? "var(--text-primary)" : "#17130A",
-              border:"2px solid var(--border, rgba(255, 255, 255, 0.08))",
-              textTransform: "none",
-              boxShadow: "none",
-              "&:hover": {
-                backgroundColor: isVerified ? "rgba(52, 211, 153, 0.25)" : "#F4B400",
-              },
-            }}
-          >
-            {isApproving ? "Approving..." : isVerified ? "Verified" : "Approve KYC"}
-          </AppButton>
+      {isEligibleForApproval && (
+              <AppButton
+                variant="contained"
+                size="small"
+                disabled={isApproving}
+                startIcon={
+                  isApproving ? (
+                    <CircularProgress size={13} color="inherit" />
+                  ) : (
+                    <VerifiedUserIcon />
+                  )
+                }
+                onClick={() => onApproveKyc(rider.id)}
+                sx={{
+                  backgroundColor: "#FFBE18",
+                  color: "#17130A",
+                  border: "2px solid var(--border, rgba(255, 255, 255, 0.08))",
+                  textTransform: "none",
+                  boxShadow: "none",
+                  "&:hover": {
+                    backgroundColor: "#F4B400",
+                  },
+                }}
+              >
+                {isApproving ? "Approving..." : "Approve KYC"}
+              </AppButton>
+            )}
         </Box>
       </DialogActions>
     </Dialog>
