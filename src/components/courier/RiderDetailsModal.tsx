@@ -384,12 +384,20 @@ const isEligibleForApproval = [
               border: "1px solid rgba(255, 255, 255, 0.04)",
             }}
           >
-            <Box sx={{ display: "flex",gap:1,fleWrap:"wrap", justifyContent: "space-between" }}>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Submitted At</Typography>
+            <Box sx={{ display: "flex",gap:1,flexWrap:"wrap", justifyContent: "space-between" }}>
+              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Submitted At:</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {rider.kyc_submitted_at ? new Date(rider.kyc_submitted_at).toLocaleString() : "Not submitted"}
               </Typography>
             </Box>
+            {rider.approval_date && (
+              <Box sx={{ display: "flex",gap:1,flexWrap:"wrap", justifyContent: "space-between" }}>
+                <Typography variant="caption" sx={{ color: "#EF4444" }}>Approval Date:</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 500, color: "#EF4444" }}>
+                  {rider.approval_date}
+                </Typography>
+              </Box>
+            )}
             {rider.kyc_rejection_reason && (
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant="caption" sx={{ color: "#EF4444" }}>Rejection Reason</Typography>
