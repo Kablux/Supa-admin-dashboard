@@ -37,11 +37,13 @@ import {
   FetchPromotionsParams,
   FetchReferralsParams,
   FetchRidersParams,
+  FetchSosParams,
   FetchUsersParams,
   GlobalConfig,
   PaginatedCourierResponse,
   PaginatedReferralResponse,
   PaginatedRideRequests,
+  PaginatedSosResponse,
   Promotion,
   PromotionSummary,
   Referral,
@@ -51,6 +53,7 @@ import {
   RideRequestSummaryResponse,
   RiderSummaryData,
   RideTypePricing,
+  SosIncident,
   TransactionAnalytics,
   UserSummaryData,
 } from "../types/common.types";
@@ -348,6 +351,18 @@ export const courierService = {
     return response.data;
   },
 
+        //////reject /riders
+        rejectRiderKyc : async (
+        userId: string,
+        reason: string,
+      ) => {
+        const response = await api.post(
+          `/business-admin/courier/riders/${userId}/kyc/reject/`,
+          {reason},
+        );
+        return response.data;
+      },
+
   // GET /users/
   fetchUsers: async (params?: FetchUsersParams) => {
     const response = await api.get<BaseApiCourierResponse<PaginatedCourierResponse<CourierUser>>>(
@@ -367,6 +382,16 @@ export const courierService = {
   },
 };
 
+///////SOS INCIDENT
+export async function fetchSosIncidentsApi(params?: FetchSosParams): Promise<PaginatedSosResponse> {
+  const { data } = await api.get<PaginatedSosResponse>("/business-admin/sos-incidents/", { params });
+  return data;
+}
+
+export async function fetchSosIncidentByIdApi(id: string): Promise<SosIncident> {
+  const { data } = await api.get<SosIncident>(`/business-admin/sos-incidents/${id}/`);
+  return data;
+}
 
 ////ADMIN ROLES
 

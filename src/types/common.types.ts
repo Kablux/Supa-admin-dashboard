@@ -735,22 +735,55 @@ export interface CourierUser {
   phone_number: string;
   user_type: string;
   account_status: string;
-  city: string;
-  state: string;
+  city: string | null;
+  state: string | null;
   date_joined: string;
   referral_code: string;
 }
 
-export interface CourierRider extends CourierUser {
-  kyc_status: string;
-  kyc_submitted_at: string;
-  kyc_rejection_reason?: string;
-  is_approved: boolean;
-  available_to_receive_order: boolean;
-  vehicle_type: string;
-  vehicle_registration_number: string;
-  rating: number;
+export interface CourierGuarantor {
+  slot: number;
+  full_name: string;
+  phone_number: string;
+  status: string;
 }
+
+export interface CourierRider extends CourierUser {
+  gender?: string | null;
+  profile_photo?: string | null;
+  date_of_birth?: string | null;
+  
+  // KYC & Verification
+  kyc_status: string;
+  kyc_submitted_at: string | null;
+  kyc_rejection_reason?: string | null;
+  is_approved: boolean;
+  approval_date?: string | null;
+  available_to_receive_order: boolean;
+
+  // Media / Document URLs
+  rider_permit_url?: string | null;
+  government_id_front_url?: string | null;
+  vehicle_picture_url?: string | null;
+
+  // Vehicle Information
+  vehicle_type: string;
+  vehicle_brand?: string | null;
+  vehicle_registration_number: string | null;
+  rating?: number | null;
+
+  // Next of Kin & Guarantors
+  next_of_kin_full_name?: string | null;
+  next_of_kin_phone_number?: string | null;
+  guarantors?: CourierGuarantor[];
+
+  // Work Experience
+  previous_place_of_work?: string | null;
+  years_worked?: string | null;
+}
+
+// Alias Rider to CourierRider to avoid duplicate interfaces across components
+export type Rider = CourierRider;
 
 export interface CourierReferral {
   id: string;
@@ -767,6 +800,81 @@ export interface ApproveKycResponse {
   is_approved: boolean;
   approval_date: string;
 }
+
+////SOS
+export type SosStatus = "OPEN" | "RESOLVED" | "IN_PROGRESS" | string;
+
+export interface SosRideInfo {
+  id: string;
+  pickup_address: string;
+  dropoff_address: string;
+  status: string;
+  rider: string;
+  driver: string;
+}
+
+export interface SosUserInfo {
+  id: string;
+  email: string;
+  full_name: string;
+  role: string;
+  phone_number: string;
+}
+
+export interface SosAudioInfo {
+  id: string;
+  audio_file: string;
+  duration_seconds: number;
+  created_at: string;
+}
+
+export interface SosIncident {
+  id: string;
+  status: SosStatus;
+  reason?: string;
+  created_at: string;
+  updated_at: string;
+  ride: SosRideInfo | null;
+  triggered_by: SosUserInfo | null;
+  audio: SosAudioInfo | null;
+}
+
+export interface PaginatedSosResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SosIncident[];
+}
+
+export interface FetchSosParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  status?: string;
+  ride?: string;
+  triggered_by?: string;
+  created_at_after?: string;
+  created_at_before?: string;
+  ordering?: string;
+}
+
+export interface SosState {
+  items: SosIncident[];
+  count: number;
+  currentPage: number;
+  pageSize: number;
+  search: string;
+  statusFilter: string;
+  rideFilter: string;
+  triggeredByFilter: string;
+  createdAtAfter: string;
+  createdAtBefore: string;
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+}
+
+
+
 
 // Query Parameters
 export interface FetchRidersParams {

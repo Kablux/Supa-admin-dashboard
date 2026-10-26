@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   fetchCourierRiders,
   approveCourierRiderKyc,
+  rejectCourierRiderKyc,
   fetchCourierUsers,
   fetchCourierReferrals,
 } from '../../api/xhrHelper';
@@ -36,29 +37,50 @@ interface CourierState {
     loading: boolean;
     error: string | null;
   };
+  selectedRider: CourierRider | null;
   kycApprovingId: string | null;
   kycApprovalError: string | null;
+  kycRejectingId: string | null;
+  kycRejectionError: string | null;
 }
 
 const initialState: CourierState = {
   riders: { data: [], count: 0, page: 1, pageSize: 10, loading: false, error: null },
   users: { data: [], count: 0, page: 1, pageSize: 10, loading: false, error: null },
   referrals: { data: [], count: 0, page: 1, pageSize: 10, loading: false, error: null },
+  selectedRider: null,
   kycApprovingId: null,
   kycApprovalError: null,
+  kycRejectingId: null,
+  kycRejectionError: null,
 };
 
 const courierSlice = createSlice({
   name: 'courier',
   initialState,
   reducers: {
+    setSelectedRider(state, action: PayloadAction<CourierRider | null>) {
+      state.selectedRider = action.payload;
+    },
     clearKycStatus(state) {
       state.kycApprovalError = null;
       state.kycApprovingId = null;
+      state.kycRejectionError = null;
+      state.kycRejectingId = null;
+    },
+    updateRiderInList(state, action: PayloadAction<Partial<CourierRider> & { id: string }>) {
+      const index = state.riders.data.findIndex((r) => r.id === action.payload.id);
+      if (index !== -1) {
+        Object.assign(state.riders.data[index], action.payload);
+      }
+      const selected = state.selectedRider;
+      if (selected && selected.id === action.payload.id) {
+        Object.assign(selected, action.payload);
+      }
     },
   },
   extraReducers: (builder) => {
-    // Riders
+    // ── Riders List ──
     builder
       .addCase(fetchCourierRiders.pending, (state) => {
         state.riders.loading = true;
@@ -73,10 +95,11 @@ const courierSlice = createSlice({
       })
       .addCase(fetchCourierRiders.rejected, (state, action) => {
         state.riders.loading = false;
-        state.riders.error = (action.payload as string) || action.error.message || 'Failed to fetch riders';
+        state.riders.error =
+          (action.payload as string) || action.error.message || 'Failed to fetch riders';
       });
 
-    // KYC Approval
+    // ── KYC Approval ──
     builder
       .addCase(approveCourierRiderKyc.pending, (state, action) => {
         state.kycApprovingId = action.meta.arg;
@@ -84,23 +107,63 @@ const courierSlice = createSlice({
       })
       .addCase(approveCourierRiderKyc.fulfilled, (state, action) => {
         state.kycApprovingId = null;
-        // Update rider in list
+
+        const { account_status, kyc_status, is_approved, approval_date } = action.payload;
+
         const index = state.riders.data.findIndex((r) => r.id === action.payload.id);
         if (index !== -1) {
-          state.riders.data[index] = {
-            ...state.riders.data[index],
-            account_status: action.payload.account_status,
-            kyc_status: action.payload.kyc_status as any,
-            is_approved: action.payload.is_approved,
-          };
+          state.riders.data[index].account_status = account_status;
+          state.riders.data[index].kyc_status = kyc_status;
+          state.riders.data[index].is_approved = is_approved;
+          state.riders.data[index].approval_date = approval_date;
+        }
+
+        const selected = state.selectedRider;
+        if (selected && selected.id === action.payload.id) {
+          selected.account_status = account_status;
+          selected.kyc_status = kyc_status;
+          selected.is_approved = is_approved;
+          selected.approval_date = approval_date;
         }
       })
       .addCase(approveCourierRiderKyc.rejected, (state, action) => {
         state.kycApprovingId = null;
-        state.kycApprovalError = (action.payload as string) || action.error.message || 'Failed to approve KYC';
+        state.kycApprovalError =
+          (action.payload as string) || action.error.message || 'Failed to approve KYC';
       });
 
-    // Users
+    // ── KYC Rejection ──
+    builder
+      .addCase(rejectCourierRiderKyc.pending, (state, action) => {
+        state.kycRejectingId = action.meta.arg.userId;
+        state.kycRejectionError = null;
+      })
+      .addCase(rejectCourierRiderKyc.fulfilled, (state, action) => {
+        state.kycRejectingId = null;
+
+        const { account_status, kyc_status, kyc_rejection_reason } = action.payload;
+
+        const index = state.riders.data.findIndex((r) => r.id === action.payload.id);
+        if (index !== -1) {
+          state.riders.data[index].account_status = account_status;
+          state.riders.data[index].kyc_status = kyc_status;
+          state.riders.data[index].kyc_rejection_reason = kyc_rejection_reason;
+        }
+
+        const selected = state.selectedRider;
+        if (selected && selected.id === action.payload.id) {
+          selected.account_status = account_status;
+          selected.kyc_status = kyc_status;
+          selected.kyc_rejection_reason = kyc_rejection_reason;
+        }
+      })
+      .addCase(rejectCourierRiderKyc.rejected, (state, action) => {
+        state.kycRejectingId = null;
+        state.kycRejectionError =
+          (action.payload as string) || action.error.message || 'Failed to reject KYC';
+      });
+
+    // ── Users List ──
     builder
       .addCase(fetchCourierUsers.pending, (state) => {
         state.users.loading = true;
@@ -115,10 +178,11 @@ const courierSlice = createSlice({
       })
       .addCase(fetchCourierUsers.rejected, (state, action) => {
         state.users.loading = false;
-        state.users.error = (action.payload as string) || action.error.message || 'Failed to fetch users';
+        state.users.error =
+          (action.payload as string) || action.error.message || 'Failed to fetch users';
       });
 
-    // Referrals
+    // ── Referrals List ──
     builder
       .addCase(fetchCourierReferrals.pending, (state) => {
         state.referrals.loading = true;
@@ -133,10 +197,11 @@ const courierSlice = createSlice({
       })
       .addCase(fetchCourierReferrals.rejected, (state, action) => {
         state.referrals.loading = false;
-        state.referrals.error = (action.payload as string) || action.error.message || 'Failed to fetch referrals';
+        state.referrals.error =
+          (action.payload as string) || action.error.message || 'Failed to fetch referrals';
       });
   },
 });
 
-export const { clearKycStatus } = courierSlice.actions;
+export const { setSelectedRider, clearKycStatus, updateRiderInList } = courierSlice.actions;
 export default courierSlice.reducer;

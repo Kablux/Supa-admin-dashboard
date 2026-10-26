@@ -43,7 +43,6 @@ interface ReferralsTableProps {
 const headerCellSx = {
   fontSize: 12,
   fontWeight: 500,
-  letterSpacing: "0.5px",
   color: "var(--text-secondary, #8A92A6)",
   backgroundColor: "var(--bg-secondary, #161B26)",
   borderColor: "var(--border, rgba(255, 255, 255, 0.08))",
@@ -53,12 +52,11 @@ const headerCellSx = {
 } as const;
 
 const bodyCellSx = {
-  fontSize: 14,
-  color: "var(--text-primary, #FFF)",
-  borderBottom: "1px solid rgba(255, 255, 255, 0.055)",
-  py: 2,
-  px: 2.5,
-  whiteSpace: "nowrap",
+  fontSize: 12,
+  color: "var(--text-primary, #FFFFFF)",
+  borderColor: "var(--border, rgba(255, 255, 255, 0.08))",
+  py: 1.5,
+  px: 2,
 } as const;
 
 const ReferralsTable: React.FC<ReferralsTableProps> = ({
@@ -70,11 +68,29 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
 }) => {
   return (
     <TableContainer
-       sx={{
-        overflow: "hidden",
-      }}
-    >
-      <Table size="small">
+           sx={{
+           width: "100%",
+           maxWidth: "100%",
+           overflowX: "auto",
+           WebkitOverflowScrolling: "touch",
+           "&::-webkit-scrollbar": {
+             height: 5,
+           },
+           "&::-webkit-scrollbar-thumb": {
+             backgroundColor: "rgba(255, 255, 255, 0.2)",
+             borderRadius: 10,
+           },
+           "&::-webkit-scrollbar-track": {
+             backgroundColor: "transparent",
+           },
+         }}
+           >
+             <Table size="small" 
+             sx={{
+             minWidth: 1000,
+             width: "100%",
+             tableLayout: "auto",
+           }}>
         <TableHead>
           <TableRow>
             <TableCell sx={headerCellSx}>Referrer</TableCell>
@@ -211,22 +227,11 @@ const ReferralsTable: React.FC<ReferralsTableProps> = ({
         onRowsPerPageChange={(e) =>
           onPageSizeChange(parseInt(e.target.value, 10))
         }
-        sx={{
+       sx={{
+          width: "100%",
           color: "var(--text-secondary, #C1C7D0)",
-          borderTop: "1px solid var(--border, rgba(255, 255, 255, 0.08))",
-          ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows": {
-            fontSize: 14,
-            fontWeight: 500,
-          },
-          ".MuiTablePagination-select": {
-            fontSize: 14,
-          },
-          ".MuiTablePagination-actions button": {
-            color: "var(--text-secondary, #C1C7D0)",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-            },
-          },
+          "& .MuiTablePagination-actions": { color: "var(--accent-gold)" },
+          // borderTop: "1px solid rgba(255,255,255,0.05)",
         }}
       />
     </TableContainer>

@@ -36,15 +36,14 @@ const ApproveKycConfirmationModal: React.FC<
           color: "var(--text-primary)",
           p: 1,
           backgroundImage: "none",
-          boxShadow: "0 24px 80px rgba(0, 0, 0, 0.35)",
         },
       }}
     >
       <DialogContent sx={{ textAlign: "center", pt: 3, pb: 2 }}>
         <Box
           sx={{
-            width: 56,
-            height: 56,
+            width: 48,
+            height: 48,
             borderRadius: "50%",
             backgroundColor: "rgba(255, 190, 24, 0.12)",
             border: "1px solid rgba(255, 190, 24, 0.2)",
@@ -56,14 +55,14 @@ const ApproveKycConfirmationModal: React.FC<
             mb: 2,
           }}
         >
-          <VerifiedUserIcon sx={{ fontSize: 30 }} />
+          <VerifiedUserIcon sx={{ fontSize: 24 }} />
         </Box>
 
         <Typography
           variant="h6"
           sx={{
             fontWeight: 600,
-            fontSize: 19,
+            fontSize: 18,
             color: "var(--text-primary)",
             mb: 1,
           }}
