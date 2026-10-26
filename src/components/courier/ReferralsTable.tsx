@@ -43,9 +43,9 @@ interface ReferralsTableProps {
 const headerCellSx = {
   fontSize: 12,
   fontWeight: 500,
-  // letterSpacing: "0.5px",
   color: "var(--text-secondary, #8A92A6)",
-  borderColor: "var(--border)",
+  backgroundColor: "var(--bg-secondary, #161B26)",
+  borderColor: "var(--border, rgba(255, 255, 255, 0.08))",
   py: 1.5,
   px: 2,
   whiteSpace: "nowrap",

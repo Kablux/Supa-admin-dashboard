@@ -800,6 +800,7 @@ export interface ApproveKycResponse {
   is_approved: boolean;
   approval_date: string;
 }
+
 ////SOS
 export type SosStatus = "OPEN" | "RESOLVED" | "IN_PROGRESS" | string;
 
