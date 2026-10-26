@@ -351,6 +351,18 @@ export const courierService = {
     return response.data;
   },
 
+        //////reject /riders
+        rejectRiderKyc : async (
+        userId: string,
+        reason: string,
+      ) => {
+        const response = await api.post(
+          `/business-admin/courier/riders/${userId}/kyc/reject/`,
+          {reason},
+        );
+        return response.data;
+      },
+
   // GET /users/
   fetchUsers: async (params?: FetchUsersParams) => {
     const response = await api.get<BaseApiCourierResponse<PaginatedCourierResponse<CourierUser>>>(
