@@ -39,6 +39,8 @@ import {
   FetchRidersParams,
   FetchSosParams,
   FetchUsersParams,
+  FundDriverWalletsPayload,
+  FundDriverWalletsResponse,
   GlobalConfig,
   PaginatedCourierResponse,
   PaginatedReferralResponse,
@@ -112,6 +114,19 @@ export async function getDriverList(
 
   return data;
 }
+
+/////fund driver wallet
+export const fundDriverWallets = async (
+  payload: FundDriverWalletsPayload,
+): Promise<FundDriverWalletsResponse> => {
+  const response = await api.post(
+    "/business-admin/drivers/fund-wallets/",
+    payload,
+  );
+
+  return response.data;
+};
+
 
 export async function getRiders(
   params: RiderQueryParams,
