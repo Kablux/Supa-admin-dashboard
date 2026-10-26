@@ -3,16 +3,13 @@ import { useLocation } from "react-router-dom";
 import {
   Box,
   Typography,
-  InputBase,
   IconButton,
   Avatar,
   Badge,
   Tooltip,
-  Chip,
   Menu,
   MenuItem,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 import TabletMacOutlinedIcon from "@mui/icons-material/TabletMacOutlined";
@@ -24,7 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useThemeMode } from "../../theme/ThemeContext";
 import { ROUTE_LABELS } from "../../data/data";
 import { logoutAdmin } from "../../api/xhrHelper";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"; // Ensure useAppSelector is imported
 
 interface HeaderProps {
   onToggleMobile: () => void;
@@ -39,6 +36,9 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
   const pageLabel = ROUTE_LABELS[location.pathname] || "Dashboard";
   const isDark = mode === "dark";
 
+  // Retrieve current user info from Redux auth slice
+  const { user } = useAppSelector((state) => state.auth);
+
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
@@ -50,6 +50,10 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
       await dispatch(logoutAdmin());
     }
   };
+
+
+  const userRole = user?.role || "Admin";
+  const userEmail = user?.email || "";
 
   return (
     <Box
@@ -184,44 +188,46 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
       </Box>
 
       {/* Profile */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-          cursor: "pointer",
-          userSelect: "none",
-          ml: 1,
-          "&:hover": { opacity: 0.82 },
-          transition: "opacity 0.15s",
-        }}
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-      >
-        <Avatar
-          src="https://i.pravatar.cc/150?img=2"
-          sx={{ width: 32, height: 32, border: "2px solid var(--accent-gold)" }}
-        />
-        <Box sx={{ display: { xs: "none", sm: "block" } }}>
-          <Typography
-            sx={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: "var(--text-primary)",
-              lineHeight: 1.2,
-            }}
-          >
-            Dami Kablus
-          </Typography>
-          <Typography
-            sx={{ fontSize: 10, color: "var(--text-muted)", lineHeight: 1 }}
-          >
-            Admin
-          </Typography>
+      <Tooltip title={userEmail || "Admin Profile"}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            cursor: "pointer",
+            userSelect: "none",
+            ml: 1,
+            "&:hover": { opacity: 0.82 },
+            transition: "opacity 0.15s",
+          }}
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+        >
+          <Avatar
+            src="https://i.pravatar.cc/150?img=2"
+            sx={{ width: 32, height: 32, border: "2px solid var(--accent-gold)" }}
+          />
+          <Box sx={{  textAlign: "left" }}>
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "var(--text-primary)",
+                lineHeight: 1.2,
+              }}
+            >
+              {userRole}
+            </Typography>
+            <Typography
+              sx={{ fontSize: 10,mt:1, color: "var(--text-secondary)", lineHeight: 1, textTransform: "capitalize" }}
+            >
+              {userEmail}
+            </Typography>
+          </Box>
+          <KeyboardArrowDownIcon
+            sx={{ fontSize: 14, color: "var(--text-muted)" }}
+          />
         </Box>
-        <KeyboardArrowDownIcon
-          sx={{ fontSize: 14, color: "var(--text-muted)" }}
-        />
-      </Box>
+      </Tooltip>
 
       <Menu
         anchorEl={anchorEl}
@@ -233,7 +239,7 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
           paper: {
             sx: {
               mt: 1,
-              minWidth: 160,
+              minWidth: 180,
               borderRadius: "12px",
               bgcolor: "var(--bg-card)",
               border: "1px solid var(--border)",
@@ -242,6 +248,16 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
           },
         }}
       >
+        {/* User email info header inside dropdown */}
+        {userEmail && (
+          <Box sx={{ px: 2, py: 1.25, borderBottom: "1px solid var(--border)" }}>
+            <Typography sx={{ fontSize: 11, color: "var(--text-muted)" }}>Signed in as</Typography>
+            <Typography sx={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)", wordBreak: "break-all" }}>
+              {userEmail}
+            </Typography>
+          </Box>
+        )}
+
         {["Profile", "Account Settings", "Sign out"].map((item) => (
           <MenuItem
             key={item}

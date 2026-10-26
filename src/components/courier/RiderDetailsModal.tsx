@@ -23,6 +23,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import KycStatusChip from "./KycStatusChip";
 import { CourierRider } from "../../types/common.types";
 import AppButton from "../common/AppButton";
+import { useAppSelector } from "../../redux/hooks";
 
 interface RiderDetailsModalProps {
   open: boolean;
@@ -43,14 +44,16 @@ export default function RiderDetailsModal({
   onApproveKyc,
   onRejectKyc,
 }: RiderDetailsModalProps) {
+  
+  const { user } = useAppSelector((state) => state.auth);
   if (!rider) return null;
 
   const isVerified = rider.kyc_status === "VERIFIED";
 
-const isEligibleForApproval = [
-  "UNDER_REVIEW",
-  "NEEDS_RESUBMISSION",
-].includes(rider.kyc_status);
+  const isEligibleForApproval = [
+    "UNDER_REVIEW",
+    "NEEDS_RESUBMISSION",
+  ].includes(rider.kyc_status);
 
   const isEligibleForRejection =
   rider.account_status === "PENDING_APPROVAL" &&
@@ -59,6 +62,8 @@ const isEligibleForApproval = [
   const isApproving = kycApprovingId === rider.id;
   const isRejecting = kycRejectingId === rider.id;
 
+  const adminEmail = user?.email || "Admin";
+  
   return (
     <Dialog
       open={open}
@@ -106,7 +111,7 @@ const isEligibleForApproval = [
             <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
               {rider.first_name} {rider.last_name}
             </Typography>
-            <Typography variant="caption" sx={{ color: "var(--text-muted, #8A92A6)" }}>
+            <Typography variant="caption" sx={{ color: "var(--text-secondary, #8A92A6)" }}>
               ID: {rider.id}
             </Typography>
           </Box>
@@ -147,7 +152,7 @@ const isEligibleForApproval = [
               backgroundColor: rider.available_to_receive_order
                 ? "rgba(16, 185, 129, 0.1)"
                 : "rgba(255, 255, 255, 0.04)",
-              color: rider.available_to_receive_order ? "#34D399" : "var(--text-muted)",
+              color: rider.available_to_receive_order ? "#34D399" : "var(--text-secondary)",
               fontSize: 11,
               fontWeight: 500,
             }}
@@ -171,33 +176,39 @@ const isEligibleForApproval = [
             }}
           >
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Email Address</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Email Address</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, wordBreak: "break-all" }}>{rider.email || "N/A"}</Typography>
             </Box>
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Phone Number</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Phone Number</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>{rider.phone_number || "N/A"}</Typography>
             </Box>
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Gender &amp; DOB</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Gender &amp; DOB</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {rider.gender || "N/A"} {rider.date_of_birth ? `(${rider.date_of_birth})` : ""}
               </Typography>
             </Box>
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>City / State</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>City / State</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {[rider.city, rider.state].filter(Boolean).join(", ") || "N/A"}
               </Typography>
             </Box>
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Referral Code</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Referral Code</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, fontFamily: "monospace" }}>{rider.referral_code || "N/A"}</Typography>
             </Box>
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Date Joined</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Date Joined</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {rider.date_joined ? new Date(rider.date_joined).toLocaleDateString() : "N/A"}
+              </Typography>
+            </Box>
+             <Box >
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Work Experience</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {rider.previous_place_of_work ? `${rider.previous_place_of_work} (${rider.years_worked || "Duration N/A"})` : "N/A"}
               </Typography>
             </Box>
           </Box>
@@ -220,19 +231,19 @@ const isEligibleForApproval = [
             }}
           >
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Vehicle Type</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Vehicle Type</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, textTransform: "capitalize" }}>
                 {rider.vehicle_type || "N/A"}
               </Typography>
             </Box>
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Brand / Make</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Brand / Make</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {rider.vehicle_brand || "N/A"}
               </Typography>
             </Box>
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Registration Number</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Registration Number</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, fontFamily: "monospace" }}>
                 {rider.vehicle_registration_number || "No plate number"}
               </Typography>
@@ -302,7 +313,7 @@ const isEligibleForApproval = [
             )}
 
             {!rider.rider_permit_url && !rider.government_id_front_url && !rider.vehicle_picture_url && (
-              <Typography variant="body2" sx={{ color: "var(--text-muted)" }}>
+              <Typography variant="body2" sx={{ color: "var(--text-secondary)" }}>
                 No document URLs available.
               </Typography>
             )}
@@ -326,7 +337,7 @@ const isEligibleForApproval = [
             }}
           >
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Next of Kin</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Next of Kin</Typography>
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
                 {rider.next_of_kin_full_name || "N/A"} ({rider.next_of_kin_phone_number || "No Phone"})
               </Typography>
@@ -335,7 +346,7 @@ const isEligibleForApproval = [
             <Divider sx={{ borderColor: "var(--border)" }} />
 
             <Box>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)", display: "block", mb: 1 }}>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)", display: "block", mb: 1 }}>
                 Registered Guarantors ({rider.guarantors?.length || 0})
               </Typography>
               {rider.guarantors && rider.guarantors.length > 0 ? (
@@ -346,7 +357,7 @@ const isEligibleForApproval = [
                         <Typography variant="body2" sx={{ fontWeight: 500 }}>
                           Slot {g.slot}: {g.full_name}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>
+                        <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>
                           {g.phone_number}
                         </Typography>
                       </Box>
@@ -355,16 +366,11 @@ const isEligibleForApproval = [
                   ))}
                 </Box>
               ) : (
-                <Typography variant="body2" sx={{ color: "var(--text-muted)" }}>No guarantors listed.</Typography>
+                <Typography variant="body2" sx={{ color: "var(--text-secondary)" }}>No guarantors listed.</Typography>
               )}
             </Box>
 
-            <Box sx={{ mt: 0.5 }}>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Work Experience</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {rider.previous_place_of_work ? `${rider.previous_place_of_work} (${rider.years_worked || "Duration N/A"})` : "N/A"}
-              </Typography>
-            </Box>
+           
           </Box>
         </Box>
 
@@ -385,16 +391,24 @@ const isEligibleForApproval = [
             }}
           >
             <Box sx={{ display: "flex",gap:1,flexWrap:"wrap", justifyContent: "space-between" }}>
-              <Typography variant="caption" sx={{ color: "var(--text-muted)" }}>Submitted At:</Typography>
+              <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Submitted At:</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {rider.kyc_submitted_at ? new Date(rider.kyc_submitted_at).toLocaleString() : "Not submitted"}
               </Typography>
             </Box>
             {rider.approval_date && (
               <Box sx={{ display: "flex",gap:1,flexWrap:"wrap", justifyContent: "space-between" }}>
-                <Typography variant="caption" sx={{ color: "#EF4444" }}>Approval Date:</Typography>
-                <Typography variant="body2" sx={{ fontWeight: 500, color: "#EF4444" }}>
-                  {rider.approval_date}
+                <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Approval Date:</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 500}}>
+                  {new Date(rider.approval_date).toLocaleString()}
+                </Typography>
+              </Box>
+            )}
+            {isVerified && (
+              <Box sx={{ display: "flex",gap:1,flexWrap:"wrap", justifyContent: "space-between" }}>
+                <Typography variant="caption" sx={{ color: "var(--text-secondary)" }}>Approved By:</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 500}}>
+                {adminEmail}
                 </Typography>
               </Box>
             )}
