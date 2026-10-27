@@ -11,7 +11,10 @@ import { Stat } from "../types/common.types";
 import MapWidget from "../components/dashboard/map/MapWidget";
 import CampaignRoundedIcon from "@mui/icons-material/CampaignRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import PushNotificationModal from "../components/dashboard/PushNotModal";
+import * as XLSX from "xlsx";
+import toast from "react-hot-toast";
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
@@ -33,6 +36,32 @@ export default function DashboardPage() {
     dispatch(getDashboardStats());
   }, [dispatch]);
 
+  // ── Template Download Handler ──
+  const handleDownloadTemplate = () => {
+    try {
+      const templateData = [
+        {
+          user_id: "123456789abcdef",
+        },
+        
+      ];
+
+      // Create a new worksheet from the array of objects
+      const worksheet = XLSX.utils.json_to_sheet(templateData);
+
+      // Create a workbook and append the worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Template");
+
+      // Trigger file download
+      XLSX.writeFile(workbook, "push_notification_template.xlsx");
+      toast.success("Template downloaded successfully!");
+    } catch (error) {
+      console.error("Failed to download template:", error);
+      toast.error("Failed to download template file");
+    }
+  };
+
   const statsData: Stat[] = [
     {
       id: "live_trips",
@@ -43,20 +72,10 @@ export default function DashboardPage() {
       bg: "#2a2000",
       trendUp: true,
       description: "",
-
       details: [
-        {
-          label: "Active",
-          value: liveTripsSummary.active,
-        },
-        {
-          label: "Completed",
-          value: liveTripsSummary.completed,
-        },
-        {
-          label: "Cancelled",
-          value: liveTripsSummary.cancelled,
-        },
+        { label: "Active", value: liveTripsSummary.active },
+        { label: "Completed", value: liveTripsSummary.completed },
+        { label: "Cancelled", value: liveTripsSummary.cancelled },
       ],
     },
     {
@@ -69,18 +88,9 @@ export default function DashboardPage() {
       trendUp: true,
       description: "",
       details: [
-        {
-          label: "Active",
-          value: usersummary.active,
-        },
-        {
-          label: "Suspended",
-          value: usersummary.suspended,
-        },
-        {
-          label: "Total",
-          value: usersummary.total,
-        },
+        { label: "Active", value: usersummary.active },
+        { label: "Suspended", value: usersummary.suspended },
+        { label: "Total", value: usersummary.total },
       ],
     },
     {
@@ -92,28 +102,12 @@ export default function DashboardPage() {
       bg: "#2a0020",
       trendUp: true,
       description: "Registered drivers currently onboarded on Kablux.",
-
       details: [
-        {
-          label: "Active",
-          value: driversummary.online,
-        },
-        {
-          label: "In Review",
-          value: driversummary.pending_kyc,
-        },
-        {
-          label: "Pending",
-          value: driversummary.not_started_kyc,
-        },
-        {
-          label: "Suspended",
-          value: driversummary.suspended,
-        },
-        {
-          label: "Total",
-          value: driversummary.total,
-        },
+        { label: "Active", value: driversummary.online },
+        { label: "In Review", value: driversummary.pending_kyc },
+        { label: "Pending", value: driversummary.not_started_kyc },
+        { label: "Suspended", value: driversummary.suspended },
+        { label: "Total", value: driversummary.total },
       ],
     },
     {
@@ -132,7 +126,6 @@ export default function DashboardPage() {
         { label: "Total", value: ridersummary.total },
       ],
     },
-
     {
       id: "ride_requests",
       label: "Ride Requests",
@@ -151,7 +144,6 @@ export default function DashboardPage() {
         { label: "Total", value: requestsummary.total },
       ],
     },
-
     {
       id: "referrals",
       label: "Referrals",
@@ -176,83 +168,96 @@ export default function DashboardPage() {
       bg: "#063006",
       trendUp: true,
       description: "Registered drivers currently onboarded on Kablux.",
-
       details: [
-        {
-          label: "Not available",
-          value: 0,
-        },
-        {
-          label: "Not available",
-          value: 0,
-        },
-        {
-          label: "Not available",
-          value: 0,
-        },
+        { label: "Not available", value: 0 },
+        { label: "Not available", value: 0 },
+        { label: "Not available", value: 0 },
       ],
     },
   ];
 
   return (
-    <Box
-      className="fade-in"
-      sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
-    >
-      {/* Filter + search bar */}
-      <Box sx={{ display: "flex", justifyContent: "space-between",flexWrap:"wrap", gap: 1 }}>
-        {/* Filter + search bar */}
+    <Box className="fade-in" sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+      {/* Filter + search bar & Push Notification Action Row */}
+      <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
         <FilterBar />
 
-        {/* Push notification compose bar */}
-        <Box
-          onClick={() => setPushOpen(true)}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            px: 1.5,
-            py: 1,
-            borderRadius: "14px",
-            border: "1px solid var(--border)",
-            backgroundColor: "var(--bg-card)",
-            cursor: "pointer",
-            transition: "border-color 0.15s ease",
-            "&:hover": { borderColor: "var(--accent-gold, #FFD700)" },
-          }}
-        >
-          <CampaignRoundedIcon sx={{ color: "var(--accent-gold, #FFD700)" }} />
-          <Typography
-            sx={{ flexGrow: 1, fontSize: 14, color: "var(--text-secondary)" }}
-          >
-            Send a push notification to users…
-          </Typography>
+        {/* Push notification compose container with Download Template & Compose button */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
+          {/* Download Template Button */}
           <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              setPushOpen(true);
-            }}
-            startIcon={<SendRoundedIcon sx={{ fontSize: 16 }} />}
+            onClick={handleDownloadTemplate}
+            startIcon={<DownloadRoundedIcon sx={{ fontSize: 18 }} />}
             sx={{
               textTransform: "none",
-              fontSize: 14,
-              fontWeight: 700,
+              fontSize: 13.5,
+              fontWeight: 600,
               borderRadius: "10px",
               px: 2,
-              py:0.9,
-              backgroundColor: "var(--accent-gold, #FFD700)",
-              color: "#000",
-              boxShadow: "none",
+              py: 1,
+              backgroundColor: "rgba(255,255,255,0.03)",
+              color: "var(--text-primary)",
+              border: "1px solid var(--border, rgba(255,255,255,0.12))",
               "&:hover": {
-                backgroundColor: "var(--accent-gold, #FFD700)",
-                boxShadow: "0 4px 12px rgba(255,215,0,0.25)",
+                borderColor: "var(--accent-gold, #FFD700)",
+                backgroundColor: "rgba(255,215,0,0.04)",
               },
             }}
           >
-            Compose
+            Download Template
           </Button>
+
+          {/* Push Compose Box */}
+          <Box
+            onClick={() => setPushOpen(true)}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              px: 1.5,
+              py: 0.8,
+              borderRadius: "14px",
+              border: "1px solid var(--border)",
+              backgroundColor: "var(--bg-card)",
+              cursor: "pointer",
+              transition: "border-color 0.15s ease",
+              "&:hover": { borderColor: "var(--accent-gold, #FFD700)" },
+            }}
+          >
+            <CampaignRoundedIcon sx={{ color: "var(--accent-gold, #FFD700)" }} />
+            <Typography
+              sx={{ display: { xs: "none", sm: "block" }, fontSize: 13.5, color: "var(--text-secondary)" }}
+            >
+              Send push notification…
+            </Typography>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                setPushOpen(true);
+              }}
+              startIcon={<SendRoundedIcon sx={{ fontSize: 16 }} />}
+              sx={{
+                textTransform: "none",
+                fontSize: 13.5,
+                fontWeight: 700,
+                borderRadius: "10px",
+                px: 2,
+                py: 0.8,
+                backgroundColor: "var(--accent-gold, #FFD700)",
+                color: "#000",
+                boxShadow: "none",
+                "&:hover": {
+                  backgroundColor: "var(--accent-gold, #FFD700)",
+                  boxShadow: "0 4px 12px rgba(255,215,0,0.25)",
+                },
+              }}
+            >
+              Compose
+            </Button>
+          </Box>
         </Box>
       </Box>
+
       {/* Row 1 — 4 stat cards + quick actions panel */}
       <Box className="flex justify-between gap-4">
         <Box
@@ -269,12 +274,7 @@ export default function DashboardPage() {
           }}
         >
           {statsData.map((stat, i) => (
-            <StatCard
-              key={stat.id}
-              stat={stat}
-              delay={i * 70}
-              loading={isLoading}
-            />
+            <StatCard key={stat.id} stat={stat} delay={i * 70} loading={isLoading} />
           ))}
         </Box>
         <Box
@@ -307,11 +307,8 @@ export default function DashboardPage() {
         <MessagesPanel />
       </Box>
 
-         {/* Push notification modal */}
-      <PushNotificationModal
-        isOpen={pushOpen}
-        onClose={() => setPushOpen(false)}
-      />
+      {/* Push notification modal */}
+      <PushNotificationModal isOpen={pushOpen} onClose={() => setPushOpen(false)} />
     </Box>
   );
 }
