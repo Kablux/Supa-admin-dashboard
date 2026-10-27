@@ -5,6 +5,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import BlockIcon from "@mui/icons-material/Block";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { FaListCheck } from "react-icons/fa6";
 import { getDashboardStats, fetchDrivers } from "../api/xhrHelper";
 import { approveDriverKyc, rejectDriverKyc, suspendDriver, unsuspendDriver } from "../api/xhr";
@@ -17,8 +18,8 @@ import DriverFilters, { DriverFilterState } from "../components/driver/DriverFil
 import ExportDriversModal from "../components/driver/ExportDriversDataModal";
 import { DRIVER_TAB_MAPPING } from "../types/common.types";
 import DriverDetailsModal from "../components/driver/modal/DriverDetailModal";
+import FundWalletModal from "../components/driver/modal/FundWalletModal";
 import toast from "react-hot-toast";
-
 
 type UITabType = keyof typeof DRIVER_TAB_MAPPING;
 
@@ -31,6 +32,13 @@ export default function DriversPage() {
   const [filters, setFilters] = useState<DriverFilterState>({});
   const [exportOpen, setExportOpen] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
+
+  // Selection & Funding state
+  const [selectedDriverIds, setSelectedDriverIds] = useState<string[]>([]);
+  const [fundWalletModalOpen, setFundWalletModalOpen] = useState(false);
+  const [targetFundDriverIds, setTargetFundDriverIds] = useState<string[]>([]);
+  const [targetFundDriverName, setTargetFundDriverName] = useState<string>("");
+
   const { driversummary } = useAppSelector((state) => state.dashboard);
   const {
     items: driversList,
@@ -39,7 +47,6 @@ export default function DriversPage() {
     isLoading,
   } = useAppSelector((state) => state.drivers);
 
-  // Stable dependency for the filters object.
   const filterKey = useMemo(() => JSON.stringify(filters), [filters]);
 
   useEffect(() => {
@@ -52,9 +59,9 @@ export default function DriversPage() {
         page: currentPage,
         page_size: pageSize,
         search: searchQuery,
-        kyc_status: DRIVER_TAB_MAPPING[activeTab], // kyc_status comes from the tabs
-        ...filters, // type, is_online, tier, date ranges
-      }),
+        kyc_status: DRIVER_TAB_MAPPING[activeTab],
+        ...filters,
+      })
     );
   }, [dispatch, currentPage, pageSize, activeTab, searchQuery, filterKey]);
 
@@ -66,79 +73,75 @@ export default function DriversPage() {
         search: searchQuery,
         kyc_status: DRIVER_TAB_MAPPING[activeTab],
         ...filters,
-      }),
+      })
     );
 
- const handleDriverAction = async (
-  driverId: string,
-  actionType: "approve" | "activate" | "reject" | "suspend" | "unsuspend" | "delete",
-  reason?: string,
-) => {
-  try {
-    const targetDriver = driversList.find((d: any) => d.id === driverId);
+  const handleDriverAction = async (
+    driverId: string,
+    actionType: "approve" | "activate" | "reject" | "suspend" | "unsuspend" | "delete",
+    reason?: string
+  ) => {
+    try {
+      const targetDriver = driversList.find((d: any) => d.id === driverId);
 
-    if (!targetDriver) {
-      toast.error("Driver not found in state!");
-      return;
-    }
-
-    if (actionType === "approve") {
-      const payload = {
-        kyc_status: targetDriver.kyc_status,
-        is_online: targetDriver.is_online,
-        rating: targetDriver.rating || "N/A",
-        ready_for_dispatch: targetDriver.ready_for_dispatch,
-      };
-      await approveDriverKyc(driverId, payload);
-      // Synchronize state before closing modal and showing toast
-      await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
-      toast.success(`${targetDriver.full_name} is Approved Successfully`);
-      setSelectedDriverId(null);
-    } else if (actionType === "suspend") {
-      const payload = {
-        kyc_status: targetDriver.kyc_status,
-        is_online: targetDriver.is_online,
-        rating: targetDriver.rating || "N/A",
-        ready_for_dispatch: targetDriver.ready_for_dispatch,
-      };
-      await suspendDriver(driverId, payload);
-      await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
-      toast.success(`${targetDriver.full_name} is suspended!`);
-      setSelectedDriverId(null);
-    } else if (actionType === "unsuspend") {
-      const payload = {
-        kyc_status: targetDriver.kyc_status,
-        rating: targetDriver.rating || "N/A",
-        ready_for_dispatch: targetDriver.ready_for_dispatch,
-        in_ride_status: (targetDriver as any).in_ride_status ?? false,
-      };
-      await unsuspendDriver(driverId, payload);
-      await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
-      toast.success(`${targetDriver.full_name} is unsuspended`);
-      setSelectedDriverId(null);
-    } else if (actionType === "reject") {
-      if (!reason || !reason.trim()) {
-        toast.error("A rejection reason is required");
+      if (!targetDriver) {
+        toast.error("Driver not found in state!");
         return;
       }
-      await rejectDriverKyc(driverId, reason.trim());
-      await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
-      toast.success(`${targetDriver.full_name}'s KYC was rejected`);
-      setSelectedDriverId(null);
+
+      if (actionType === "approve") {
+        const payload = {
+          kyc_status: targetDriver.kyc_status,
+          is_online: targetDriver.is_online,
+          rating: targetDriver.rating || "N/A",
+          ready_for_dispatch: targetDriver.ready_for_dispatch,
+        };
+        await approveDriverKyc(driverId, payload);
+        await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
+        toast.success(`${targetDriver.full_name} is Approved Successfully`);
+        setSelectedDriverId(null);
+      } else if (actionType === "suspend") {
+        const payload = {
+          kyc_status: targetDriver.kyc_status,
+          is_online: targetDriver.is_online,
+          rating: targetDriver.rating || "N/A",
+          ready_for_dispatch: targetDriver.ready_for_dispatch,
+        };
+        await suspendDriver(driverId, payload);
+        await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
+        toast.success(`${targetDriver.full_name} is suspended!`);
+        setSelectedDriverId(null);
+      } else if (actionType === "unsuspend") {
+        const payload = {
+          kyc_status: targetDriver.kyc_status,
+          rating: targetDriver.rating || "N/A",
+          ready_for_dispatch: targetDriver.ready_for_dispatch,
+          in_ride_status: (targetDriver as any).in_ride_status ?? false,
+        };
+        await unsuspendDriver(driverId, payload);
+        await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
+        toast.success(`${targetDriver.full_name} is unsuspended`);
+        setSelectedDriverId(null);
+      } else if (actionType === "reject") {
+        if (!reason || !reason.trim()) {
+          toast.error("A rejection reason is required");
+          return;
+        }
+        await rejectDriverKyc(driverId, reason.trim());
+        await Promise.all([dispatch(getDashboardStats()), refetchDrivers()]);
+        toast.success(`${targetDriver.full_name}'s KYC was rejected`);
+        setSelectedDriverId(null);
+      }
+    } catch (error: any) {
+      console.error(`Failed to execute ${actionType} on driver ID: ${driverId}`, error);
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.rejection_reason?.[0] ||
+          `Failed to ${actionType} driver`
+      );
     }
-  } catch (error: any) {
-    console.error(
-      `Failed to execute ${actionType} on driver ID: ${driverId}`,
-      error,
-    );
-    toast.error(
-      error?.response?.data?.message ||
-        error?.response?.data?.rejection_reason?.[0] ||
-        `Failed to ${actionType} driver`,
-    );
-  }
-};
- 
+  };
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     dispatch(setCurrentPage(1));
@@ -146,6 +149,7 @@ export default function DriversPage() {
 
   const handleTabChange = (tab: UITabType) => {
     setActiveTab(tab);
+    setSelectedDriverIds([]);
     dispatch(setCurrentPage(1));
   };
 
@@ -163,39 +167,34 @@ export default function DriversPage() {
     dispatch(setCurrentPage(1));
   };
 
+  // ── Row Selection & Funding Handlers ──
+  const handleSelectDriver = (driverId: string) => {
+    setSelectedDriverIds((prev) =>
+      prev.includes(driverId) ? prev.filter((id) => id !== driverId) : [...prev, driverId]
+    );
+  };
+
+  const handleSelectAll = (driverIdsOnPage: string[]) => {
+    setSelectedDriverIds(driverIdsOnPage);
+  };
+
+  const handleOpenFundModal = (driverIds: string[], name?: string) => {
+    if (driverIds.length === 0) return;
+    setTargetFundDriverIds(driverIds);
+    setTargetFundDriverName(name || `${driverIds.length} drivers selected`);
+    setFundWalletModalOpen(true);
+  };
+
   const driverStats: OverviewItem[] = [
-    {
-      title: "Total Drivers",
-      value: driversummary?.total,
-      icon: <PeopleIcon />,
-    },
-    {
-      title: "Active Drivers",
-      value: driversummary?.online,
-      icon: <CheckCircleIcon color="success" />,
-    },
-    {
-      title: "Pending Drivers",
-      value: driversummary?.not_started_kyc,
-      icon: <VisibilityIcon color="secondary" />,
-    },
-    {
-      title: "Drivers In Review",
-      value: driversummary?.pending_kyc,
-      icon: <FaListCheck color="#4A90E2" />,
-    },
-    {
-      title: "Suspended Drivers",
-      value: driversummary?.suspended,
-      icon: <BlockIcon color="error" />,
-    },
+    { title: "Total Drivers", value: driversummary?.total, icon: <PeopleIcon /> },
+    { title: "Active Drivers", value: driversummary?.online, icon: <CheckCircleIcon color="success" /> },
+    { title: "Pending Drivers", value: driversummary?.not_started_kyc, icon: <VisibilityIcon color="secondary" /> },
+    { title: "Drivers In Review", value: driversummary?.pending_kyc, icon: <FaListCheck color="#4A90E2" /> },
+    { title: "Suspended Drivers", value: driversummary?.suspended, icon: <BlockIcon color="error" /> },
   ];
 
   return (
-    <Box
-      className="fade-in"
-      sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}
-    >
+    <Box className="fade-in" sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}>
       {/* Search Input */}
       <SearchFilterRow
         value={searchQuery}
@@ -206,7 +205,7 @@ export default function DriversPage() {
       {/* Overview Cards Block */}
       <OverviewCards items={driverStats} loading={isLoading} />
 
-      {/* Status tabs (left) + Filters trigger (right) */}
+      {/* Status tabs (left) + Action buttons (right) */}
       <Box
         sx={{
           display: "flex",
@@ -218,42 +217,59 @@ export default function DriversPage() {
         }}
       >
         <Box sx={{ display: "flex", gap: 3 }}>
-          {(["all", "approved", "pending", "review", "rejected"] as const).map(
-            (tab) => (
-              <Typography
-                key={tab}
-                onClick={() => handleTabChange(tab)}
-                sx={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                  textTransform: "capitalize",
-                  color:
-                    activeTab === tab ? "var(--accent-gold)" : "secondary.main",
-                  position: "relative",
-                  pb: 0.5,
-                  transition: "color 0.2s",
-                  "&::after":
-                    activeTab === tab
-                      ? {
-                          content: '""',
-                          position: "absolute",
-                          bottom: 0,
-                          left: 0,
-                          width: "100%",
-                          height: "2px",
-                          backgroundColor: "var(--accent-gold)",
-                        }
-                      : {},
-                }}
-              >
-                {tab}
-              </Typography>
-            ),
-          )}
+          {(["all", "approved", "pending", "review", "rejected"] as const).map((tab) => (
+            <Typography
+              key={tab}
+              onClick={() => handleTabChange(tab)}
+              sx={{
+                fontSize: 14,
+                fontWeight: 500,
+                cursor: "pointer",
+                textTransform: "capitalize",
+                color: activeTab === tab ? "var(--accent-gold)" : "secondary.main",
+                position: "relative",
+                pb: 0.5,
+                transition: "color 0.2s",
+                "&::after":
+                  activeTab === tab
+                    ? {
+                        content: '""',
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "2px",
+                        backgroundColor: "var(--accent-gold)",
+                      }
+                    : {},
+              }}
+            >
+              {tab}
+            </Typography>
+          ))}
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          {selectedDriverIds.length > 0 && (
+            <Button
+              onClick={() => handleOpenFundModal(selectedDriverIds)}
+              startIcon={<AccountBalanceWalletIcon sx={{ fontSize: 18 }} />}
+              sx={{
+                height: 40,
+                px: 2,
+                textTransform: "none",
+                fontSize: 13.5,
+                fontWeight: 600,
+                borderRadius: "10px",
+                color: "#17130A",
+                backgroundColor: "var(--accent-gold, #FEB914)",
+                "&:hover": { backgroundColor: "#F4B400" },
+              }}
+            >
+              Fund Wallets ({selectedDriverIds.length})
+            </Button>
+          )}
+
           <Button
             onClick={() => setExportOpen(true)}
             startIcon={<FileDownloadRoundedIcon sx={{ fontSize: 18 }} />}
@@ -279,7 +295,7 @@ export default function DriversPage() {
         </Box>
       </Box>
 
-      {/* Drivers Table  */}
+      {/* Drivers Table */}
       <DriversTable
         isLoading={isLoading}
         driversList={driversList}
@@ -289,7 +305,9 @@ export default function DriversPage() {
         onPageChange={handleChangePage}
         onPageSizeChange={handlePageSizeChange}
         onViewDriver={(id) => setSelectedDriverId(id)}
-        // onDriverAction={handleDriverAction}
+        selectedDriverIds={selectedDriverIds}
+        onSelectDriver={handleSelectDriver}
+        onSelectAll={handleSelectAll}
       />
 
       {/* Details modal */}
@@ -300,6 +318,7 @@ export default function DriversPage() {
         onDriverAction={handleDriverAction}
       />
 
+      {/* Export Modal */}
       <ExportDriversModal
         isOpen={exportOpen}
         onClose={() => setExportOpen(false)}
@@ -307,6 +326,19 @@ export default function DriversPage() {
           search: searchQuery || undefined,
           kyc_status: DRIVER_TAB_MAPPING[activeTab] || undefined,
           ...filters,
+        }}
+      />
+
+      {/* Fund Wallet Modal */}
+      <FundWalletModal
+        open={fundWalletModalOpen}
+        driverIds={targetFundDriverIds}
+        driverNames={targetFundDriverName}
+        onClose={() => setFundWalletModalOpen(false)}
+        onSuccess={() => {
+          setSelectedDriverIds([]);
+          refetchDrivers();
+          dispatch(getDashboardStats());
         }}
       />
     </Box>

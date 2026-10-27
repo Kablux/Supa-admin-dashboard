@@ -76,6 +76,30 @@ export interface DriverSummaryData {
   approved_kyc: number;
 }
 
+
+/////fund driver wallet
+export interface FundDriverWalletsPayload {
+  driver_ids: string[];
+  amount: string;
+  note: string;
+}
+
+export interface FundDriverWalletsResponse {
+  message: string;
+  data: {
+    amount: string;
+    group_reference: string;
+    funded_count: number;
+    funded: {
+      driver_id: string;
+      wallet_id: string;
+      transaction_id: string;
+      reference: string;
+      available_balance: string;
+    }[];
+  };
+}
+
 export interface LiveTripsSummary {
   active: number;
   completed: number;
