@@ -224,6 +224,17 @@ export interface TransactionAnalytics {
   };
 }
 
+export interface TransactionFilterState {
+  type?: string;
+  direction?: string;
+  status?: string;
+  channel?: string;
+  user_role?: string;
+  fund_source?: string;
+  created_at_after?: string;
+  created_at_before?: string;
+}
+
 // NOTIFICATION TYPES
 export type NotifCategory = "corporate" | "standard" | "premium";
 
