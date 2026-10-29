@@ -4,7 +4,7 @@ import dashboardReducer from "./slices/Dashboard";
 import ridersReducer from "./slices/Riders";
 import driversReducer from "./slices/Drivers";
 import tripsReducer from "./slices/Trips";
-import transactionReducer from "./slices/Transaction";
+import transactionReducer from "./slices/Transactions";
 import notificationReducer from "./slices/Notification";
 import adminRoleReducer from "./slices/AdminRole";
 import corporateReducer from "./slices/corporate";
@@ -28,7 +28,7 @@ export const store = configureStore({
     referrals: referralsReducer,
     trips: tripsReducer,
     courier: courierReducer,
-    transaction: transactionReducer,
+    transactions: transactionReducer,
     notification: notificationReducer,
     adminRole: adminRoleReducer,
     corporate: corporateReducer,
