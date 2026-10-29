@@ -25,6 +25,8 @@ import {
   fetchPromotionsXHR,
   fetchPromotionUsagesXHR,
   fetchSosIncidentsApi,
+  fetchTransactionAnalyticsApi,
+  fetchTransactionsApi,
   getAdminRoles,
   getCorporateData,
   getDriverList,
@@ -50,7 +52,7 @@ import {
   updatePromotionXHR,
   uploadFiles,
 } from "./xhr";
-import { AdminRole, Banner, BannerPayload, BannersState,  CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, SosState, UploadFile } from "../types/common.types";
+import { AdminRole, Banner, BannerPayload, BannersState,  CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchTransactionsParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, SosState, UploadFile } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
@@ -676,6 +678,33 @@ export const fetchPromotionUsages = createAsyncThunk(
       return rejectWithValue(
         err.response?.data || "Failed to fetch promo usages"
       );
+    }
+  }
+);
+
+
+//////Transaction
+
+export const fetchTransactions = createAsyncThunk(
+  "transactions/fetchTransactions",
+  async (params: FetchTransactionsParams | undefined, { rejectWithValue }) => {
+    try {
+      const data = await fetchTransactionsApi(params);
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch transactions");
+    }
+  }
+);
+
+export const fetchTransactionAnalytic = createAsyncThunk(
+  "transactions/fetchAnalytics",
+  async (range: "week" | "month" | "year" = "month", { rejectWithValue }) => {
+    try {
+      const data = await fetchTransactionAnalyticsApi(range);
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch transaction analytics");
     }
   }
 );

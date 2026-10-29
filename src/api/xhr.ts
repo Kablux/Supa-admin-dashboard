@@ -38,6 +38,7 @@ import {
   FetchReferralsParams,
   FetchRidersParams,
   FetchSosParams,
+  FetchTransactionsParams,
   FetchUsersParams,
   FundDriverWalletsPayload,
   FundDriverWalletsResponse,
@@ -56,7 +57,10 @@ import {
   RiderSummaryData,
   RideTypePricing,
   SosIncident,
+  Transaction,
   TransactionAnalytics,
+  TransactionAnalyticsResponse,
+  TransactionsResponse,
   UserSummaryData,
 } from "../types/common.types";
 
@@ -969,5 +973,24 @@ export const fetchPromotionUsagesXHR = async (params: {
     { params }
   );
 
+  return response.data;
+};
+
+
+//////Transactions
+export const fetchTransactionsApi = async (params?: FetchTransactionsParams): Promise<TransactionsResponse> => {
+  const response = await api.get("/business-admin/transactions/", { params });
+  return response.data;
+};
+
+export const fetchTransactionDetailsApi = async (id: string): Promise<Transaction> => {
+  const response = await api.get(`/business-admin/transactions/${id}/`);
+  return response.data;
+};
+
+export const fetchTransactionAnalyticsApi = async (range: "week" | "month" | "year" = "month"): Promise<TransactionAnalyticsResponse> => {
+  const response = await api.get("/business-admin/transactions/analytics/", {
+    params: { range },
+  });
   return response.data;
 };
