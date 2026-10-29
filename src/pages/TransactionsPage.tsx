@@ -1,79 +1,88 @@
-import { Box, Typography } from "@mui/material";
-import { BalanceSection } from "../components/transactions/BalanceSection";
-import { EarningSummary } from "../components/transactions/EarningSummary";
-import { INCOME_CARDS, MICRO_STATS } from "../data/transactionMockData";
-import { IncomeCard } from "../components/transactions/IncomeCard";
-import { ReviewStatCard } from "../components/transactions/ReviewStatCard";
-import { RecentTransactions } from "../components/transactions/RecentTransaction";
+import React, { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { fetchTransactions, fetchTransactionAnalytic } from "../api/xhrHelper";
+import SearchFilterRow from "../components/SearchFilterRow";
+import { setAnalyticsRange, setCurrentPage, setPageSize } from "../redux/slices/Transactions";
+import TransactionAnalyticsSection from "../components/transactions/AnalyticsSection";
+import TransactionSummaryCards from "../components/transactions/SummaryCard";
+import TransactionsTable from "../components/transactions/TransactionTable";
 
-export default function TransactionsPage(): React.ReactElement {
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("en-GB", {
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-  const timeStr = now.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+
+export default function TransactionsPage() {
+  const dispatch = useAppDispatch();
+  const [search, setSearch] = useState("");
+
+  const {
+    items: transactions,
+    totalCount,
+    currentPage,
+    pageSize,
+    totalIncome,
+    totalExpense,
+    analytics,
+    analyticsRange,
+    isLoading,
+    isAnalyticsLoading,
+  } = useAppSelector((state) => state.transactions);
+
+  useEffect(() => {
+    dispatch(
+      fetchTransactions({
+        page: currentPage,
+        page_size: pageSize,
+        search: search || undefined,
+      })
+    );
+  }, [dispatch, currentPage, pageSize, search]);
+
+  useEffect(() => {
+    dispatch(fetchTransactionAnalytic(analyticsRange));
+  }, [dispatch, analyticsRange]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    dispatch(setCurrentPage(1));
+  };
+
+  const calculatedBalance = Number(totalIncome || 0) - Number(totalExpense || 0);
 
   return (
-    <Box
-      className="fade-in"
-      sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
-    >
-      {/* ── Two-column grid ── */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1fr 2fr" },
-          gap: 5,
-          alignItems: "start",
-        }}
-      >
-        {/* Left column */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-          {/* Header */}
-          <Box>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontSize: 18,
-                color: "var(--text-primary)",
-              }}
-            >
-              Todays Earnings
-            </Typography>
-            <Typography
-              sx={{ fontSize: 11, color: "var(--text-muted)", mt: 0.25 }}
-            >
-              {dateStr}, {timeStr}
-            </Typography>
-          </Box>
+    <Box className="fade-in" sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}>
+      {/* Summary Cards */}
+      <TransactionSummaryCards
+        totalIncome={totalIncome}
+        totalExpense={totalExpense}
+        calculatedBalance={calculatedBalance}
+      />
 
-          {/* Income cards */}
-          {INCOME_CARDS.map((card) => (
-            <IncomeCard key={card.id} card={card} />
-          ))}
+      {/* Analytics Chart Section */}
+      <TransactionAnalyticsSection
+        analytics={analytics}
+        analyticsRange={analyticsRange}
+        isAnalyticsLoading={isAnalyticsLoading}
+        onRangeChange={(range) => dispatch(setAnalyticsRange(range))}
+      />
 
-          {/* Micro stats row */}
-          <Box sx={{ display: "flex", gap: 2 }}>
-            {MICRO_STATS.map((s) => (
-              <ReviewStatCard key={s.id} stat={s} />
-            ))}
-          </Box>
-        </Box>
-
-        {/* Right column */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-          <EarningSummary />
-          <RecentTransactions />
-          <BalanceSection />
-          {/* <CardsSection /> */}
-        </Box>
+      {/* Search Bar */}
+      <Box className="md:max-w-xl w-full">
+        <SearchFilterRow
+          value={search}
+          onChange={handleSearchChange}
+          placeholder="Search by ID, reference, or user email..."
+        />
       </Box>
+
+      {/* Transactions Table */}
+      <TransactionsTable
+        isLoading={isLoading}
+        transactions={transactions}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        onPageChange={(_, newPage) => dispatch(setCurrentPage(newPage + 1))}
+        onPageSizeChange={(size) => dispatch(setPageSize(size))}
+      />
     </Box>
   );
 }

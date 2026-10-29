@@ -138,6 +138,68 @@ export const RIDE_REQUEST_TAB = {
   expired: "expired",
 } as const;
 
+/////Transaction
+export interface Transaction {
+  id: string;
+  reference: string;
+  type: string;
+  amount: string;
+  direction: "credit" | "debit";
+  status: string;
+  channel: string;
+  user_email: string;
+  user_name: string;
+  user_type: string;
+  created_at: string;
+}
+
+export interface TransactionsResultContainer {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Transaction[];
+  total_income?: string;
+  total_expense?: string;
+}
+
+export interface TransactionsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: TransactionsResultContainer[];
+  total_income?: string;
+  total_expense?: string;
+}
+
+
+export interface TransactionAnalyticsResponse {
+  range: string;
+  currency: string;
+  metrics: {
+    name: string;
+    label: string;
+    data: { x: string; y: number }[];
+  }[];
+  summary: {
+    total_income: number;
+    total_expense: number;
+  };
+}
+
+export interface FetchTransactionsParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  status?: string;
+  type?: string;
+  direction?: string;
+  channel?: string;
+  user_role?: string;
+  fund_source?: string;
+  created_at_after?: string;
+  created_at_before?: string;
+  ordering?: string;
+}
 
 export interface AnalyticsPoint {
   x: string;
@@ -149,6 +211,8 @@ export interface AnalyticsMetric {
   label: string;
   data: AnalyticsPoint[];
 }
+
+export type AnalyticsRange = "week" | "month" | "year";
 
 export interface TransactionAnalytics {
   range: string;
