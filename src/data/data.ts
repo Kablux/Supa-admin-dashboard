@@ -18,6 +18,7 @@ import { MdOutlineHelpOutline } from "react-icons/md";
 import { RiEBikeFill } from "react-icons/ri";
 import { VscReferences } from "react-icons/vsc";
 import { IoGift } from "react-icons/io5";
+import { MdInsights } from "react-icons/md";
 import type {
   FinancePoint,
   MessagesData,
@@ -36,6 +37,12 @@ export const navSections: NavSection[] = [
         label: "Dashboard",
         icon: AiOutlineHome,
         path: "/",
+      },
+      {
+        id: "analytics",
+        label: "Analytics",
+        icon: MdInsights,
+        path: "/analytics",
       },
     ],
   },
@@ -213,6 +220,7 @@ export const ROUTE_LABELS: Record<string, string> = {
   "/feedback": "Feedback",
   "/dispute": "Dispute",
   "/help": "Help",
+  "/analytics": "Analytics",
 };
 
 export const quickActions = [
