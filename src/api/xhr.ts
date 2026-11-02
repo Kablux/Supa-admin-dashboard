@@ -61,6 +61,7 @@ import {
   TransactionAnalytics,
   TransactionAnalyticsResponse,
   TransactionsResponse,
+  UnsuspendRiderResponse,
   UserSummaryData,
 } from "../types/common.types";
 
@@ -397,6 +398,14 @@ export const courierService = {
       `/business-admin/courier/referrals/`,
       { params }
     );
+    return response.data;
+  },
+  
+  ////unsuspend rider
+    unsuspendRider: async (userId: string) => {
+    const response = await api.post<
+      BaseApiCourierResponse<UnsuspendRiderResponse> | UnsuspendRiderResponse
+    >(`/business-admin/riders/${userId}/unsuspend/`);
     return response.data;
   },
 };
