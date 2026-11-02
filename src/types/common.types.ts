@@ -900,6 +900,26 @@ export interface ApproveKycResponse {
   approval_date: string;
 }
 
+export interface UnsuspendRiderResponse {
+  id: string;
+  email: string;
+  status: string;
+  full_name: string;
+  phone_number: string;
+  address: string;
+  rating: string;
+  profile_image: string;
+  profile_image_url: string;
+  loyalty_points: string;
+  total_rides: string;
+  total_of_rides: string;
+  completed_rides: string;
+  number_of_completed_rides: string;
+  cancelled_rides: string;
+  number_of_cancelled_rides: string;
+  has_fcm: boolean;
+}
+
 ////SOS
 export type SosStatus = "OPEN" | "RESOLVED" | "IN_PROGRESS" | string;
 

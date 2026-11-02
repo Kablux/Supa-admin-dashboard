@@ -5,6 +5,7 @@ import {
   rejectCourierRiderKyc,
   fetchCourierUsers,
   fetchCourierReferrals,
+  unsuspendCourierRider,
 } from '../../api/xhrHelper';
 import {
   CourierRider,
@@ -42,6 +43,8 @@ interface CourierState {
   kycApprovalError: string | null;
   kycRejectingId: string | null;
   kycRejectionError: string | null;
+  unsuspendingId: string | null;
+  unsuspendError: string | null;
 }
 
 const initialState: CourierState = {
@@ -53,6 +56,8 @@ const initialState: CourierState = {
   kycApprovalError: null,
   kycRejectingId: null,
   kycRejectionError: null,
+  unsuspendingId: null,
+  unsuspendError: null,
 };
 
 const courierSlice = createSlice({
@@ -67,6 +72,8 @@ const courierSlice = createSlice({
       state.kycApprovingId = null;
       state.kycRejectionError = null;
       state.kycRejectingId = null;
+      state.unsuspendingId = null;
+      state.unsuspendError = null;
     },
     updateRiderInList(state, action: PayloadAction<Partial<CourierRider> & { id: string }>) {
       const index = state.riders.data.findIndex((r) => r.id === action.payload.id);
@@ -163,6 +170,37 @@ const courierSlice = createSlice({
           (action.payload as string) || action.error.message || 'Failed to reject KYC';
       });
 
+// ── Unsuspend Rider ──
+     builder
+      .addCase(unsuspendCourierRider.pending, (state, action) => {
+        state.unsuspendingId = action.meta.arg;
+        state.unsuspendError = null;
+      })
+      .addCase(unsuspendCourierRider.fulfilled, (state, action) => {
+        state.unsuspendingId = null;
+ 
+        // Match on the id we sent (meta.arg) — the response id may be the
+        // rider-profile id rather than the user id used in our list.
+        const riderId = action.meta.arg;
+        const newStatus = action.payload?.status?.toUpperCase() || 'ACTIVE';
+ 
+        const index = state.riders.data.findIndex((r) => r.id === riderId);
+        if (index !== -1) {
+          state.riders.data[index].account_status = newStatus;
+        }
+ 
+        const selected = state.selectedRider;
+        if (selected && selected.id === riderId) {
+          selected.account_status = newStatus;
+        }
+      })
+      .addCase(unsuspendCourierRider.rejected, (state, action) => {
+        state.unsuspendingId = null;
+        state.unsuspendError =
+          action.payload || action.error.message || 'Failed to unsuspend rider';
+      });
+      
+      
     // ── Users List ──
     builder
       .addCase(fetchCourierUsers.pending, (state) => {
