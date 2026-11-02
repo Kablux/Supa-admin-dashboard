@@ -52,7 +52,7 @@ import {
   updatePromotionXHR,
   uploadFiles,
 } from "./xhr";
-import { AdminRole, Banner, BannerPayload, BannersState,  CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchTransactionsParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, SosState, UploadFile } from "../types/common.types";
+import { AdminRole, Banner, BannerPayload, BannersState,  CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchTransactionsParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, SosState, UnsuspendRiderResponse, UploadFile } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
@@ -516,6 +516,23 @@ export const fetchCourierReferrals = createAsyncThunk(
     }
   }
 );
+
+export const unsuspendCourierRider = createAsyncThunk<
+  UnsuspendRiderResponse,
+  string,
+  { rejectValue: string }
+>('courier/unsuspendRider', async (userId, { rejectWithValue }) => {
+  try {
+    const res: any = await courierService.unsuspendRider(userId);
+    return (res?.data ?? res) as UnsuspendRiderResponse;
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.error ||
+        err.response?.data?.detail ||
+        'Failed to unsuspend rider'
+    );
+  }
+});
 
 ///SOS THUNK
 export const loadSosIncidents = createAsyncThunk(

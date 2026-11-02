@@ -86,7 +86,7 @@ const CourierFilters: React.FC<CourierFiltersProps> = ({
         {activeTab === "riders" && (
           <>
             {/* KYC Status Filter */}
-            <FormControl size="small" sx={{ minWidth: 150 }}>
+            <FormControl size="small" sx={{ minWidth: 160 }}>
               <Select
                 value={kycStatus}
                 displayEmpty
@@ -94,7 +94,7 @@ const CourierFilters: React.FC<CourierFiltersProps> = ({
                 sx={selectSx}
               >
                 <MenuItem value="" sx={{ fontSize: 14 }}>
-                  All KYC
+                  All KYC Statuses
                 </MenuItem>
                 <MenuItem value="UNDER_REVIEW" sx={{ fontSize: 14 }}>
                   Under Review
@@ -102,11 +102,11 @@ const CourierFilters: React.FC<CourierFiltersProps> = ({
                 <MenuItem value="NEEDS_RESUBMISSION" sx={{ fontSize: 14 }}>
                   Needs Resubmission
                 </MenuItem>
-                <MenuItem value="APPROVED" sx={{ fontSize: 14 }}>
-                  Approved
+                <MenuItem value="NOT_SUBMITTED" sx={{ fontSize: 14 }}>
+                  Not Submitted
                 </MenuItem>
-                <MenuItem value="REJECTED" sx={{ fontSize: 14 }}>
-                  Rejected
+                <MenuItem value="VERIFIED" sx={{ fontSize: 14 }}>
+                  Verified
                 </MenuItem>
               </Select>
             </FormControl>

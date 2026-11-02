@@ -14,6 +14,7 @@ import {
 import { navSections } from "../../data/data";
 import logoImg from "../../assets/Kablux-logo.svg";
 import type { NavItem } from "../../types/common.types";
+import { useAnalyticsMe } from "../../analytics/api";
 
 export const SIDEBAR_WIDTH = 220;
 export const COLLAPSED_WIDTH = 72;
@@ -37,6 +38,10 @@ export default function Sidebar({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const effectiveCollapsed = isCollapsed && !isMobile;
+  // Analytics only appears once the backend reports it as enabled for this admin.
+  const { me } = useAnalyticsMe();
+  const showAnalytics = Boolean(me?.enabled && me.sections.length);
+  const visibleSections = navSections.map((section) => ({ ...section, items: section.items.filter((item) => item.id !== "analytics" || showAnalytics) }));
 
   const handleNav = (item: NavItem) => {
     setActiveNav(item.id);
@@ -88,7 +93,7 @@ export default function Sidebar({
 
       {/* Nav Sections */}
       <Box sx={{ flex: 1, px: effectiveCollapsed ? 1 : 1.5, py: 1.5, overflowY: "auto", overflowX: "hidden" }}>
-        {navSections.map((section, si) => (
+        {visibleSections.map((section, si) => (
           <Box key={si}>
             {/* Section Title */}
             {section.title && (
