@@ -1,0 +1,32 @@
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  body {
+    background: #fff !important;
+  }
+  nav,
+  header,
+  .MuiDrawer-root,
+  .MuiTabs-root,
+  .leaflet-control-container {
+    display: none !important;
+  }
+  main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f4f4f4;
+    --border: #d8d8d8;
+    --border-subtle: #eeeeee;
+    --text-primary: #111111;
+    --text-secondary: #444444;
+    --text-muted: #777777;
+  }
+}

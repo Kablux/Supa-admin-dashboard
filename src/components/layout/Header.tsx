@@ -33,7 +33,7 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
   const dispatch = useAppDispatch();
   const { mode, toggleMode } = useThemeMode();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const pageLabel = ROUTE_LABELS[location.pathname] || "Dashboard";
+  const pageLabel = ROUTE_LABELS[location.pathname] || (location.pathname.startsWith("/analytics") ? "Analytics" : "Dashboard");
   const isDark = mode === "dark";
 
   // Retrieve current user info from Redux auth slice
