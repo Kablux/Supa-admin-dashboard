@@ -30,6 +30,7 @@ import BannersPage from "./pages/BannerPage";
 import CampaignPage from "./pages/CampaignPage";
 import { Toaster } from "react-hot-toast";
 import SessionTimeoutManager from "./components/auth/SessionTimeoutManager";
+import { analyticsRoutes } from "./analytics/routes";
 
 function ThemedApp() {
   const { mode } = useThemeMode();
@@ -74,6 +75,7 @@ function ThemedApp() {
             <Route path="feedback" element={<FeedbackPage />} />
             <Route path="dispute" element={<DisputePage />} />
             <Route path="help" element={<HelpPage />} />
+            {analyticsRoutes}
           </Route>
         </Routes>
       </BrowserRouter>

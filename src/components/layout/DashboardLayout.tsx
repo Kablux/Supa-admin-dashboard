@@ -25,16 +25,18 @@ const PATH_TO_ID: Record<string, string> = {
   "/help": "help",
 };
 
+const navIdFor = (pathname: string) => PATH_TO_ID[pathname] || (pathname.startsWith("/analytics") ? "analytics" : undefined);
+
 export default function DashboardLayout() {
   const location = useLocation();
   const [activeNav, setActiveNav] = useState(
-    PATH_TO_ID[location.pathname] || "dashboard",
+    navIdFor(location.pathname) || "dashboard",
   );
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
-    const id = PATH_TO_ID[location.pathname];
+    const id = navIdFor(location.pathname);
     if (id) setActiveNav(id);
   }, [location.pathname]);
 
