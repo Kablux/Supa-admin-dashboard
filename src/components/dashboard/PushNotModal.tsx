@@ -8,6 +8,10 @@ import {
   TextField,
   CircularProgress,
   Divider,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
@@ -55,6 +59,7 @@ export default function PushNotificationModal({
 }: PushNotificationModalProps) {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [audience, setAudience] = useState<"rider" | "driver">("rider");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -64,13 +69,14 @@ export default function PushNotificationModal({
     setFile(null);
     setTitle("");
     setMessage("");
+    setAudience("rider");
     setLoading(false);
     setResult(null);
     if (fileRef.current) fileRef.current.value = "";
   };
 
   const handleClose = () => {
-    if (loading) return; // don't close mid-send
+    if (loading) return;
     reset();
     onClose();
   };
@@ -97,11 +103,11 @@ export default function PushNotificationModal({
     }
     setLoading(true);
     try {
-      const res = await broadcastRetention(file, title.trim(), message.trim());
+      const res = await broadcastRetention(file, title.trim(), message.trim(), audience);
       setResult(res);
       const skipped = res.unknown_ids?.length ?? 0;
       toast.success(
-        `Push queued to ${res.notified} rider${res.notified === 1 ? "" : "s"}` +
+        `Push queued to ${res.notified} ${audience}${res.notified === 1 ? "" : "s"}` +
           (skipped ? ` · ${skipped} unknown ID${skipped === 1 ? "" : "s"} skipped` : ""),
       );
     } catch (err: any) {
@@ -172,13 +178,11 @@ export default function PushNotificationModal({
           >
             <CheckCircleRoundedIcon sx={{ color: "#50c878", fontSize: 30 }} />
             <Box>
-              <Typography sx={{ fontSize: 16, fontWeight: 700 }}>
+              <Typography sx={{ fontSize: 14, fontWeight: 700 }}>
                 {result.queued ? "Broadcast queued" : "Broadcast processed"}
               </Typography>
-              <Typography
-                sx={{ fontSize: 13, color: "var(--text-secondary)" }}
-              >
-                Push queued to {result.notified} rider
+              <Typography sx={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                Push queued to {result.notified} {audience}
                 {result.notified === 1 ? "" : "s"}.
               </Typography>
             </Box>
@@ -260,6 +264,95 @@ export default function PushNotificationModal({
         /* ---------------- Compose view ---------------- */
         <>
           <Box sx={{ px: 3, py: 2.5, display: "flex", flexDirection: "column", gap: 2.5 }}>
+
+         <FormControl size="small" fullWidth>
+              <InputLabel
+                id="audience-profile-label"
+                sx={{
+                  color: "var(--text-secondary)",
+                  fontSize: 13,
+                  "&.Mui-focused": {
+                    color: "#FFBE18",
+                  },
+                }}
+              >
+                Audience Profile
+              </InputLabel>
+
+              <Select
+                labelId="audience-profile-label"
+                value={audience}
+                label="Audience Profile"
+                onChange={(e) => setAudience(e.target.value as "rider" | "driver")}
+                sx={{
+                  borderRadius: 1,
+                  backgroundColor: "var(--bg-secondary, #141721)",
+                  color: "var(--text-primary)",
+                  fontSize: 14,
+                  minHeight: 44,
+
+                  "& .MuiSelect-select": {
+                    py: 1.25,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "var(--border)",
+                  },
+
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "var(--accent-gold-dim, rgba(255,215,0,0.25))",
+                  },
+
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "var(--accent-gold, #FFD700)",
+                    borderWidth: 1,
+                  },
+
+                  "& .MuiSelect-icon": {
+                    color: "var(--text-muted)",
+                  },
+                }}
+               MenuProps={{
+                  slotProps: {
+                    paper: {
+                      sx: {
+                        mt: 0.75,
+                        backgroundColor: "var(--bg-secondary, #141721)",
+                        color: "var(--text-primary)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 2,
+                        boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
+
+                        "& .MuiMenuItem-root": {
+                          fontSize: 14,
+                          minHeight: 40,
+                          borderRadius: 1,
+                          mx: 0.75,
+                          my: 0.25,
+
+                          "&:hover": {
+                            backgroundColor: "rgba(255,190,24,0.07)",
+                          },
+
+                          "&.Mui-selected": {
+                            backgroundColor: "rgba(255,190,24,0.12)",
+                            color: "var(--text-primary)",
+                          },
+
+                          "&.Mui-selected:hover": {
+                            backgroundColor: "rgba(255,190,24,0.18)",
+                          },
+                        },
+                      },
+                    },
+                  },
+                }}
+              >
+                <MenuItem value="rider">Rider </MenuItem>
+                <MenuItem value="driver">Driver</MenuItem>
+              </Select>
+            </FormControl>
+
             {/* File upload */}
             <input
               ref={fileRef}
@@ -378,18 +471,20 @@ export default function PushNotificationModal({
           <Box sx={{ px: 3, py: 2.5, display: "flex", justifyContent: "flex-end", gap: 1.5 }}>
             <Button
               onClick={handleClose}
-              disabled={loading}
               sx={{
                 height: 42,
                 px: 2,
                 textTransform: "none",
-                fontSize: 13.5,
-                fontWeight: 600,
-                borderRadius: "10px",
+                fontSize: 14,
+                fontWeight: 500,
+                minWidth: 120,
+                cursor: "pointer",
+                borderRadius: "8px",
                 color: "var(--text-primary)",
                 border: "1px solid var(--border, rgba(255,255,255,0.15))",
                 "&:hover": {
-                  borderColor: "rgba(255,255,255,0.3)",
+                  color: "var(--accent-gold, #FFD700)",
+                  borderColor: "var(--border, rgba(255,255,255,0.3))",
                   backgroundColor: "rgba(255,255,255,0.03)",
                 },
               }}
@@ -404,9 +499,9 @@ export default function PushNotificationModal({
                 height: 42,
                 px: 3,
                 textTransform: "none",
-                fontSize: 13.5,
-                fontWeight: 700,
-                borderRadius: "10px",
+                fontSize: 14,
+                fontWeight: 500,
+                borderRadius: "8px",
                 minWidth: 150,
                 backgroundColor: "var(--accent-gold, #FFD700)",
                 color: "#000",
@@ -416,7 +511,7 @@ export default function PushNotificationModal({
                   boxShadow: "0 4px 12px rgba(255,215,0,0.25)",
                 },
                 "&.Mui-disabled": {
-                  backgroundColor: "rgba(255,255,255,0.12)",
+                  backgroundColor: "var(--accent-gold-dim, rgba(255,215,0,0.25))",
                   color: "rgba(255,255,255,0.4)",
                 },
               }}
