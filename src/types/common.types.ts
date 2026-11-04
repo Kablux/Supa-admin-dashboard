@@ -598,7 +598,7 @@ export interface RideTypePricing {
   per_minute: string;
   max_surge: string;
 }
- 
+
 export interface GlobalConfig {
   base_fare: string;
   commission_rate: string;
@@ -643,8 +643,8 @@ export interface ReferralUser {
 // Update your main Referral interface
 export interface Referral {
   id: string;
-  user: ReferralUser;          
-  referred_user: ReferralUser; 
+  user: ReferralUser;
+  referred_user: ReferralUser;
   role: string;
   created_at: string;
   updated_at: string;
@@ -691,10 +691,13 @@ export interface DriverLocationsResponse {
 }
 
 ///Retention Response
+export type BroadcastAudience = "rider" | "driver";
+
 export interface BroadcastRetentionResponse {
   notified: number;
   queued: boolean;
   unknown_ids: string[];
+  audience: string;
 }
 
 ////courier
@@ -742,14 +745,14 @@ export interface Banner {
   id: string;
   title: string;
   body: string;
-  image_small: string;   
-  image_large: string;   
-  image_url: string;     
+  image_small: string;
+  image_large: string;
+  image_url: string;
   audience: BannerAudience;
   is_active: boolean;
   sort_order: number;
-  starts_at: string | null;   
-  ends_at: string | null;    
+  starts_at: string | null;
+  ends_at: string | null;
   is_clickable: boolean;
   cta_type: BannerCtaType;
   cta_value: string;
@@ -804,7 +807,7 @@ export interface BannersState {
   audienceFilter: BannerAudience | '';
   activeFilter: boolean | '';
   listStatus: BannersRequestStatus;
-  mutateStatus: BannersRequestStatus; 
+  mutateStatus: BannersRequestStatus;
   error: string | null;
   mutateError: string | null;
 }
@@ -851,7 +854,7 @@ export interface CourierRider extends CourierUser {
   gender?: string | null;
   profile_photo?: string | null;
   date_of_birth?: string | null;
-  
+
   // KYC & Verification
   kyc_status: string;
   kyc_submitted_at: string | null;

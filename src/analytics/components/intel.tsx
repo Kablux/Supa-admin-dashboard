@@ -13,9 +13,9 @@ export function InsightList({ insights, compact = false }: { insights: Insight[]
   return (
     <Stack spacing={1.5}>
       {insights.map((insight) => (
-        <Box key={insight.key} sx={{ borderLeft: `3px solid ${TONE[insight.tone]}`, pl: 1.75, py: 0.5, breakInside: "avoid" }}>
+        <Box key={insight.key} sx={{ borderLeft: `2px solid ${TONE[insight.tone]}`, pl: 1.75, py: 0.5, breakInside: "avoid" }}>
           <Typography sx={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>{insight.headline}</Typography>
-          {insight.explanation && <Typography sx={{ fontSize: 13, color: "var(--text-secondary)", mt: 0.25 }}>{insight.explanation}</Typography>}
+          {insight.explanation && <Typography sx={{ fontSize: 12, color: "var(--text-secondary)", mt: 0.25 }}>{insight.explanation}</Typography>}
           {!compact && insight.evidence.length > 0 && (
             <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1, mt: 1 }}>
               {insight.evidence.map((item) => (
@@ -23,7 +23,7 @@ export function InsightList({ insights, compact = false }: { insights: Insight[]
                   key={item.label}
                   size="small"
                   variant="outlined"
-                  sx={{ borderColor: "var(--border)", color: "var(--text-secondary)", fontSize: 11.5 }}
+                  sx={{ borderColor: "var(--border)", color: "var(--text-secondary)", fontSize: 12 }}
                   label={`${item.label}: ${formatValue(item.value, item.unit)}${item.previous !== null && item.previous !== undefined ? ` (was ${formatValue(item.previous, item.unit)})` : ""}`}
                 />
               ))}
