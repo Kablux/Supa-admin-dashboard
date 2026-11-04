@@ -235,7 +235,7 @@ export default function SessionTimeoutManager() {
 
         <DialogTitle
           id="session-warning-title"
-          sx={{ textAlign: "center", fontWeight: 800 }}
+          sx={{ textAlign: "center", fontWeight: 700 }}
         >
           Your session is about to expire
         </DialogTitle>
