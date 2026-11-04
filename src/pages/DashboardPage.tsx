@@ -36,20 +36,17 @@ export default function DashboardPage() {
     dispatch(getDashboardStats());
   }, [dispatch]);
 
-  // ── Template Download Handler ──
+ // ── Template Download Handler ──
   const handleDownloadTemplate = () => {
     try {
       const templateData = [
         {
           user_id: "123456789abcdef",
+          audience: "rider",
         },
-        
       ];
 
-      // Create a new worksheet from the array of objects
       const worksheet = XLSX.utils.json_to_sheet(templateData);
-
-      // Create a workbook and append the worksheet
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Template");
 

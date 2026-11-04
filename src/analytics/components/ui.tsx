@@ -7,26 +7,90 @@ import { downloadAnalytics, errorMessage, useAnalyticsMe, useKpiDefinitions } fr
 import { AVAILABILITY_LABEL, FILTER_LABEL, formatDateTime, formatValue, isGoodChange } from "../format";
 import type { FilterInfo, Freshness, Metric } from "../types";
 
-export function Section({ title, subtitle, actions, children, dense = false }: { title?: string; subtitle?: string; actions?: ReactNode; children: ReactNode; dense?: boolean }) {
+
+export function Section({
+  title,
+  subtitle,
+  actions,
+  children,
+  dense = false,
+}: {
+  title?: string;
+  subtitle?: string;
+  actions?: ReactNode;
+  children: ReactNode;
+  dense?: boolean;
+}) {
   return (
-    <Box sx={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 3, p: dense ? 2 : { xs: 2, md: 3 }, breakInside: "avoid" }}>
+    <Box
+      sx={{
+        position: "relative",
+        // background: "var(--bg-card, #1A1D26)",
+        border: "1px solid var(--border, rgba(255,255,255,0.08))",
+        borderRadius: "8px",
+        p: dense ? 2 : { xs: 2, md: 2.5 },
+        minWidth: 0,
+        breakInside: "avoid",
+        transition: "border-color 0.2s ease",
+        "&:hover": {
+          borderColor: "rgba(255,190,24,0.16)",
+        },
+      }}
+    >
       {(title || actions) && (
-        <Stack direction="row" spacing={2} sx={{ alignItems: "flex-start", justifyContent: "space-between", mb: 2 }}>
-          <Box>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={1.5}
+          sx={{
+            alignItems: { xs: "flex-start", sm: "center" },
+            justifyContent: "space-between",
+            mb: 2.5,
+          }}
+        >
+          <Box sx={{ minWidth: 0 }}>
             {title && (
-              <Typography sx={{ fontWeight: 600, fontSize: 16, color: "var(--text-primary)" }}>
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontSize: 14,
+                  color: "var(--text-primary, #fff)",
+                  letterSpacing: "-0.015em",
+                }}
+              >
                 {title}
               </Typography>
             )}
-            {subtitle && <Typography sx={{ fontSize: 13, color: "var(--text-secondary)", mt: 0.25 }}>{subtitle}</Typography>}
+            {subtitle && (
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  color: "var(--text-secondary, #8A92A6)",
+                  mt: 0.6,
+                  lineHeight: 1.65,
+                }}
+              >
+                {subtitle}
+              </Typography>
+            )}
           </Box>
-          {actions && <Box sx={{ "@media print": { display: "none" } }}>{actions}</Box>}
+          {actions && (
+            <Box
+              sx={{
+                flexShrink: 0,
+                maxWidth: "100%",
+                "@media print": { display: "none" },
+              }}
+            >
+              {actions}
+            </Box>
+          )}
         </Stack>
       )}
       {children}
     </Box>
   );
 }
+
 
 export function Grid({ min = 220, gap = 2, children }: { min?: number; gap?: number; children: ReactNode }) {
   return <Box sx={{ display: "grid", gap, gridTemplateColumns: `repeat(auto-fill, minmax(${min}px, 1fr))` }}>{children}</Box>;
@@ -50,19 +114,49 @@ function ChangeChip({ metricKey, change }: { metricKey: string; change: number |
   );
 }
 
-export function KpiCard({ metric, to, compact = false }: { metric: Metric; to?: string; compact?: boolean }) {
+export function KpiCard({
+  metric,
+  to,
+  compact = false,
+}: {
+  metric: Metric;
+  to?: string;
+  compact?: boolean;
+}) {
   const definitions = useKpiDefinitions();
   const navigate = useNavigate();
+
   const definition = definitions[metric.key];
-  const unavailable = metric.value === null && metric.availability !== "available";
+  const unavailable =
+    metric.value === null && metric.availability !== "available";
+
   const tooltip = definition ? (
-    <Box sx={{ p: 0.5, maxWidth: 320 }}>
-      <Typography sx={{ fontSize: 12, fontWeight: 600, mb: 0.5 }}>{definition.label}</Typography>
-      <Typography sx={{ fontSize: 12, mb: 0.75 }}>{definition.definition}</Typography>
-      <Typography sx={{ fontSize: 11, opacity: 0.8 }}>Formula: {definition.formula}</Typography>
-      <Typography sx={{ fontSize: 11, opacity: 0.8 }}>Source: {definition.source}</Typography>
-      <Typography sx={{ fontSize: 11, opacity: 0.8 }}>Dated by: {definition.date_field}</Typography>
-      {definition.missing_data && <Typography sx={{ fontSize: 11, opacity: 0.8 }}>Missing data: {definition.missing_data}</Typography>}
+    <Box sx={{ p: 0.75, maxWidth: 320 }}>
+      <Typography sx={{ fontSize: 12, fontWeight: 700, mb: 0.75 }}>
+        {definition.label}
+      </Typography>
+
+      <Typography sx={{ fontSize: 12, lineHeight: 1.6, mb: 1 }}>
+        {definition.definition}
+      </Typography>
+
+      <Typography sx={{ fontSize: 11, opacity: 0.75, mb: 0.35 }}>
+        Formula: {definition.formula}
+      </Typography>
+
+      <Typography sx={{ fontSize: 11, opacity: 0.75, mb: 0.35 }}>
+        Source: {definition.source}
+      </Typography>
+
+      <Typography sx={{ fontSize: 11, opacity: 0.75 }}>
+        Dated by: {definition.date_field}
+      </Typography>
+
+      {definition.missing_data && (
+        <Typography sx={{ fontSize: 11, opacity: 0.75, mt: 0.5 }}>
+          Missing data: {definition.missing_data}
+        </Typography>
+      )}
     </Box>
   ) : (
     metric.note || metric.label
@@ -71,42 +165,172 @@ export function KpiCard({ metric, to, compact = false }: { metric: Metric; to?: 
   return (
     <Box
       onClick={to ? () => navigate(to) : undefined}
+      onKeyDown={
+        to
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                navigate(to);
+              }
+            }
+          : undefined
+      }
+      role={to ? "button" : undefined}
+      tabIndex={to ? 0 : undefined}
       sx={{
-        background: "var(--bg-card)",
-        border: "1px solid var(--border)",
-        borderRadius: 2.5,
-        p: compact ? 1.5 : 2,
-        cursor: to ? "pointer" : "default",
-        transition: "border-color 0.2s ease, background 0.2s ease",
-        "&:hover": to ? { borderColor: "var(--accent-gold)", background: "var(--bg-card-hover)" } : undefined,
-        minHeight: compact ? 84 : 108,
+        position: "relative",
+        overflow: "hidden",
+        background:
+          "linear-gradient(145deg, var(--bg-card, #1A1D26) 0%, var(--bg-secondary, #141721) 100%)",
+        border: "1px solid var(--border, rgba(255,255,255,0.08))",
+        borderRadius: "8px",
+        p: 2,
+        minHeight: compact ? 100 : 124,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        gap: 1.5,
+        cursor: to ? "pointer" : "default",
+        transition: "all 0.25s ease",
         breakInside: "avoid",
+
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "42px",
+          height: "3px",
+          borderRadius: "0 0 4px 0",
+          background: "#FFBE18",
+          opacity: 0.8,
+        },
+
+        "&:hover": to
+          ? {
+              borderColor: "rgba(255,190,24,0.45)",
+              transform: "translateY(-2px)",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+            }
+          : undefined,
+
+        "&:focus-visible": {
+          outline: "2px solid #FFBE18",
+          outlineOffset: 3,
+        },
       }}
     >
-      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", color: "var(--text-secondary)" }}>
-        <Typography sx={{ fontSize: 12.5, fontWeight: 500, lineHeight: 1.3 }}>{metric.label}</Typography>
-        <Tooltip title={tooltip} arrow placement="top">
-          <Box component="span" sx={{ display: "inline-flex", opacity: 0.7 }}>
-            <MdInfoOutline size={13} />
+      <Stack
+        direction="row"
+        // justifyContent="space-between"
+        spacing={1}
+      >
+        <Stack
+          direction="row"
+          spacing={0.75}
+          sx={{ minWidth: 0 }}
+        >
+          <Typography
+            sx={{
+              fontSize: 12,
+              fontWeight: 500,
+              color: "var(--text-secondary, #A0A6B5)",
+              lineHeight: 1.4,
+            }}
+          >
+            {metric.label}
+          </Typography>
+
+          <Tooltip title={tooltip} arrow placement="top">
+            <Box
+              component="span"
+              sx={{
+                display: "inline-flex",
+                color: "var(--text-muted, #8A92A6)",
+                cursor: "help",
+                "&:hover": { color: "#FFBE18" },
+              }}
+            >
+              <MdInfoOutline size={14} />
+            </Box>
+          </Tooltip>
+        </Stack>
+
+        {to && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 25,
+              height: 25,
+              borderRadius: "7px",
+              background: "rgba(255,190,24,0.08)",
+              color: "#FFBE18",
+              flexShrink: 0,
+              opacity: 0.8,
+            }}
+          >
+            <MdArrowUpward size={13} style={{ transform: "rotate(45deg)" }} />
           </Box>
-        </Tooltip>
+        )}
       </Stack>
-      <Stack direction="row" spacing={1} sx={{ alignItems: "baseline", justifyContent: "space-between", mt: 1 }}>
+
+      <Stack
+        direction="row"
+        spacing={1}
+      >
         {unavailable ? (
-          <Chip size="small" label={AVAILABILITY_LABEL[metric.availability] || "Not available"} sx={{ fontSize: 11, height: 22 }} />
+          <Chip
+            size="small"
+            label={
+              AVAILABILITY_LABEL[metric.availability] || "Not available"
+            }
+            sx={{
+              height: 25,
+              borderRadius: "7px",
+              fontSize: 10.5,
+              fontWeight: 600,
+              color: "#A0A6B5",
+              background: "rgba(160,166,181,0.1)",
+              border: "1px solid rgba(160,166,181,0.15)",
+            }}
+          />
         ) : (
-          <Typography sx={{ fontSize: compact ? 20 : 24, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>
+          <Typography
+            sx={{
+              fontSize: compact ? 18 : 24,
+              fontWeight: 700,
+              color: "var(--text-primary)",
+              letterSpacing: "-0.035em",
+              lineHeight: 1.2,
+              fontVariantNumeric: "tabular-nums",
+              overflowWrap: "anywhere",
+            }}
+          >
             {formatValue(metric.value, metric.unit)}
           </Typography>
         )}
+
         <ChangeChip metricKey={metric.key} change={metric.change_pct} />
       </Stack>
-      {(metric.previous !== null && metric.previous !== undefined) || metric.note ? (
-        <Typography sx={{ fontSize: 11.5, color: "var(--text-muted)", mt: 0.5 }} noWrap title={metric.note || undefined}>
-          {metric.previous !== null && metric.previous !== undefined ? `Previous: ${formatValue(metric.previous, metric.unit)}` : metric.note}
+
+      {(metric.previous !== null && metric.previous !== undefined) ||
+      metric.note ? (
+        <Typography
+          noWrap
+          title={metric.note || undefined}
+          sx={{
+            fontSize: 12,
+            fontWeight: 500,
+            color: "var(--text-muted, #8A92A6)",
+            pt: 0.75,
+            borderTop: "1px solid var(--border, rgba(255,255,255,0.06))",
+          }}
+        >
+          {metric.previous !== null && metric.previous !== undefined
+            ? `Previous: ${formatValue(metric.previous, metric.unit)}`
+            : metric.note}
         </Typography>
       ) : null}
     </Box>
@@ -185,13 +409,82 @@ export function ExportMenu({ path, params, label = "Export" }: { path: string; p
   };
   return (
     <>
-      <Button size="small" color="inherit" variant="outlined" startIcon={busy ? <CircularProgress size={14} /> : <MdDownload />} onClick={(e) => setAnchor(e.currentTarget)} sx={{ borderColor: "var(--border)", textTransform: "none" }} disabled={busy}>
-        {label}
-      </Button>
-      <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)}>
-        <MenuItem onClick={() => run("csv")}>CSV</MenuItem>
-        <MenuItem onClick={() => run("xlsx")}>Excel (.xlsx)</MenuItem>
-      </Menu>
+      <Button
+          size="small"
+          variant="outlined"
+          startIcon={
+            busy ? (
+              <CircularProgress size={15} sx={{ color: "#FFBE18" }} />
+            ) : (
+              <MdDownload  />
+            )
+          }
+          onClick={(e) => setAnchor(e.currentTarget)}
+          disabled={busy}
+            sx={{
+              px: 2,
+              textTransform: "none",
+              fontSize: 14,
+              fontWeight: 500,
+              borderRadius: "8px",
+              color: "var(--text-primary)",
+              backgroundColor: "var(--bg-card)",
+              border: "1px solid var(--border, rgba(255,255,255,0.12))",
+              "&:hover": {
+                borderColor: "rgba(255,255,255,0.25)",
+                backgroundColor: "rgba(255,255,255,0.06)",
+              },
+            }}
+        >
+          {busy ? "Exporting..." : label}
+        </Button>
+        <Menu
+          anchorEl={anchor}
+          open={Boolean(anchor)}
+          onClose={() => setAnchor(null)}
+          slotProps={{
+            paper: {
+              sx: {
+                mt: 1,
+                minWidth: 124,
+                borderRadius: "8px",
+                background: "#1A1D26",
+                border: "1px solid var(--border, rgba(255,255,255,0.12))",
+                boxShadow: "0 12px 35px rgba(0,0,0,0.05)",
+                overflow: "hidden",
+                "& .MuiList-root": {
+                  p: 0.75,
+                },
+              },
+            },
+          }}
+        >
+          {[
+            { value: "csv" as const, label: " CSV" },
+            { value: "xlsx" as const, label: "Excel (.xlsx)" },
+          ].map((item) => (
+            <MenuItem
+              key={item.value}
+              onClick={() => run(item.value)}
+              sx={{
+                minHeight: 39,
+                borderRadius: "7px",
+                px: 1.5,
+                fontSize: 14,
+                fontWeight: 500,
+                color: "var(--text-primary, #FFFFFF)",
+                transition: "all 0.2s ease",
+
+                "&:hover": {
+                  color: "var(--accent-gold, #FFC107)",
+                  background: "rgba(255,190,24,0.09)",
+                },
+              }}
+            >
+              {item.label}
+            </MenuItem>
+          ))}
+        </Menu>
     </>
   );
 }
@@ -199,7 +492,7 @@ export function ExportMenu({ path, params, label = "Export" }: { path: string; p
 export function PeriodCaption({ period, comparison }: { period?: { label: string; start: string; end: string }; comparison?: { start: string; end: string } | null }) {
   if (!period) return null;
   return (
-    <Typography sx={{ fontSize: 13, color: "var(--text-secondary)" }}>
+    <Typography sx={{ fontSize: 12, color: "var(--text-secondary)" }}>
       {period.label} ({period.start} to {period.end}){comparison ? ` · compared with ${comparison.start} to ${comparison.end}` : ""}
     </Typography>
   );

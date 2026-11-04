@@ -199,7 +199,7 @@ export const unsuspendDriver = async (
   );
   return response.data;
 };
- 
+
 
 export const rejectDriverKyc = async (
   driverId: string,
@@ -292,7 +292,7 @@ export async function getRideRequestDetails(
   return data;
 }
 
-////Banner 
+////Banner
 export async function fetchBanners(
   params?: BannersQueryParams
 ): Promise<PaginatedResponse<Banner>> {
@@ -400,7 +400,7 @@ export const courierService = {
     );
     return response.data;
   },
-  
+
   ////unsuspend rider
     unsuspendRider: async (userId: string) => {
     const response = await api.post<
@@ -874,25 +874,24 @@ export const getReferralDetails = (id: string) => {
 
 
 ///Broadcast Retention Messages
- 
 export const broadcastRetention = async (
   file: File,
   title: string,
   message: string,
+  audience: "rider" | "driver"
 ): Promise<BroadcastRetentionResponse> => {
   const form = new FormData();
   form.append("file", file);
   form.append("title", title);
   form.append("message", message);
- 
+  form.append("audience", audience);
+
   const { data } = await api.post<BroadcastRetentionResponse>(
     "/business-admin/riders/broadcast-retention/",
     form,
     {
       transformRequest: [
         (payload, headers) => {
-          // headers is an AxiosHeaders instance in axios v1 (has .delete);
-          // fall back to plain-object delete for older shapes.
           const h = headers as unknown as {
             delete?: (name: string) => void;
             [k: string]: unknown;
@@ -903,7 +902,7 @@ export const broadcastRetention = async (
             delete h["Content-Type"];
             delete h["content-type"];
           }
-          return payload; 
+          return payload;
         },
       ],
     },
