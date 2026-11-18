@@ -96,6 +96,8 @@ export interface Rider {
   cancelled_rides: string;
   number_of_cancelled_rides: string;
   status: string;
+  sign_method?: string;
+  has_fcm?: boolean;
 }
 
 export interface VehicleImage {
@@ -200,13 +202,44 @@ export interface PaginatedResponse<T> {
   results: T[];
 }
 
+export type RiderStatus =
+  | "active"
+  | "pending_verification"
+  | "suspended"
+  | "deleted"
+  | "";
+
+  export type RiderPeriod = "today" | "yesterday" | "this_week" | "this_month" | "";
+
+export type RiderActivitySegment =
+  | "cancelled_request"
+  | "completed_one_ride"
+  | "expired_unmatched"
+  | "never_requested"
+  | "";
+
+export interface RiderFilterState {
+  activity_segment?: RiderActivitySegment;
+  has_fcm?: "" | "true" | "false";
+  status?: RiderStatus;
+  tier?: string;
+  ordering?: string;
+  period?: RiderPeriod;
+  created_at_after?: string;
+  created_at_before?: string;
+}
+
+
 export interface RiderQueryParams {
   page?: number;
   page_size?: number;
   search?: string;
-  status?: "active" | "pending_verification" | "suspended" | "deleted" | "";
-    tier?: string; 
-  period?: "today" | "yesterday" | "this_week" | "this_month" | "";
+  status?: RiderStatus;
+  tier?: string;
+  activity_segment?: RiderActivitySegment;
+  has_fcm?: boolean;
+  ordering?: string;
+  period?: RiderPeriod;
   created_at_after?: string;
   created_at_before?: string;
 }

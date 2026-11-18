@@ -12,10 +12,10 @@ import OverviewCards, { OverviewItem } from "../components/OverviewCard";
 import RidersTable from "../components/rider/RidersTable";
 import { TAB_MAPPING } from "../types/common.types";
 import RiderDetailsModal from "../components/rider/RideDetailsModal";
-
 import SearchFilterRow from "../components/SearchFilterRow";
-import RiderFilters, { RiderFilterState } from "../components/rider/RiderFilter";
 import ExportRidersModal from "../components/rider/ExportRiderDataModal";
+import RiderFilters from "../components/rider/RiderFilterModal/RiderFilter";
+import { RiderFilterState, RiderQueryParams, RiderStatus } from "../types/auth";
 
 type UITabType = keyof typeof TAB_MAPPING;
 
@@ -27,7 +27,8 @@ export default function RidersPage() {
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState<RiderFilterState>({});
   const [selectedRiderId, setSelectedRiderId] = useState<string | null>(null);
-   const [exportOpen, setExportOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+
   const { ridersummary } = useAppSelector((state) => state.dashboard);
   const {
     items: ridersList,
@@ -36,24 +37,40 @@ export default function RidersPage() {
     isLoading,
   } = useAppSelector((state) => state.riders);
 
-  // Stable dependency for the filters object.
-  const filterKey = useMemo(() => JSON.stringify(filters), [filters]);
+  const riderQueryParams = useMemo<RiderQueryParams>(() => {
+    const resolvedStatus = (filters.status || TAB_MAPPING[activeTab] || undefined) as
+      | RiderStatus
+      | undefined;
+
+    const resolvedHasFcm =
+      filters.has_fcm === "true"
+        ? true
+        : filters.has_fcm === "false"
+        ? false
+        : undefined;
+
+    return {
+      page: currentPage,
+      page_size: pageSize,
+      search: searchQuery.trim() || undefined,
+      status: resolvedStatus,
+      tier: filters.tier?.trim() || undefined,
+      activity_segment: filters.activity_segment || undefined,
+      has_fcm: resolvedHasFcm,
+      ordering: filters.ordering || undefined,
+      period: filters.period || undefined,
+      created_at_after: filters.created_at_after || undefined,
+      created_at_before: filters.created_at_before || undefined,
+    };
+  }, [currentPage, pageSize, searchQuery, activeTab, filters]);
 
   useEffect(() => {
     dispatch(getDashboardStats());
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(
-      fetchRiders({
-        page: currentPage,
-        page_size: pageSize,
-        search: searchQuery,
-        status: TAB_MAPPING[activeTab], // status comes from the tabs
-        ...filters, // period, created_at_after, created_at_before
-      }),
-    );
-  }, [dispatch, currentPage, pageSize, activeTab, searchQuery, filterKey]);
+    dispatch(fetchRiders(riderQueryParams));
+  }, [dispatch, riderQueryParams]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -62,6 +79,7 @@ export default function RidersPage() {
 
   const handleTabChange = (tab: UITabType) => {
     setActiveTab(tab);
+    setFilters((prev) => ({ ...prev, status: "" }));
     dispatch(setCurrentPage(1));
   };
 
@@ -128,7 +146,7 @@ export default function RidersPage() {
           mt: 1,
         }}
       >
-        <Box sx={{ display: "flex", gap: 3,  }}>
+        <Box sx={{ display: "flex", gap: 3 }}>
           {(["all", "active", "pending", "suspended"] as const).map((tab) => (
             <Typography
               key={tab}
@@ -187,7 +205,8 @@ export default function RidersPage() {
           <RiderFilters value={filters} onChange={handleFiltersChange} />
         </Box>
       </Box>
-      {/* Riders Table  */}
+
+      {/* Riders Table */}
       <RidersTable
         isLoading={isLoading}
         ridersList={ridersList}
@@ -204,29 +223,17 @@ export default function RidersPage() {
         riderId={selectedRiderId}
         isOpen={!!selectedRiderId}
         onClose={() => setSelectedRiderId(null)}
-            onVerified={() => {
+        onVerified={() => {
           dispatch(getDashboardStats());
-          dispatch(
-            fetchRiders({
-              page: currentPage,
-              page_size: pageSize,
-              search: searchQuery,
-              status: TAB_MAPPING[activeTab],
-              ...filters,
-            }),
-          );
+          dispatch(fetchRiders(riderQueryParams));
         }}
       />
-      
+
       {/* Export modal — exports the currently filtered view */}
       <ExportRidersModal
         isOpen={exportOpen}
         onClose={() => setExportOpen(false)}
-        params={{
-          search: searchQuery || undefined,
-          status: TAB_MAPPING[activeTab] || undefined,
-          ...filters,
-        }}
+        params={riderQueryParams}
       />
     </Box>
   );

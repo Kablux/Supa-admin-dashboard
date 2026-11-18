@@ -88,7 +88,7 @@ export async function loginRequest(
 }
 
 export async function logoutRequest(refresh: string): Promise<void> {
-  await api.post("/business-admin/auth/logout/", { refresh });
+  await api.post("/auth/logout/", { refresh });
 }
 export async function getTransactionAnalytics(
   range: "week" | "month" | "year" = "month",
