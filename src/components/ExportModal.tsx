@@ -294,6 +294,7 @@ export default function ExportModal({
         <Box sx={{ display: "flex", gap: 1.5 }}>
           <Button
             disabled={loading}
+            onClick={onClose}
             sx={{
               px: 2,
               textTransform: "none",
