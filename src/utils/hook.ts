@@ -20,14 +20,14 @@ export function validateLoginForm(values: LoginCredentials): LoginFormErrors {
   return errors;
 }
 
-export function cleanQueryParams<T extends Record<string, any>>(
-  params: T,
-): Record<string, any> {
+export function cleanQueryParams<T extends object>(params: T): Partial<T> {
   return Object.fromEntries(
-    Object.entries(params).filter(
-      ([_, value]) => value !== undefined && value !== null && value !== "",
-    ),
-  );
+    Object.entries(params).filter(([, value]) => {
+      if (value === undefined || value === null) return false;
+      if (typeof value === "string") return value.trim() !== "";
+      return true;
+    }),
+  ) as Partial<T>;
 }
 
 export function formatNaira(n: number): string {

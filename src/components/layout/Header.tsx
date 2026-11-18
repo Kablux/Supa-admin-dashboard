@@ -21,7 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useThemeMode } from "../../theme/ThemeContext";
 import { ROUTE_LABELS } from "../../data/data";
 import { logoutAdmin } from "../../api/xhrHelper";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks"; // Ensure useAppSelector is imported
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 
 interface HeaderProps {
   onToggleMobile: () => void;
@@ -33,10 +33,11 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
   const dispatch = useAppDispatch();
   const { mode, toggleMode } = useThemeMode();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const pageLabel = ROUTE_LABELS[location.pathname] || (location.pathname.startsWith("/analytics") ? "Analytics" : "Dashboard");
+  const pageLabel =
+    ROUTE_LABELS[location.pathname] ||
+    (location.pathname.startsWith("/analytics") ? "Analytics" : "Dashboard");
   const isDark = mode === "dark";
 
-  // Retrieve current user info from Redux auth slice
   const { user } = useAppSelector((state) => state.auth);
 
   const handleMenuClose = () => {
@@ -51,7 +52,6 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
     }
   };
 
-
   const userRole = user?.role || "Admin";
   const userEmail = user?.email || "";
 
@@ -60,12 +60,15 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
       component="header"
       sx={{
         height: 60,
+        width: "100%",
+        maxWidth: "100vw",
+        overflow: "hidden",
         backgroundColor: "var(--bg-primary)",
         borderBottom: "1px solid var(--border)",
         display: "flex",
         alignItems: "center",
-        px: { xs: 2, md: 3 },
-        gap: 2,
+        px: { xs: 1.25, sm: 2, md: 3 },
+        gap: { xs: 0.75, sm: 2 },
         position: "sticky",
         top: 0,
         zIndex: 90,
@@ -74,28 +77,29 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
       }}
     >
       {/* Sidebar Toggle Buttons */}
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
         {/* Mobile Toggle */}
         <IconButton
           onClick={onToggleMobile}
           size="small"
+          aria-label="Open navigation menu"
           sx={{
-            display: { xs: "flex", md: "none" },
+            display: { xs: "inline-flex", md: "none" },
             color: "var(--text-muted)",
-            mr: 1,
+            p: 0.5,
           }}
         >
-          <MenuIcon />
+          <MenuIcon sx={{ fontSize: 20 }} />
         </IconButton>
-        
+
         {/* Desktop Collapse Toggle */}
         <IconButton
           onClick={onToggleCollapse}
           size="small"
+          aria-label="Toggle sidebar collapse"
           sx={{
-            display: { xs: "none", md: "flex" },
+            display: { xs: "none", md: "inline-flex" },
             color: "var(--text-muted)",
-            mr: 1,
           }}
         >
           <MenuIcon />
@@ -104,44 +108,91 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
 
       {/* Breadcrumb */}
       <Box
-        sx={{ display: "flex", alignItems: "center", gap: 0.75, flexShrink: 0 }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 0.75,
+          minWidth: 0,
+          flexShrink: 1,
+        }}
       >
         <TabletMacOutlinedIcon
-          sx={{ fontSize: 15, color: "var(--text-muted)" }}
+          sx={{
+            fontSize: 15,
+            color: "var(--text-muted)",
+            display: { xs: "none", sm: "block" },
+            flexShrink: 0,
+          }}
         />
-        <Typography sx={{ fontSize: 12, color: "var(--text-muted)", display: { xs: "none", sm: "block" } }}>
+        <Typography
+          sx={{
+            fontSize: 12,
+            color: "var(--text-muted)",
+            display: { xs: "none", md: "block" },
+            whiteSpace: "nowrap",
+          }}
+        >
           Dashboards
         </Typography>
-        <Typography sx={{ fontSize: 12, color: "var(--text-muted)", display: { xs: "none", sm: "block" } }}>
+        <Typography
+          sx={{
+            fontSize: 12,
+            color: "var(--text-muted)",
+            display: { xs: "none", md: "block" },
+          }}
+        >
           /
         </Typography>
         <Typography
-          sx={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)" }}
+          noWrap
+          sx={{
+            fontSize: { xs: 12.5, sm: 12 },
+            fontWeight: 600,
+            color: "var(--text-primary)",
+            maxWidth: { xs: 88, sm: 180, md: "none" },
+          }}
         >
           {pageLabel}
         </Typography>
       </Box>
 
-      <Box sx={{ flex: 1 }} />
+      <Box sx={{ flex: 1, minWidth: 4 }} />
 
       {/* Action icons */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: { xs: 0.25, sm: 0.5 },
+          flexShrink: 0,
+        }}
+      >
         <Tooltip title="Refresh">
-          <IconButton size="small" sx={{ color: "var(--text-muted)" }}>
+          <IconButton
+            size="small"
+            sx={{
+              color: "var(--text-muted)",
+              display: { xs: "none", sm: "inline-flex" },
+            }}
+          >
             <RefreshOutlinedIcon sx={{ fontSize: 17 }} />
           </IconButton>
         </Tooltip>
 
         <Tooltip title="Favourites">
-          <IconButton size="small" sx={{ color: "var(--text-muted)", display: { xs: "none", sm: "inline-flex" } }}>
+          <IconButton
+            size="small"
+            sx={{
+              color: "var(--text-muted)",
+              display: { xs: "none", sm: "inline-flex" },
+            }}
+          >
             <StarBorderIcon sx={{ fontSize: 17 }} />
           </IconButton>
         </Tooltip>
 
-        {/* ─── Theme toggle ─── */}
-        <Tooltip
-          title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-        >
+        {/* Theme toggle */}
+        <Tooltip title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}>
           <IconButton
             size="small"
             onClick={toggleMode}
@@ -149,9 +200,9 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
               color: "var(--accent-gold)",
               backgroundColor: "var(--accent-gold-glow)",
               border: "1px solid rgba(245,197,24,0.2)",
-              width: 30,
-              height: 30,
-              mx: 1,
+              width: { xs: 28, sm: 30 },
+              height: { xs: 28, sm: 30 },
+              mx: { xs: 0.25, sm: 0.75 },
               transition: "all 0.2s ease",
               "&:hover": {
                 backgroundColor: "rgba(245,197,24,0.18)",
@@ -168,7 +219,13 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
         </Tooltip>
 
         <Tooltip title="Notifications">
-          <IconButton size="small" sx={{ color: "var(--text-muted)", mx: 0.5 }}>
+          <IconButton
+            size="small"
+            sx={{
+              color: "var(--text-muted)",
+              p: { xs: 0.5, sm: 0.75 },
+            }}
+          >
             <Badge
               badgeContent={3}
               sx={{
@@ -193,10 +250,13 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 1,
+            gap: { xs: 0.65, sm: 1 },
             cursor: "pointer",
             userSelect: "none",
-            ml: 1,
+            ml: { xs: 0.25, sm: 0.5 },
+            minWidth: 0,
+            maxWidth: { xs: 122, sm: 220, md: 250 },
+            flexShrink: 0,
             "&:hover": { opacity: 0.82 },
             transition: "opacity 0.15s",
           }}
@@ -204,27 +264,47 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
         >
           <Avatar
             src="https://i.pravatar.cc/150?img=2"
-            sx={{ width: 32, height: 32, border: "2px solid var(--accent-gold)" }}
+            sx={{
+              width: { xs: 28, sm: 32 },
+              height: { xs: 28, sm: 32 },
+              border: "2px solid var(--accent-gold)",
+              flexShrink: 0,
+            }}
           />
-          <Box sx={{  textAlign: "left" }}>
+          <Box sx={{ textAlign: "left", minWidth: 0, flex: 1 }}>
             <Typography
+              noWrap
               sx={{
-                fontSize: 12,
+                fontSize: { xs: 11, sm: 12 },
                 fontWeight: 600,
                 color: "var(--text-primary)",
                 lineHeight: 1.2,
+                textTransform: "capitalize",
               }}
             >
               {userRole}
             </Typography>
-            <Typography
-              sx={{ fontSize: 10,mt:1, color: "var(--text-secondary)", lineHeight: 1, textTransform: "capitalize" }}
-            >
-              {userEmail}
-            </Typography>
+            {userEmail && (
+              <Typography
+                noWrap
+                sx={{
+                  fontSize: { xs: 9.5, sm: 10 },
+                  mt: 0.25,
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.1,
+                }}
+              >
+                {userEmail}
+              </Typography>
+            )}
           </Box>
           <KeyboardArrowDownIcon
-            sx={{ fontSize: 14, color: "var(--text-muted)" }}
+            sx={{
+              fontSize: 14,
+              color: "var(--text-muted)",
+              display: { xs: "none", sm: "block" },
+              flexShrink: 0,
+            }}
           />
         </Box>
       </Tooltip>
@@ -240,6 +320,7 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
             sx: {
               mt: 1,
               minWidth: 180,
+              maxWidth: "calc(100vw - 24px)",
               borderRadius: "12px",
               bgcolor: "var(--bg-card)",
               border: "1px solid var(--border)",
@@ -248,11 +329,19 @@ export default function Header({ onToggleMobile, onToggleCollapse }: HeaderProps
           },
         }}
       >
-        {/* User email info header inside dropdown */}
         {userEmail && (
           <Box sx={{ px: 2, py: 1.25, borderBottom: "1px solid var(--border)" }}>
-            <Typography sx={{ fontSize: 11, color: "var(--text-muted)" }}>Signed in as</Typography>
-            <Typography sx={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)", wordBreak: "break-all" }}>
+            <Typography sx={{ fontSize: 11, color: "var(--text-muted)" }}>
+              Signed in as
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "var(--text-primary)",
+                wordBreak: "break-all",
+              }}
+            >
               {userEmail}
             </Typography>
           </Box>
