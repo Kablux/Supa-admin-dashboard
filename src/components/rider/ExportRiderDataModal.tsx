@@ -9,6 +9,8 @@ const RIDER_COLUMNS: ExportColumn[] = [
   { key: "email", label: "Email", default: true },
   { key: "phone_number", label: "Phone Number", default: true },
   { key: "status", label: "Status", default: true },
+  { key: "sign_method", label: "Sign In Method", default: true },
+  { key: "has_fcm", label: "Has FCM", default: true },
   { key: "address", label: "Address" },
   { key: "rating", label: "Rating" },
   { key: "loyalty_points", label: "Loyalty Points" },
@@ -39,9 +41,9 @@ export default function ExportRidersModal({
       columns={RIDER_COLUMNS}
       fetchPage={async (page, page_size) => {
         const res = await getRiders({ ...params, page, page_size });
-        return { 
-          results: res.results as unknown as Record<string, unknown>[], 
-          count: res.count 
+        return {
+          results: res.results as unknown as Record<string, unknown>[],
+          count: res.count
         };
       }}
     />
