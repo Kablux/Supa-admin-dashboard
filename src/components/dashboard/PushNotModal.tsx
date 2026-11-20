@@ -12,16 +12,18 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Switch,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import EventAvailableRoundedIcon from "@mui/icons-material/EventAvailableRounded";
+import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import { BroadcastRetentionResponse } from "../../types/common.types";
 import { broadcastRetention } from "../../api/xhr";
 import toast from "react-hot-toast";
-
 
 interface PushNotificationModalProps {
   isOpen: boolean;
@@ -46,12 +48,55 @@ const inputSx = {
   },
 };
 
+const dateTimeInputSx = {
+  flex: 1,
+  "& .MuiOutlinedInput-root": {
+    height: 42,
+    borderRadius: "10px",
+    fontSize: 13.5,
+    color: "var(--text-primary)",
+    backgroundColor: "rgba(255,255,255,0.02)",
+    "& fieldset": { borderColor: "var(--border, rgba(255,255,255,0.12))" },
+    "&:hover fieldset": { borderColor: "rgba(255,255,255,0.25)" },
+    "&.Mui-focused fieldset": { borderColor: "var(--accent-gold, #FFD700)" },
+    "& input::-webkit-calendar-picker-indicator": {
+      filter: "invert(0.75)",
+      cursor: "pointer",
+    },
+  },
+  "& .MuiInputLabel-root": { color: "var(--text-secondary)", fontSize: 13 },
+  "& .MuiInputLabel-root.Mui-focused": { color: "var(--accent-gold, #FFD700)" },
+};
+
 const prettySize = (bytes: number) =>
   bytes < 1024
     ? `${bytes} B`
     : bytes < 1024 * 1024
       ? `${(bytes / 1024).toFixed(1)} KB`
       : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+
+const getTodayDateStr = () => {
+  const now = new Date();
+  const offsetMs = now.getTimezoneOffset() * 60_000;
+  return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
+};
+
+const getDefaultTimeStr = () => {
+  const future = new Date(Date.now() + 15 * 60 * 1000);
+  const hh = String(future.getHours()).padStart(2, "0");
+  const mm = String(future.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+};
+
+const formatScheduledLabel = (isoStr?: string | null) => {
+  if (!isoStr) return "";
+  const parsed = new Date(isoStr);
+  if (Number.isNaN(parsed.getTime())) return isoStr;
+  return parsed.toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+};
 
 export default function PushNotificationModal({
   isOpen,
@@ -62,6 +107,9 @@ export default function PushNotificationModal({
   const [audience, setAudience] = useState<"rider" | "driver">("rider");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
+  const [scheduleEnabled, setScheduleEnabled] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState(getTodayDateStr);
+  const [scheduleTime, setScheduleTime] = useState(getDefaultTimeStr);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<BroadcastRetentionResponse | null>(null);
 
@@ -70,6 +118,9 @@ export default function PushNotificationModal({
     setTitle("");
     setMessage("");
     setAudience("rider");
+    setScheduleEnabled(false);
+    setScheduleDate(getTodayDateStr());
+    setScheduleTime(getDefaultTimeStr());
     setLoading(false);
     setResult(null);
     if (fileRef.current) fileRef.current.value = "";
@@ -90,7 +141,15 @@ export default function PushNotificationModal({
     setFile(f);
   };
 
-  const canSend = !!file && title.trim() !== "" && message.trim() !== "" && !loading;
+  const hasValidSchedule =
+    !scheduleEnabled || (Boolean(scheduleDate) && Boolean(scheduleTime));
+
+  const canSend =
+    !!file &&
+    title.trim() !== "" &&
+    message.trim() !== "" &&
+    hasValidSchedule &&
+    !loading;
 
   const handleSend = async () => {
     if (!file) {
@@ -101,18 +160,48 @@ export default function PushNotificationModal({
       toast.error("Add a title and a message");
       return;
     }
+
+    let sendAtIso: string | undefined;
+    if (scheduleEnabled) {
+      if (!scheduleDate || !scheduleTime) {
+        toast.error("Select both a date and time to schedule");
+        return;
+      }
+      const scheduledDateObj = new Date(`${scheduleDate}T${scheduleTime}`);
+      if (Number.isNaN(scheduledDateObj.getTime())) {
+        toast.error("Invalid schedule date or time");
+        return;
+      }
+      if (scheduledDateObj.getTime() <= Date.now()) {
+        toast.error("Scheduled time must be in the future");
+        return;
+      }
+      sendAtIso = scheduledDateObj.toISOString();
+    }
+
     setLoading(true);
     try {
-      const res = await broadcastRetention(file, title.trim(), message.trim(), audience);
+      const res = await broadcastRetention(
+        file,
+        title.trim(),
+        message.trim(),
+        audience,
+        sendAtIso,
+      );
       setResult(res);
       const skipped = res.unknown_ids?.length ?? 0;
+      const isScheduled = Boolean(res.scheduled || sendAtIso);
       toast.success(
-        `Push queued to ${res.notified} ${audience}${res.notified === 1 ? "" : "s"}` +
+        (isScheduled
+          ? `Push scheduled for ${res.notified} ${audience}${res.notified === 1 ? "" : "s"}`
+          : `Push queued to ${res.notified} ${audience}${res.notified === 1 ? "" : "s"}`) +
           (skipped ? ` · ${skipped} unknown ID${skipped === 1 ? "" : "s"} skipped` : ""),
       );
     } catch (err: any) {
       toast.error(
-        err?.response?.data?.message || "Failed to send push notification",
+        err?.response?.data?.message ||
+          err?.response?.data?.detail ||
+          "Failed to send push notification",
       );
     } finally {
       setLoading(false);
@@ -151,7 +240,7 @@ export default function PushNotificationModal({
             Send Push Notification
           </Typography>
           <Typography sx={{ fontSize: 13, color: "var(--text-secondary)" }}>
-            Upload an .xlsx of rider IDs and compose your message
+            Upload an .xlsx of IDs and send now or schedule for later
           </Typography>
         </Box>
         <IconButton
@@ -166,7 +255,6 @@ export default function PushNotificationModal({
       <Divider sx={{ borderColor: "rgba(255,255,255,0.06)" }} />
 
       {result ? (
-        /* ---------------- Result view ---------------- */
         <Box sx={{ px: 3, py: 3 }}>
           <Box
             sx={{
@@ -179,11 +267,17 @@ export default function PushNotificationModal({
             <CheckCircleRoundedIcon sx={{ color: "#50c878", fontSize: 30 }} />
             <Box>
               <Typography sx={{ fontSize: 14, fontWeight: 700 }}>
-                {result.queued ? "Broadcast queued" : "Broadcast processed"}
+                {result.scheduled
+                  ? "Broadcast scheduled"
+                  : result.queued
+                    ? "Broadcast queued"
+                    : "Broadcast processed"}
               </Typography>
               <Typography sx={{ fontSize: 12, color: "var(--text-secondary)" }}>
-                Push queued to {result.notified} {audience}
-                {result.notified === 1 ? "" : "s"}.
+                {result.scheduled
+                  ? `Scheduled for ${result.notified} ${audience}${result.notified === 1 ? "" : "s"}`
+                  : `Push queued to ${result.notified} ${audience}${result.notified === 1 ? "" : "s"}`}
+                {result.send_at ? ` · ${formatScheduledLabel(result.send_at)}` : "."}
               </Typography>
             </Box>
           </Box>
@@ -197,9 +291,7 @@ export default function PushNotificationModal({
                 backgroundColor: "rgba(255,255,255,0.015)",
               }}
             >
-              <Typography
-                sx={{ fontSize: 12.5, fontWeight: 600, mb: 0.5 }}
-              >
+              <Typography sx={{ fontSize: 12.5, fontWeight: 600, mb: 0.5 }}>
                 {result.unknown_ids.length} unknown ID
                 {result.unknown_ids.length === 1 ? "" : "s"} skipped
               </Typography>
@@ -261,11 +353,19 @@ export default function PushNotificationModal({
           </Box>
         </Box>
       ) : (
-        /* ---------------- Compose view ---------------- */
         <>
-          <Box sx={{ px: 3, py: 2.5, display: "flex", flexDirection: "column", gap: 2.5 }}>
-
-         <FormControl size="small" fullWidth>
+          <Box
+            sx={{
+              px: 3,
+              py: 2.5,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2.25,
+              maxHeight: "72vh",
+              overflowY: "auto",
+            }}
+          >
+            <FormControl size="small" fullWidth>
               <InputLabel
                 id="audience-profile-label"
                 sx={{
@@ -290,29 +390,24 @@ export default function PushNotificationModal({
                   color: "var(--text-primary)",
                   fontSize: 14,
                   minHeight: 44,
-
                   "& .MuiSelect-select": {
                     py: 1.25,
                   },
-
                   "& .MuiOutlinedInput-notchedOutline": {
                     borderColor: "var(--border)",
                   },
-
                   "&:hover .MuiOutlinedInput-notchedOutline": {
                     borderColor: "var(--accent-gold-dim, rgba(255,215,0,0.25))",
                   },
-
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     borderColor: "var(--accent-gold, #FFD700)",
                     borderWidth: 1,
                   },
-
                   "& .MuiSelect-icon": {
                     color: "var(--text-muted)",
                   },
                 }}
-               MenuProps={{
+                MenuProps={{
                   slotProps: {
                     paper: {
                       sx: {
@@ -322,23 +417,19 @@ export default function PushNotificationModal({
                         border: "1px solid var(--border)",
                         borderRadius: 2,
                         boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
-
                         "& .MuiMenuItem-root": {
                           fontSize: 14,
                           minHeight: 40,
                           borderRadius: 1,
                           mx: 0.75,
                           my: 0.25,
-
                           "&:hover": {
                             backgroundColor: "rgba(255,190,24,0.07)",
                           },
-
                           "&.Mui-selected": {
                             backgroundColor: "rgba(255,190,24,0.12)",
                             color: "var(--text-primary)",
                           },
-
                           "&.Mui-selected:hover": {
                             backgroundColor: "rgba(255,190,24,0.18)",
                           },
@@ -348,7 +439,7 @@ export default function PushNotificationModal({
                   },
                 }}
               >
-                <MenuItem value="rider">Rider </MenuItem>
+                <MenuItem value="rider">Rider</MenuItem>
                 <MenuItem value="driver">Driver</MenuItem>
               </Select>
             </FormControl>
@@ -414,7 +505,7 @@ export default function PushNotificationModal({
                   alignItems: "center",
                   justifyContent: "center",
                   gap: 1,
-                  py: 3,
+                  py: 2.5,
                   borderRadius: "12px",
                   border: "1px dashed var(--border, rgba(255,255,255,0.25))",
                   backgroundColor: "rgba(255,255,255,0.015)",
@@ -459,16 +550,127 @@ export default function PushNotificationModal({
               placeholder="Write the notification body…"
               multiline
               minRows={3}
-              maxRows={6}
+              maxRows={5}
               fullWidth
               sx={inputSx}
             />
+
+            {/* Schedule toggle + Date & Time */}
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: "12px",
+                border: "1px solid",
+                borderColor: scheduleEnabled
+                  ? "rgba(255,215,0,0.3)"
+                  : "var(--border, rgba(255,255,255,0.1))",
+                backgroundColor: scheduleEnabled
+                  ? "rgba(255,215,0,0.03)"
+                  : "rgba(255,255,255,0.015)",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 1.5,
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
+                  <EventAvailableRoundedIcon
+                    sx={{
+                      fontSize: 20,
+                      color: scheduleEnabled
+                        ? "var(--accent-gold, #FFD700)"
+                        : "var(--text-secondary)",
+                    }}
+                  />
+                  <Box>
+                    <Typography sx={{ fontSize: 13.5, fontWeight: 600 }}>
+                      Schedule send time
+                    </Typography>
+                    <Typography
+                      sx={{ fontSize: 11.5, color: "var(--text-secondary)" }}
+                    >
+                      {scheduleEnabled
+                        ? "Pick a future date and time to push notification"
+                        : "Leave off to send immediately"}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <Switch
+                  checked={scheduleEnabled}
+                  onChange={(e) => setScheduleEnabled(e.target.checked)}
+                  size="small"
+                  sx={{
+                    "& .MuiSwitch-switchBase.Mui-checked": {
+                      color: "var(--accent-gold, #FFD700)",
+                    },
+                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                      backgroundColor: "rgba(255, 215, 0, 0.45)",
+                    },
+                  }}
+                />
+              </Box>
+
+              {scheduleEnabled && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    gap: 1.5,
+                    mt: 1.75,
+                  }}
+                >
+                  <TextField
+                    type="date"
+                    size="small"
+                    label="Date"
+                    slotProps={{
+                      inputLabel: { shrink: true },
+                      htmlInput: { min: getTodayDateStr() },
+                    }}
+                    value={scheduleDate}
+                    onChange={(e) => setScheduleDate(e.target.value)}
+                    sx={dateTimeInputSx}
+                  />
+                  <TextField
+                    type="time"
+                    size="small"
+                    label="Time"
+                    slotProps={{
+                      inputLabel: { shrink: true },
+                      input: {
+                        endAdornment: (
+                          <AccessTimeRoundedIcon
+                            sx={{ fontSize: 16, color: "var(--text-secondary)", ml: 0.5 }}
+                          />
+                        ),
+                      },
+                    }}
+                    value={scheduleTime}
+                    onChange={(e) => setScheduleTime(e.target.value)}
+                    sx={dateTimeInputSx}
+                  />
+                </Box>
+              )}
+            </Box>
           </Box>
 
           <Divider sx={{ borderColor: "rgba(255,255,255,0.06)" }} />
 
           {/* Actions */}
-          <Box sx={{ px: 3, py: 2.5, display: "flex", justifyContent: "flex-end", gap: 1.5 }}>
+          <Box
+            sx={{
+              px: 3,
+              py: 2.5,
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 1.5,
+            }}
+          >
             <Button
               onClick={handleClose}
               sx={{
@@ -494,7 +696,14 @@ export default function PushNotificationModal({
             <Button
               onClick={handleSend}
               disabled={!canSend}
-              startIcon={!loading && <SendRoundedIcon sx={{ fontSize: 18 }} />}
+              startIcon={
+                !loading &&
+                (scheduleEnabled ? (
+                  <EventAvailableRoundedIcon sx={{ fontSize: 18 }} />
+                ) : (
+                  <SendRoundedIcon sx={{ fontSize: 18 }} />
+                ))
+              }
               sx={{
                 height: 42,
                 px: 3,
@@ -502,7 +711,7 @@ export default function PushNotificationModal({
                 fontSize: 14,
                 fontWeight: 500,
                 borderRadius: "8px",
-                minWidth: 150,
+                minWidth: 155,
                 backgroundColor: "var(--accent-gold, #FFD700)",
                 color: "#000",
                 boxShadow: "none",
@@ -518,6 +727,8 @@ export default function PushNotificationModal({
             >
               {loading ? (
                 <CircularProgress size={18} sx={{ color: "#000" }} />
+              ) : scheduleEnabled ? (
+                "Schedule push"
               ) : (
                 "Send push"
               )}
