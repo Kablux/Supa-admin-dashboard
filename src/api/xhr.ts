@@ -878,13 +878,17 @@ export const broadcastRetention = async (
   file: File,
   title: string,
   message: string,
-  audience: "rider" | "driver"
+  audience: "rider" | "driver",
+  sendAt?: string,
 ): Promise<BroadcastRetentionResponse> => {
   const form = new FormData();
   form.append("file", file);
   form.append("title", title);
   form.append("message", message);
   form.append("audience", audience);
+  if (sendAt) {
+    form.append("send_at", sendAt);
+  }
 
   const { data } = await api.post<BroadcastRetentionResponse>(
     "/business-admin/riders/broadcast-retention/",

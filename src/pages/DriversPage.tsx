@@ -179,7 +179,12 @@ export default function DriversPage() {
   };
 
   const handleOpenFundModal = (driverIds: string[], name?: string) => {
-    if (driverIds.length === 0) return;
+    if (driverIds.length === 0) {
+      toast.error("Please select at least one driver to fund", {
+        id: "select-driver-to-fund",
+      });
+      return;
+    }
     setTargetFundDriverIds(driverIds);
     setTargetFundDriverName(name || `${driverIds.length} drivers selected`);
     setFundWalletModalOpen(true);
@@ -192,6 +197,8 @@ export default function DriversPage() {
     { title: "Drivers In Review", value: driversummary?.pending_kyc, icon: <FaListCheck color="#4A90E2" /> },
     { title: "Suspended Drivers", value: driversummary?.suspended, icon: <BlockIcon color="error" /> },
   ];
+
+  const hasSelection = selectedDriverIds.length > 0;
 
   return (
     <Box className="fade-in" sx={{ p: 1, display: "flex", flexDirection: "column", gap: 3.5 }}>
@@ -250,25 +257,35 @@ export default function DriversPage() {
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          {selectedDriverIds.length > 0 && (
-            <Button
-              onClick={() => handleOpenFundModal(selectedDriverIds)}
-              startIcon={<AccountBalanceWalletIcon sx={{ fontSize: 18 }} />}
-              sx={{
-                height: 40,
-                px: 2,
-                textTransform: "none",
-                fontSize: 13.5,
-                fontWeight: 600,
-                borderRadius: "10px",
-                color: "#17130A",
-                backgroundColor: "var(--accent-gold, #FEB914)",
-                "&:hover": { backgroundColor: "#F4B400" },
-              }}
-            >
-              Fund Wallets ({selectedDriverIds.length})
-            </Button>
-          )}
+          <Button
+            onClick={() => handleOpenFundModal(selectedDriverIds)}
+            startIcon={<AccountBalanceWalletIcon sx={{ fontSize: 18 }} />}
+            sx={{
+              height: 40,
+              px: 2,
+              textTransform: "none",
+              fontSize: 13.5,
+              fontWeight: 600,
+              borderRadius: "10px",
+              color: hasSelection ? "#17130A" : "var(--text-primary)",
+              backgroundColor: hasSelection
+                ? "var(--accent-gold, #FEB914)"
+                : "rgba(255,255,255,0.03)",
+              border: hasSelection
+                ? "1px solid var(--accent-gold, #FEB914)"
+                : "1px solid var(--border, rgba(255,255,255,0.12))",
+              "&:hover": {
+                backgroundColor: hasSelection
+                  ? "#F4B400"
+                  : "rgba(255,255,255,0.06)",
+                borderColor: hasSelection
+                  ? "#F4B400"
+                  : "rgba(255,255,255,0.25)",
+              },
+            }}
+          >
+            {hasSelection ? `Fund Wallets (${selectedDriverIds.length})` : "Fund Wallets"}
+          </Button>
 
           <Button
             onClick={() => setExportOpen(true)}
