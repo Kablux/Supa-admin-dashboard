@@ -12,9 +12,11 @@ import { TRIP_TAB_MAPPING } from "../types/common.types";
 import SearchFilterRow from "../components/SearchFilterRow";
 import TripsTable from "../components/trips/TripsTable";
 import TripDetailsModal from "../components/trips/TripDetailModal";
-import TripFilters, { TripFilterState } from "../components/trips/TripFilterDrawer";
+
 import { setCurrentPage } from "../redux/slices/Trips";
 import ExportTripsModal from "../components/trips/ExportTripsData";
+import { TripFilterState } from "../components/trips/FilterModal/constants";
+import TripFilterDrawer from "../components/trips/FilterModal/TripFilterDrawer";
 type UITabType = keyof typeof TRIP_TAB_MAPPING;
 
 export default function TripsPage() {
@@ -47,8 +49,8 @@ export default function TripsPage() {
         page: currentPage,
         page_size: pageSize,
         search: searchQuery,
-        status: TRIP_TAB_MAPPING[activeTab], 
-        ...filters, 
+        status: TRIP_TAB_MAPPING[activeTab],
+        ...filters,
       }),
     );
   }, [dispatch, currentPage, pageSize, activeTab, searchQuery, filterKey]);
@@ -182,7 +184,7 @@ export default function TripsPage() {
           >
             Export
           </Button>
-          <TripFilters value={filters} onChange={handleFiltersChange} />
+          <TripFilterDrawer value={filters} onChange={handleFiltersChange} />
         </Box>
       </Box>
 
@@ -203,7 +205,7 @@ export default function TripsPage() {
         isOpen={!!selectedTripId}
         onClose={() => setSelectedTripId(null)}
       />
-      
+
         <ExportTripsModal
         isOpen={exportOpen}
         onClose={() => setExportOpen(false)}

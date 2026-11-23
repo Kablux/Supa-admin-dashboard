@@ -12,9 +12,24 @@ export const ACCESS_TOKEN_KEY = "access_token";
 export const REFRESH_TOKEN_KEY = "refresh_token";
 export const SESSION_START_KEY = "session_start_time";
 export const LAST_ACTIVITY_KEY = "last_activity_time";
+export const SESSION_EXPIRED_EVENT = "app:session-expired";
 
-export const SESSION_TIMEOUT_MS = 60 * 60 * 1000; 
-export const SESSION_WARNING_MS = 60 * 1000;
+const DEFAULT_TIMEOUT_MINUTES = 60;
+
+const configuredMinutes = Number(import.meta.env.VITE_SESSION_TIMEOUT_MINUTES);
+const sessionTimeoutMinutes =
+  Number.isFinite(configuredMinutes) && configuredMinutes > 0
+    ? configuredMinutes
+    : DEFAULT_TIMEOUT_MINUTES;
+
+export const SESSION_TIMEOUT_MS = sessionTimeoutMinutes * 60 * 1000;
+
+// Cap warning at 60s for longer sessions
+export const SESSION_WARNING_MS = Math.min(
+  60 * 1000,
+  Math.floor(SESSION_TIMEOUT_MS * 0.25)
+);
+
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
@@ -26,7 +41,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
-  // Handle FormData differently from normal JSON requests
+  // Let the browser/XHR set the multipart boundary automatically for FormData
   if (config.data instanceof FormData) {
     config.headers?.delete("Content-Type");
   } else {
@@ -36,12 +51,28 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+    const url = String(error?.config?.url || "");
+    const isAuthEndpoint =
+      url.includes("/login") ||
+      url.includes("/token") ||
+      url.includes("/logout");
+
+    if (status === 401 && !isAuthEndpoint) {
+      clearStoredTokens();
+      window.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api;
 
-export function setStoredTokens(
-  access?: string,
-  refresh?: string
-): void {
+export function setStoredTokens(access?: string, refresh?: string): void {
   if (access) {
     const now = Date.now();
 
@@ -57,11 +88,11 @@ export function setStoredTokens(
   }
 }
 
-export function getStoredAccessToken() {
+export function getStoredAccessToken(): string | null {
   return sessionStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
-export function getStoredRefreshToken() {
+export function getStoredRefreshToken(): string | null {
   return localStorage.getItem(REFRESH_TOKEN_KEY);
 }
 

@@ -694,8 +694,12 @@ export interface DriverLocationsResponse {
 export type BroadcastAudience = "rider" | "driver";
 
 export interface BroadcastRetentionResponse {
+  id?: string;
   notified: number;
   queued: boolean;
+  scheduled?: boolean;
+  send_at?: string | null;
+  status?: string;
   unknown_ids: string[];
   audience: string;
 }
