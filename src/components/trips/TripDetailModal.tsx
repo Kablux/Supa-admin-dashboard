@@ -215,7 +215,7 @@ export default function TripDetailsModal({
                 </Typography>
                 <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
                   {tripData.end_time
-                    ? new Date(tripData.start_time).toLocaleTimeString([], {
+                    ? new Date(tripData.end_time).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                       })
