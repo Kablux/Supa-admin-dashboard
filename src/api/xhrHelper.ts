@@ -27,6 +27,9 @@ import {
   fetchSosIncidentsApi,
   fetchTransactionAnalyticsApi,
   fetchTransactionsApi,
+  fetchPendingApprovalApi,
+  approveTransactionApi,
+  rejectTransactionApi,
   getAdminRoles,
   getCorporateData,
   getDriverList,
@@ -52,11 +55,12 @@ import {
   updatePromotionXHR,
   uploadFiles,
 } from "./xhr";
-import { AdminRole, Banner, BannerPayload, BannersState,  CreatePromotionPayload, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchTransactionsParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, SosState, UnsuspendRiderResponse, UploadFile } from "../types/common.types";
+import { AdminRole, Banner, BannerPayload, BannersState,  CreatePromotionPayload, FetchPendingApprovalParams, FetchPromotionsParams, FetchReferralsParams, FetchRidersParams, FetchTransactionsParams, FetchUsersParams, PaginatedReferralResponse, Promotion, Referral, ReferralQueryParams, RideRequestQueryParams, SosState, UnsuspendRiderResponse, UploadFile } from "../types/common.types";
 import { setCorporateData, setLoading } from "../redux/slices/corporate";
 import { AppDispatch } from "../redux/store";
 import { setFleetData } from "../redux/slices/Fleet";
 import toast from "react-hot-toast";
+import { PENDING_WITHDRAWAL_FILTERS } from "../components/transactions/withdrawalConfig";
 
 export const loginAdmin = createAsyncThunk<
   LoginResponse,
@@ -710,6 +714,66 @@ export const fetchTransactions = createAsyncThunk(
       return data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch transactions");
+    }
+  }
+);
+
+/** Withdrawal requests queue — GET /business-admin/transactions/pending-approval/. */
+export const fetchPendingApprovals = createAsyncThunk(
+  "transactions/fetchPendingApprovals",
+  async (params: FetchPendingApprovalParams | undefined, { rejectWithValue }) => {
+    try {
+      return await fetchPendingApprovalApi({ ...params, ...PENDING_WITHDRAWAL_FILTERS });
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch withdrawal requests");
+    }
+  }
+);
+
+/** Count-only fetch for withdrawals awaiting approval (drives the tab badge). */
+export const fetchPendingWithdrawalCount = createAsyncThunk(
+  "transactions/fetchPendingWithdrawalCount",
+  async (_: void, { rejectWithValue }) => {
+    try {
+      const data = await fetchPendingApprovalApi({ ...PENDING_WITHDRAWAL_FILTERS, page: 1, page_size: 1 });
+      return data.count || 0;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch pending withdrawals");
+    }
+  }
+);
+
+const apiErrorMessage = (error: any, fallback: string): string => {
+  const data = error?.response?.data;
+  return data?.message || data?.detail || data?.error || fallback;
+};
+
+export const approveTransaction = createAsyncThunk(
+  "transactions/approve",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await approveTransactionApi(id);
+      toast.success(response.message || "Withdrawal approved. Payment is being processed.");
+      return response.data;
+    } catch (error: any) {
+      const message = apiErrorMessage(error, "Unable to approve withdrawal");
+      toast.error(message);
+      return rejectWithValue(message);
+    }
+  }
+);
+
+export const rejectTransaction = createAsyncThunk(
+  "transactions/reject",
+  async ({ id, reason }: { id: string; reason: string }, { rejectWithValue }) => {
+    try {
+      const response = await rejectTransactionApi(id, reason);
+      toast.success(response.message || "Withdrawal declined. Funds returned to the driver's balance.");
+      return response.data;
+    } catch (error: any) {
+      const message = apiErrorMessage(error, "Unable to decline withdrawal");
+      toast.error(message);
+      return rejectWithValue(message);
     }
   }
 );
