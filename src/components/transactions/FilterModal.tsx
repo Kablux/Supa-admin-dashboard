@@ -135,10 +135,12 @@ export default function TransactionsFilterModal({
                 sx={selectSx}
               >
                 <MenuItem value=""><em>All Statuses</em></MenuItem>
+                <MenuItem value="pending_approval">Awaiting Approval</MenuItem>
                 <MenuItem value="success">Successful</MenuItem>
                 <MenuItem value="pending">Pending</MenuItem>
                 <MenuItem value="expired">Expired</MenuItem>
                 <MenuItem value="failed">Failed</MenuItem>
+                <MenuItem value="rejected">Declined</MenuItem>
               </Select>
             </FormControl>
 
@@ -172,7 +174,7 @@ export default function TransactionsFilterModal({
                 <MenuItem value="platform_fee">Platform Fee</MenuItem>
                 <MenuItem value="admin_adjustment">Admin Adjustment</MenuItem>
                 <MenuItem value="refund">Refund</MenuItem>
-                <MenuItem value="payout">Payout</MenuItem>
+                <MenuItem value="payout">Payout (Withdrawal)</MenuItem>
                 <MenuItem value="bonus">Bonus</MenuItem>
                 <MenuItem value="ride_payment">Ride Payment</MenuItem>
               </Select>

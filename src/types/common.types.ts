@@ -153,6 +153,75 @@ export interface Transaction {
   created_at: string;
 }
 
+/**
+ * Full transaction record as returned by the detail / approve / reject endpoints.
+ * Fields beyond the list shape are optional because the detail endpoint may
+ * return either shape.
+ */
+export interface TransactionDetail extends Transaction {
+  group_reference?: string;
+  fund_source?: string;
+  user_role?: string;
+  metadata?: Record<string, unknown> | string | null;
+  updated_at?: string;
+  /** Plain id on detail/approve responses; expanded object on the pending-approval list. */
+  user?: string | PendingApprovalUser | null;
+  wallet?: string | PendingApprovalWallet | null;
+  transfer_recipient?: string | PendingApprovalRecipient | null;
+  related_transactions?: unknown;
+  parent_transaction?: unknown;
+  ride?: unknown;
+}
+
+export interface PendingApprovalUser {
+  id?: string;
+  email?: string;
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  role?: string;
+  [key: string]: unknown;
+}
+
+/** Wallet balance keys aren't documented, so numeric fields are rendered generically. */
+export interface PendingApprovalWallet {
+  id?: string;
+  [key: string]: unknown;
+}
+
+export interface PendingApprovalRecipient {
+  recipient_code?: string;
+  bank_code?: string;
+  bank_name?: string;
+  account_number?: string;
+  account_name?: string;
+  [key: string]: unknown;
+}
+
+export interface PendingApprovalResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: TransactionDetail[];
+}
+
+export interface FetchPendingApprovalParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  type?: string;
+  direction?: string;
+  channel?: string;
+  user_role?: string;
+  fund_source?: string;
+}
+
+export interface TransactionActionResponse {
+  message: string;
+  data: TransactionDetail;
+}
+
 export interface TransactionsResultContainer {
   count: number;
   next: string | null;
@@ -195,6 +264,7 @@ export interface FetchTransactionsParams {
   direction?: string;
   channel?: string;
   user_role?: string;
+  profile_role?: string;
   fund_source?: string;
   created_at_after?: string;
   created_at_before?: string;
