@@ -57,8 +57,11 @@ import {
   RiderSummaryData,
   RideTypePricing,
   SosIncident,
-  Transaction,
+  FetchPendingApprovalParams,
+  PendingApprovalResponse,
+  TransactionActionResponse,
   TransactionAnalytics,
+  TransactionDetail,
   TransactionAnalyticsResponse,
   TransactionsResponse,
   UnsuspendRiderResponse,
@@ -995,8 +998,35 @@ export const fetchTransactionsApi = async (params?: FetchTransactionsParams): Pr
   return response.data;
 };
 
-export const fetchTransactionDetailsApi = async (id: string): Promise<Transaction> => {
+export const fetchTransactionDetailsApi = async (id: string): Promise<TransactionDetail> => {
   const response = await api.get(`/business-admin/transactions/${id}/`);
+  return response.data;
+};
+
+/** Transactions with status pending_approval, with user, wallet, recipient and linked fee expanded. */
+export const fetchPendingApprovalApi = async (
+  params?: FetchPendingApprovalParams,
+): Promise<PendingApprovalResponse> => {
+  const response = await api.get("/business-admin/transactions/pending-approval/", {
+    params: cleanQueryParams(params ?? {}),
+  });
+  return response.data;
+};
+
+/** Approve a pending-approval transaction. For driver withdrawals this starts the Paystack transfer. */
+export const approveTransactionApi = async (id: string): Promise<TransactionActionResponse> => {
+  const response = await api.post(`/business-admin/transactions/${id}/approve/`);
+  return response.data;
+};
+
+/** Reject a pending-approval transaction. For driver withdrawals the amount + fee are returned to the driver's balance. */
+export const rejectTransactionApi = async (
+  id: string,
+  rejectionReason: string,
+): Promise<TransactionActionResponse> => {
+  const response = await api.post(`/business-admin/transactions/${id}/reject/`, {
+    rejection_reason: rejectionReason,
+  });
   return response.data;
 };
 
