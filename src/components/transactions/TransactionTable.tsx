@@ -11,9 +11,11 @@ import {
   TableHead,
   TableRow,
   Chip,
+  Button,
 } from "@mui/material";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { Transaction } from "../../types/common.types";
+import { formatStatusLabel, isAwaitingApproval, statusColors } from "./withdrawalConfig";
 
 interface TransactionsTableProps {
   isLoading: boolean;
@@ -23,6 +25,10 @@ interface TransactionsTableProps {
   pageSize: number;
   onPageChange: (event: unknown, newPage: number) => void;
   onPageSizeChange: (newPageSize: number) => void;
+  onRowClick?: (tx: Transaction) => void;
+  title?: string;
+  emptyTitle?: string;
+  emptyMessage?: string;
 }
 
 export default function TransactionsTable({
@@ -33,6 +39,10 @@ export default function TransactionsTable({
   pageSize,
   onPageChange,
   onPageSizeChange,
+  onRowClick,
+  title = "Transactions",
+  emptyTitle = "No Transactions Found",
+  emptyMessage = "There are no transactions matching your criteria.",
 }: TransactionsTableProps) {
   return (
     <Box
@@ -42,7 +52,7 @@ export default function TransactionsTable({
     >
       <Box sx={{ p: 2.5, borderBottom: "1px solid rgba(255, 255, 255, 0.06)" }}>
         <Typography sx={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>
-         Transactions
+          {title}
         </Typography>
       </Box>
 
@@ -53,9 +63,9 @@ export default function TransactionsTable({
       ) : transactions.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 8, px: 3 }}>
           <ReceiptLongIcon sx={{ fontSize: 48, color: "var(--text-secondary)", mb: 1, opacity: 0.5 }} />
-          <Typography sx={{  fontWeight: 600, mb: 0.5 }}>No Transactions Found</Typography>
+          <Typography sx={{ fontWeight: 600, mb: 0.5 }}>{emptyTitle}</Typography>
           <Typography sx={{ fontSize: 14, color: "var(--text-secondary)" }}>
-            There are no transactions matching your criteria.
+            {emptyMessage}
           </Typography>
         </Box>
       ) : (
@@ -75,9 +85,9 @@ export default function TransactionsTable({
           <Table size="small">
             <TableHead>
               <TableRow>
-                {[" User", "Reference ID", "Type", "Channel", "Amount", "Status", "Created Date"].map((h) => (
+                {["User", "Reference ID", "Type", "Channel", "Amount", "Status", "Created Date", ""].map((h, i) => (
                   <TableCell
-                    key={h}
+                    key={h || i}
                    sx={{
                       fontSize: 12,
                       fontWeight: 500,
@@ -97,12 +107,17 @@ export default function TransactionsTable({
             <TableBody>
               {transactions.map((tx) => {
                 const isCredit = tx.direction === "credit";
+                const awaiting = isAwaitingApproval(tx);
+                const { bg, fg } = statusColors(tx.status);
                 const formattedAmount = `${isCredit ? "+" : "-"}₦${Math.abs(Number(tx.amount) || 0).toLocaleString()}`;
 
                 return (
                   <TableRow
                     key={tx.id}
+                    hover={!!onRowClick}
+                    onClick={onRowClick ? () => onRowClick(tx) : undefined}
                     sx={{
+                      cursor: onRowClick ? "pointer" : "default",
                       "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.02)" },
                       "&:last-child td": { borderBottom: 0 },
                     }}
@@ -124,7 +139,7 @@ export default function TransactionsTable({
 
                     <TableCell sx={{ py: 1.5, px: 2, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                       <Chip
-                        label={tx.type}
+                        label={tx.type?.replace(/_/g, " ")}
                         size="small"
                         sx={{
                           textTransform: "capitalize",
@@ -138,7 +153,7 @@ export default function TransactionsTable({
 
                     <TableCell sx={{ py: 1.5, px: 2, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                       <Typography sx={{ fontSize: 12,textTransform:"capitalize", color: "var(--text-secondary)" }}>
-                        {tx.channel || "N/A"}
+                        {tx.channel?.replace(/_/g, " ") || "N/A"}
                       </Typography>
                     </TableCell>
 
@@ -156,24 +171,15 @@ export default function TransactionsTable({
 
                     <TableCell sx={{ py: 1.5, px: 2, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                       <Chip
-                        label={tx.status}
+                        label={formatStatusLabel(tx.status)}
                         size="small"
                         sx={{
                           fontSize: 12,
                           height: 20,
                           fontWeight: 600,
-                          backgroundColor:
-                            tx.status === "success" || tx.status === "completed"
-                              ? "rgba(52, 211, 153, 0.1)"
-                              : tx.status === "pending"
-                              ? "rgba(254, 185, 20, 0.1)"
-                              : "rgba(239, 68, 68, 0.1)",
-                          color:
-                            tx.status === "success" || tx.status === "completed"
-                              ? "#34D399"
-                              : tx.status === "pending"
-                              ? "#FEB914"
-                              : "#EF4444",
+                          textTransform: "capitalize",
+                          backgroundColor: bg,
+                          color: fg,
                         }}
                       />
                     </TableCell>
@@ -182,6 +188,36 @@ export default function TransactionsTable({
                       <Typography sx={{ fontSize: 12, color: "var(--text-secondary)" }}>
                         {tx.created_at ? new Date(tx.created_at).toLocaleDateString() : "N/A"}
                       </Typography>
+                      {tx.created_at && (
+                        <Typography sx={{ fontSize: 11, color: "var(--text-secondary)", opacity: 0.7 }}>
+                          {new Date(tx.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        </Typography>
+                      )}
+                    </TableCell>
+
+                    <TableCell sx={{ py: 1.5, px: 2, borderBottom: "1px solid rgba(255,255,255,0.04)" }} align="right">
+                      {awaiting && onRowClick && (
+                        <Button
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onRowClick(tx);
+                          }}
+                          sx={{
+                            textTransform: "none",
+                            fontSize: 12,
+                            fontWeight: 600,
+                            whiteSpace: "nowrap",
+                            color: "var(--accent-gold, #FEB914)",
+                            border: "1px solid var(--accent-gold, #FEB914)",
+                            borderRadius: "6px",
+                            px: 1.5,
+                            py: 0.25,
+                          }}
+                        >
+                          Review
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 );
